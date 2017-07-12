@@ -1,0 +1,38 @@
+{
+  "name": "react-typescript",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@types/d3": "^4.9.0",
+    "@types/jest": "^19.2.4",
+    "@types/node": "^7.0.27",
+    "@types/react": "^15.0.26",
+    "@types/react-dom": "^15.5.0",
+    "@types/react-redux": "^4.4.45",
+    "@types/react-router-dom": "^4.0.4",
+    "@types/redux-promise-middleware": "0.0.6",
+    "@types/redux-thunk": "^2.1.0",
+    "@types/slick-carousel": "^1.6.32",
+    "axios": "^0.16.2",
+    "d3": "^4.9.1",
+    "react": "^15.5.4",
+    "react-d3": "^0.4.0",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.5",
+    "react-router-dom": "^4.1.1",
+    "redux-persist": "^4.8.0",
+    "redux-promise-middleware": "^4.2.1",
+    "redux-thunk": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/redux-logger": "^3.0.0",
+    "react-scripts-ts": "2.3.2",
+    "redux-logger": "^3.0.6"
+  },
+  "scripts": {
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
+  }
+}

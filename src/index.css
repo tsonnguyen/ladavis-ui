@@ -1,0 +1,27 @@
+.row > *{
+  display: inline-block;
+  vertical-align:top;
+}
+div.row {
+  white-space: nowrap;
+}
+.hide {
+  display: none;
+}
+.slimScroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: rgba(0,0,0,0);
+  border-radius: 100px;
+}
+.slimScroll::-webkit-scrollbar:hover {
+background-color: rgba(0, 0, 0, 0.09);
+}
+.slimScroll::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.5);
+  border-radius: 100px;
+}
+.slimScroll::-webkit-scrollbar-thumb:active {
+  background: rgba(0,0,0,0.61);
+  border-radius: 100px;
+}
