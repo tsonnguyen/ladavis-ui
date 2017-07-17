@@ -1,0 +1,28 @@
+.time-bar {
+  position: absolute;
+  left: 60px;
+}
+
+.time-bar-element  {
+  width: 750px;
+  height: 20px;
+  border: 1;
+}
+
+.date-element-bkg {
+  height: 20px;
+  width: 150px;
+  fill: none;
+  stroke: black;
+}
+
+.date-element-text {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.adjust-pointer {
+  height: 20px;
+  fill: rgba(255, 0, 0, 0.81);;
+  stroke: red;
+}
