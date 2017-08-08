@@ -1,18 +1,20 @@
 import * as React from 'react';
 import * as d3 from 'd3';
 
+import * as SizeTrack from '../SizeTrack';
+
 import './TimelineChart.css';
 
-interface TimelineChartProps {
+interface Props {
   name: string;
   position: number;
 }
 
-interface TimelineChartState {
+interface States {
 
 }
 
-class TimelineChart extends React.Component<TimelineChartProps, TimelineChartState> {
+class TimelineChart extends React.Component<Props, States> {
   constructor() {
     super();
   }
@@ -27,8 +29,8 @@ class TimelineChart extends React.Component<TimelineChartProps, TimelineChartSta
 
     // set the dimensions and margins of the graph
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
-        width = 960 - margin.left - margin.right,
-        height = 200 - margin.top - margin.bottom;
+        width = SizeTrack.TRACK_WIDTH - margin.left - margin.right,
+        height = SizeTrack.TRACK_HEIGHT - margin.top - margin.bottom;
 
     // set the ranges
     var x = d3.scaleLinear()
@@ -61,14 +63,14 @@ class TimelineChart extends React.Component<TimelineChartProps, TimelineChartSta
           .attr('height', '10px')
           .attr('transform', 'translate(0,0)');
 
-    // add the x Axis
-    svg.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x));
+    // // add the x Axis
+    // svg.append('g')
+    //     .attr('transform', 'translate(0,' + height + ')')
+    //     .call(d3.axisBottom(x));
 
     // add the y Axis
-    svg.append('g')
-        .call(d3.axisLeft(y));
+    // svg.append('g')
+    //     .call(d3.axisLeft(y));
   }
 
   componentDidMount() {

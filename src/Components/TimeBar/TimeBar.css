@@ -1,17 +1,10 @@
 .time-bar {
-  position: absolute;
-  left: 60px;
-}
-
-.time-bar-element  {
   width: 750px;
-  height: 20px;
-  border: 1;
+  height: 70px;
 }
 
 .date-element-bkg {
   height: 20px;
-  width: 150px;
   fill: none;
   stroke: black;
 }
@@ -21,8 +14,15 @@
   font-weight: bold;
 }
 
-.adjust-pointer {
+#adjust-pointer {
   height: 20px;
   fill: rgba(255, 0, 0, 0.81);;
   stroke: red;
+}
+
+.adjust-pointer-y {
+  width: 7px;
+  height: 20px;
+  fill: transparent;
+  cursor: ew-resize;
 }

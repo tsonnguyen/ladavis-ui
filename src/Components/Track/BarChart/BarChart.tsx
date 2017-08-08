@@ -1,18 +1,20 @@
 import * as React from 'react';
 import * as d3 from 'd3';
 
+import * as SizeTrack from '../SizeTrack';
+
 import './BarChart.css';
 
-interface BarChartProps {
+interface Props {
   name: string;
   position: number;
 }
 
-interface BarChartState {
+interface States {
 
 }
 
-class BarChart extends React.Component<BarChartProps, BarChartState> {
+class BarChart extends React.Component<Props, States> {
   constructor() {
     super();
   }
@@ -29,8 +31,8 @@ class BarChart extends React.Component<BarChartProps, BarChartState> {
 
     // set the dimensions and margins of the graph
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
-        width = 960 - margin.left - margin.right,
-        height = 200 - margin.top - margin.bottom;
+        width = SizeTrack.TRACK_WIDTH - margin.left - margin.right,
+        height = SizeTrack.TRACK_HEIGHT - margin.top - margin.bottom;
 
     // set the ranges
     var x = d3.scaleLinear()
@@ -50,7 +52,7 @@ class BarChart extends React.Component<BarChartProps, BarChartState> {
 
     // Scale the range of the data in the domains
     x.domain([0, 10]);
-    y.domain([0, 90]);
+    y.domain([0, 100]);
 
     // append the rectangles for the bar chart
     svg.selectAll('.bar')
@@ -74,13 +76,14 @@ class BarChart extends React.Component<BarChartProps, BarChartState> {
           .attr('transform', 'translate(0,0)');
 
     // add the x Axis
-    svg.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x));
+    // svg.append('g')
+    //     .attr('transform', 'translate(0,' + height + ')')
+    //     .call(d3.axisBottom(x));
 
     // add the y Axis
     svg.append('g')
-        .call(d3.axisLeft(y));
+        .attr('transform', 'translate(0, 0)')
+        .call(d3.axisLeft(y).ticks(5, 's'));
   }
 
   componentDidMount() {

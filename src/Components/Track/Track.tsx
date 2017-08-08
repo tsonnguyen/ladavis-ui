@@ -7,49 +7,65 @@ import TimelineChart from './TimelineChart/TimelineChart';
 
 import './Track.css';
 
-interface TrackProps {
+interface Props {
   type: string;
+  name: string;
   position: number;
 }
 
-interface TrackState {
+interface States {
 
 }
 
-class Track extends React.Component<TrackProps, TrackState> {
+class Track extends React.Component<Props, States> {
+
   constructor() {
     super();
   }
 
   renderLineChart() {
     return (
-      <div>
-        <LineChart name={'line-chart'} position={50}/>
-      </div>
+      <LineChart name={this.props.name} position={50}/>
     );
   }
 
   renderBarChart() {
     return (
-      <div>
-        <BarChart name={'bar-chart'} position={350}/>
-      </div>
+      <BarChart name={this.props.name} position={350}/>
     );
   }
 
   renderEventChart() {
     return (
-      <div>
-        <EventChart name={'event-chart'} position={650}/>
-      </div>
+      <EventChart name={this.props.name} position={650}/>
     );
   }
 
   renderTimelineChart() {
     return (
-      <div>
-        <TimelineChart name={'timeline-chart'} position={650}/>
-      </div>
+      <TimelineChart name={this.props.name} position={650}/>
+    );
+  }
+
+  renderTrackBorder() {
+    return (
+      <rect 
+        className="track-border" 
+        x="50" 
+        y="20.5" 
+        transform="translate(0,0)" 
+      />
+    );
+  }
+
+  renderTrackDrag() {
+    return (
+      <rect 
+        className="track-drag" 
+        x="800" 
+        y="20.5" 
+        transform="translate(0,0)" 
+      />
     );
   }
 
@@ -73,9 +89,11 @@ class Track extends React.Component<TrackProps, TrackState> {
     }
 
     return (
-      <div className="track" style={{top: this.props.position}}>
-        {renderComponent}
-      </div>
+      <svg className="track" y={this.props.position}>
+        {this.renderTrackBorder()}
+        {this.renderTrackDrag()}
+        {renderComponent}  
+      </svg>
     );
   }
 }

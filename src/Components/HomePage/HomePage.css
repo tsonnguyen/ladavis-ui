@@ -1,0 +1,97 @@
+.patient {
+  display: table;
+}
+
+.patient-info {
+  display: table-cell;
+  width: 16%;
+  padding-left: 2%;
+  vertical-align: top;
+}
+
+.patient-basic-info {
+  border: 1px solid black;
+  height: 300px;
+}
+
+.patient-avatar {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 10px;
+  padding-top: 10px;
+  border: 1px solid black;
+}
+
+.patient-basic-info-box {
+  width: 80%;
+  margin-top: 5px;
+  margin-left: 10%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid black;
+  text-align: center;
+}
+
+.patient-basic-info-text {
+  font-size: 12px;
+  margin: 0;
+}
+
+.patient-health-info {
+  height: 300px;
+  margin-top: 10px;
+  border: 1px solid black;
+}
+
+.patient-health-title {
+  padding: 5px;
+  background: grey;
+  color: white;
+  border: 1px solid black;
+}
+
+.patient-health-value {
+  padding: 5px;
+  border: 1px solid black;  
+}
+
+.patient-chart {
+  display: table-cell;
+  width: 80%;
+  vertical-align: top;
+}
+
+.patient-chart-header {
+  height: 135px;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  border: 1px solid black;
+}
+
+.patient-chart-header .svg-container {
+  width: 100%;
+}
+
+.patient-chart-body {
+  height: 375px;
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  border: 1px solid black;
+  overflow: auto;
+}
+
+.patient-chart-body .svg-container {
+  width: 100%;
+}
+
+.patient-chart-footer {
+  height: 70px;
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-top: 10px;
+  padding-left: 50px;
+  border: 1px solid black;
+}

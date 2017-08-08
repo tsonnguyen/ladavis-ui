@@ -1,18 +1,20 @@
 import * as React from 'react';
 import * as d3 from 'd3';
 
+import * as SizeTrack from '../SizeTrack';
+
 import './EventChart.css';
 
-interface EventChartProps {
+interface Props {
   name: string;
   position: number;
 }
 
-interface EventChartState {
+interface States {
 
 }
 
-class EventChart extends React.Component<EventChartProps, EventChartState> {
+class EventChart extends React.Component<Props, States> {
   constructor() {
     super();
   }
@@ -29,8 +31,8 @@ class EventChart extends React.Component<EventChartProps, EventChartState> {
 
     // set the dimensions and margins of the graph
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
-        width = 960 - margin.left - margin.right,
-        height = 200 - margin.top - margin.bottom;
+        width = SizeTrack.TRACK_WIDTH - margin.left - margin.right,
+        height = SizeTrack.TRACK_HEIGHT - margin.top - margin.bottom;
 
     // set the ranges
     var x = d3.scaleLinear()
@@ -64,13 +66,13 @@ class EventChart extends React.Component<EventChartProps, EventChartState> {
           .attr('transform', 'translate(-5,0)');
 
     // add the x Axis
-    svg.append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x));
+    // svg.append('g')
+    //     .attr('transform', 'translate(0,' + height + ')')
+    //     .call(d3.axisBottom(x));
 
     // add the y Axis
-    svg.append('g')
-        .call(d3.axisLeft(y));
+    // svg.append('g')
+    //     .call(d3.axisLeft(y));
   }
 
   componentDidMount() {
