@@ -16,12 +16,13 @@ class TimeBar extends React.Component<TimeBarProps, TimeBarState> {
   arrayPosition: number[] = [];
   leftEndPoint: number = 0;
   rightEndPoint: number = 750;
+  originalElementLength: number = 75;
 
   constructor() {
     super();
     this.state = {
       adjustPos: 0,
-      adjustLength: 750
+      adjustLength: 750,
     };
   }
 
@@ -115,25 +116,35 @@ class TimeBar extends React.Component<TimeBarProps, TimeBarState> {
     d3.select('#adjust-bar').select('#adjust-pointer-right')
       .attr('transform', 'translate(' + (self.state.adjustPos + self.state.adjustLength - 2) + ', 40)');
 
-    d3.select('#date-bar').selectAll('.date-element')
-        .data(this.arrayPosition)
-        .attr('transform', function(d: any){
-            return 'translate(' + (d + self.state.adjustPos) + ', 0)';
-        });
+    let newWidth = this.originalElementLength / (this.state.adjustLength) * this.rightEndPoint;
+    this.arrayPosition = [];
+    for (var i = 0; i < 10; i++) {
+      this.arrayPosition.push(i * newWidth);
+    }
     
-    d3.select('#time-bar').selectAll('.time-element')
-        .data(this.arrayPosition)
-        .attr('transform', function(d: any){
-            return 'translate(' + (d + self.state.adjustPos) + ', 20)';
-        });
+    let listDateElement = d3.select('#date-bar').selectAll('.date-element');
+    listDateElement.data(this.arrayPosition)
+      .attr('transform', function(d: any){
+          return 'translate(' + (d - self.state.adjustPos / self.state.adjustLength * self.rightEndPoint) + ', 0)';
+      });
+    listDateElement.select('.date-element-bkg').attr('width', newWidth);
+    listDateElement.select('.date-element-text').attr('x', newWidth / 2 - 25);
+    
+    let listTimeElement = d3.select('#time-bar').selectAll('.time-element');
+    let x = d3.scaleLinear().range([0, newWidth]).domain([0, 24]);
+    listTimeElement.data(this.arrayPosition)
+      .attr('transform', function(d: any){
+          return 'translate(' 
+            + (d - self.state.adjustPos / self.state.adjustLength * self.rightEndPoint - 0.5) + ', 20)';
+      })
+      .call(d3.axisBottom(x).tickValues([0, 4, 8, 12, 16, 20, 0]));
   }
 
   componentDidMount() {
     for (var i = 0; i < 10; i++) {
-      let width = 75;
-      this.arrayPosition.push(i * width);
-      this.drawDate(i * width, width);
-      this.drawTimeBar(i * width, width);
+      this.arrayPosition.push(i * this.originalElementLength);
+      this.drawDate(i * this.originalElementLength, this.originalElementLength);
+      this.drawTimeBar(i * this.originalElementLength, this.originalElementLength);
     }
     this.drawAdjustBar();
   }
