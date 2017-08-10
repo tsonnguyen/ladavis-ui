@@ -19,7 +19,7 @@ class EventChart extends React.Component<Props, States> {
     super();
   }
 
-  draw() {
+  drawChart() {
     var self = this;
 
     var data = [
@@ -75,8 +75,69 @@ class EventChart extends React.Component<Props, States> {
     //     .call(d3.axisLeft(y));
   }
 
+  drawFigureBox() {
+    var svg = d3.select('#' + this.props.name);
+    svg.append('rect')
+            .attr('class', 'figure-box')
+            .attr('x', SizeTrack.TRACK_WIDTH + 40)
+            .attr('y', 20)
+            .attr('width', 90)
+            .attr('height', 30)
+            .attr('fill', 'rgba(255, 0, 0, 0.7)');
+
+    svg.append('text')
+            .attr('class', 'figure-name')
+            .text('HbA1c')
+            .attr('x', SizeTrack.TRACK_WIDTH + 50)
+            .attr('y', 40); 
+
+    svg.append('rect')
+            .attr('class', 'figure-box')
+            .attr('x', SizeTrack.TRACK_WIDTH + 40)
+            .attr('y', 55)
+            .attr('width', 90)
+            .attr('height', 30)
+            .attr('fill', 'rgba(255, 0, 0, 0.7)');
+
+    svg.append('text')
+            .attr('class', 'figure-name')
+            .text('HbA1c')
+            .attr('x', SizeTrack.TRACK_WIDTH + 50)
+            .attr('y', 75); 
+
+    svg.append('rect')
+            .attr('class', 'figure-box')
+            .attr('x', SizeTrack.TRACK_WIDTH + 40)
+            .attr('y', 90)
+            .attr('width', 90)
+            .attr('height', 30)
+            .attr('fill', 'rgba(255, 0, 0, 0.7)');
+
+    svg.append('text')
+            .attr('class', 'figure-name')
+            .text('HbA1c')
+            .attr('x', SizeTrack.TRACK_WIDTH + 50)
+            .attr('y', 110); 
+
+    svg.append('rect')
+            .attr('class', 'figure-box')
+            .attr('x', SizeTrack.TRACK_WIDTH + 135)
+            .attr('y', 20)
+            .attr('width', 35)
+            .attr('height', 100)
+            .attr('fill', 'rgba(255, 0, 0, 0.7)');
+
+    svg.append('text')
+            .attr('class', 'figure-name')
+            .text('HbA1c')
+            .attr('x', 40)
+            .attr('y', -(SizeTrack.TRACK_WIDTH + 145))
+            .attr('transform', 'rotate(90)'); 
+  }
+
   componentDidMount() {
-    this.draw();
+    this.drawChart();
+    this.drawFigureBox();
   }
 
   render() {

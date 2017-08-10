@@ -19,14 +19,15 @@ class BarChart extends React.Component<Props, States> {
     super();
   }
 
-  draw() {
+  drawChart() {
     var self = this;
 
     var data = [
       [1, 20, 80], 
+      [2, 20, 80], 
       [3, 40, 20],
       [5, 50, 10],
-      [7, 20, 80]
+      [10, 20, 80]
     ];
 
     // set the dimensions and margins of the graph
@@ -51,7 +52,7 @@ class BarChart extends React.Component<Props, States> {
                 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Scale the range of the data in the domains
-    x.domain([0, 10]);
+    x.domain([-1, 10]);
     y.domain([0, 100]);
 
     // append the rectangles for the bar chart
@@ -86,8 +87,64 @@ class BarChart extends React.Component<Props, States> {
         .call(d3.axisLeft(y).ticks(5, 's'));
   }
 
+  drawFigureBox() {
+    var svg = d3.select('#' + this.props.name);
+    svg.append('text')
+        .attr('class', 'figure-value-1')
+        .text('822')
+        .attr('x', SizeTrack.TRACK_WIDTH + 40)
+        .attr('y', 35); 
+
+    svg.append('text')
+        .attr('class', 'figure-value-2')
+        .text('822')
+        .attr('x', SizeTrack.TRACK_WIDTH + 40)
+        .attr('y', 90); 
+
+    svg.append('text')
+        .attr('class', 'figure-unit')
+        .text('mmHg')
+        .attr('x', SizeTrack.TRACK_WIDTH + 85)
+        .attr('y', 35); 
+
+    svg.append('text')
+        .attr('class', 'figure-unit')
+        .text('mmHg')
+        .attr('x', SizeTrack.TRACK_WIDTH + 85)
+        .attr('y', 90); 
+
+    svg.append('rect')
+        .attr('class', 'figure-box')
+        .attr('x', SizeTrack.TRACK_WIDTH + 40)
+        .attr('y', 40)
+        .attr('width', 130)
+        .attr('height', 25)
+        .attr('fill', 'rgba(255, 0, 0, 0.7)');
+
+    svg.append('rect')
+        .attr('class', 'figure-box')
+        .attr('x', SizeTrack.TRACK_WIDTH + 40)
+        .attr('y', 95)
+        .attr('width', 130)
+        .attr('height', 25)
+        .attr('fill', 'rgba(0, 0, 255, 0.7)');
+
+    svg.append('text')
+        .attr('class', 'figure-name')
+        .text('HbA1c')
+        .attr('x', SizeTrack.TRACK_WIDTH + 50)
+        .attr('y', 59); 
+
+    svg.append('text')
+        .attr('class', 'figure-name')
+        .text('HbA1c')
+        .attr('x', SizeTrack.TRACK_WIDTH + 50)
+        .attr('y', 114); 
+  }
+
   componentDidMount() {
-    this.draw();
+    this.drawChart();
+    this.drawFigureBox();
   }
 
   render() {

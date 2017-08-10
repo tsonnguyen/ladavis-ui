@@ -23,3 +23,21 @@
 .tick line {
   stroke-width: 3px;
 }
+
+.figure-value-1, .figure-value-2 {
+  font-size: 25px;
+}
+
+.figure-value {
+  font-size: 50px;
+}
+
+.figure-name {
+  fill: white;
+  font-size: 20px;
+}
+
+.figure-box {
+  stroke: black;
+  stroke-width: 2px;
+}

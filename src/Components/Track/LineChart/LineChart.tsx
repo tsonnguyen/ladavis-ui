@@ -19,7 +19,7 @@ class LineChart extends React.Component<Props, States> {
     super();
   }
 
-  draw() {
+  drawChart() {
     var self = this;
 
     var data = [
@@ -93,8 +93,38 @@ class LineChart extends React.Component<Props, States> {
         .call(d3.axisLeft(y).ticks(5, 's'));
   }
 
+  drawFigureBox() {
+    var svg = d3.select('#' + this.props.name);
+    svg.append('text')
+            .attr('class', 'figure-value')
+            .text('822')
+            .attr('x', SizeTrack.TRACK_WIDTH + 40)
+            .attr('y', 55); 
+
+    svg.append('text')
+            .attr('class', 'figure-unit')
+            .text('mmHg')
+            .attr('x', SizeTrack.TRACK_WIDTH + 125)
+            .attr('y', 55); 
+
+    svg.append('rect')
+            .attr('class', 'figure-box')
+            .attr('x', SizeTrack.TRACK_WIDTH + 40)
+            .attr('y', 65)
+            .attr('width', 130)
+            .attr('height', 55)
+            .attr('fill', 'rgba(255, 0, 0, 0.7)');
+
+    svg.append('text')
+            .attr('class', 'figure-name')
+            .text('HbA1c')
+            .attr('x', SizeTrack.TRACK_WIDTH + 50)
+            .attr('y', 85); 
+  }
+
   componentDidMount() {
-    this.draw();
+    this.drawChart();
+    this.drawFigureBox();
   }
 
   render() {
