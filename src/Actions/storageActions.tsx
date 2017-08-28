@@ -1,6 +1,9 @@
-export function initPageName(pageName: string){
+
+import { getPatientInfoById } from '../API';
+
+export function getPatientById(userId: number) {
   return {
-    type: 'INIT_PAGE_NAME',
-    payload: pageName
+    type: 'GET_PATIENT_BY_ID',
+    payload: getPatientInfoById(userId)
   };
 }

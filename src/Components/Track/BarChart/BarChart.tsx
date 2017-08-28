@@ -1,12 +1,18 @@
 import * as React from 'react';
 import * as d3 from 'd3';
 
+import { POINT } from '../../../Interfaces';
+import { convertedTime } from  '../../../API';
 import * as SizeTrack from '../SizeTrack';
 
 import './BarChart.css';
 
 interface Props {
   name: string;
+  title: string;
+  title2: string;
+  value: POINT[];
+  value2: POINT[];
   position: number;
 }
 
@@ -19,16 +25,16 @@ class BarChart extends React.Component<Props, States> {
     super();
   }
 
-  drawChart() {
+  drawChart(data1: Object[], data2: Object[]) {
     var self = this;
 
-    var data = [
-      [1, 20, 80], 
-      [2, 20, 80], 
-      [3, 40, 20],
-      [5, 50, 10],
-      [10, 20, 80]
-    ];
+    // var data = [
+    //   [1, 20, 80], 
+    //   [2, 20, 80], 
+    //   [3, 40, 20],
+    //   [5, 50, 10],
+    //   [10, 20, 80]
+    // ];
 
     // set the dimensions and margins of the graph
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -52,28 +58,28 @@ class BarChart extends React.Component<Props, States> {
                 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Scale the range of the data in the domains
-    x.domain([-1, 10]);
-    y.domain([0, 100]);
+    x.domain([292810, 292813]);
+    y.domain([0, 200]);
 
     // append the rectangles for the bar chart
     svg.selectAll('.bar')
-        .data(data)
+        .data(data1)
         .enter().append('rect')
           .attr('class', 'bar')
-          .attr('x', function(d: any) { return x(d[0]); })
+          .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('width', '10px')
-          .attr('y', function(d: any) { return y(d[1]); })
-          .attr('height', function(d: any) { return height - y(d[1]); })
+          .attr('y', function(d: any) { return y(Number(d.value)); })
+          .attr('height', function(d: any) { return height - y(Number(d.value)); })
           .attr('transform', 'translate(-10,0)');
     
     svg.selectAll('.bar2')
-        .data(data)
+        .data(data2)
         .enter().append('rect')
           .attr('class', 'bar2')
-          .attr('x', function(d: any) { return x(d[0]); })
+          .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('width', '10px')
-          .attr('y', function(d: any) { return y(d[2]); })
-          .attr('height', function(d: any) { return height - y(d[2]); })
+          .attr('y', function(d: any) { return y(Number(d.value)); })
+          .attr('height', function(d: any) { return height - y(Number(d.value)); })
           .attr('transform', 'translate(0,0)');
 
     // add the x Axis
@@ -131,19 +137,19 @@ class BarChart extends React.Component<Props, States> {
 
     svg.append('text')
         .attr('class', 'figure-name')
-        .text('HbA1c')
+        .text(this.props.title)
         .attr('x', SizeTrack.TRACK_WIDTH + 50)
         .attr('y', 59); 
 
     svg.append('text')
         .attr('class', 'figure-name')
-        .text('HbA1c')
+        .text(this.props.title2)
         .attr('x', SizeTrack.TRACK_WIDTH + 50)
         .attr('y', 114); 
   }
 
-  componentDidMount() {
-    this.drawChart();
+  componentWillReceiveProps(props: Props) {
+    this.drawChart(props.value, props.value2);
     this.drawFigureBox();
   }
 

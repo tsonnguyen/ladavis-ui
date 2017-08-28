@@ -1,37 +1,51 @@
-import { STORAGE } from '../Interfaces';
-import { setUserStorageToken } from '../Actions/userActions';
+import { PATIENT } from '../Interfaces';
+
 export default function reducer(
-  state: STORAGE = {
-    loginStatus: false, 
-    persistStatus: false,
-    firstLogin: true
+  state: PATIENT = {
+    systolic: [],
+    diastolic: [],
+    hemoA1c: [],
+    glucoseBlood: [],
+    glucoseUrine: [],
+    creatinine: [],
+    albumin: [],
+    choles: [],
+    trigly: [],
+    simva: [],
+    lisin: [],
+    RR: [],
+    acar: [],
+    met: [],
+    Glit: [],
+    DPP4: [],
+    SH: [],
+    notes: [],
   }, 
-  
   action: any) {
   switch (action.type) {
-    case 'TRY_LOGIN_FULFILLED': {
-      setUserStorageToken(action.payload.data.content.session);
-      return {...state, loginStatus: true};
-    }
-    case 'AUTHENTICATE_USER_FULFILLED': {
-      let userInfo = action.payload.data.content;
-      if (userInfo.user.registerStatus !== 5) {
-        if (window.location.pathname !== '/register' && state.firstLogin) {
-          window.location.href = '/register';
-        }
-      }
-      return {...state, firstLogin: false};
-    }
-    case 'AUTHENTICATE_USER_REJECTED': {
-      window.location.href = '/';
-      return {...state, loginStatus: false, firstLogin: true};
-    }
-    case 'INIT_PERSIST_STATUS': {
-      return {...state, persistStatus: true};
-    }
-    case 'TRY_LOGOUT_FULFILLED': {
-      setUserStorageToken(null);
-      return {...state, loginStatus: false, firstLogin: true};
+    case 'GET_PATIENT_BY_ID_FULFILLED': {
+      let data = action.payload.data.data;
+      return {
+        ...state, 
+        systolic: data.systolic,
+        diastolic: data.diastolic,
+        hemoA1c: data.hemoA1c,
+        glucoseBlood: data.glucoseBlood,
+        glucoseUrine: data.glucoseUrine,
+        creatinine: data.creatinine,
+        albumin: data.albumin,
+        choles: data.choles,
+        trigly: data.trigly,
+        simva: data.simva,
+        lisin: data.lisin,
+        RR: data.RR,
+        acar: data.acar,
+        met: data.met,
+        Glit: data.Glit,
+        DPP4: data.DPP4,
+        SH: data.SH,
+        notes: data.notes,
+      };
     }
     default: return state;
   }

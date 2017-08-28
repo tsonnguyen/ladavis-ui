@@ -1,12 +1,16 @@
 import * as React from 'react';
 import * as d3 from 'd3';
 
+import { POINT } from '../../../Interfaces';
+import { convertedTime } from  '../../../API';
 import * as SizeTrack from '../SizeTrack';
 
 import './LineChart.css';
 
 interface Props {
   name: string;
+  title: string;
+  value: POINT[];
   position: number;
 }
 
@@ -19,39 +23,43 @@ class LineChart extends React.Component<Props, States> {
     super();
   }
 
-  drawChart() {
+  drawChart(data: Object[]) {
     var self = this;
 
-    var data = [
-      [1, 20], 
-      [3, 40],
-      [5, 50],
-      [7, 20]
-    ];
+    // var data: Object[] = [
+    //   [Date.parse('2013-03-12 15:09:04') * 25 / 9 / 10000000 / 4, 20], 
+    //   [Date.parse('2013-03-12 16:09:04') * 25 / 9 / 10000000 / 4, 90],
+    //   [Date.parse('2013-03-12 17:09:04') * 25 / 9 / 10000000 / 4, 50],
+    //   [Date.parse('2013-03-12 18:09:04') * 25 / 9 / 10000000 / 4, 90]
+    // ];
 
-    var data2 = [
-      [1, 70], 
-      [3, 30],
-      [5, 80],
-      [7, 50]
-    ];
+    // var data2 = [
+    //   [Date.parse('2013-03-12 15:09:04') * 25 / 9 / 10000000 / 4, 70], 
+    //   [Date.parse('2013-03-12 16:09:04') * 25 / 9 / 10000000 / 4, 30],
+    //   [Date.parse('2013-03-12 17:09:04') * 25 / 9 / 10000000 / 4, 80],
+    //   [Date.parse('2013-03-12 18:09:04') * 25 / 9 / 10000000 / 4, 50]
+    // ];
 
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = SizeTrack.TRACK_WIDTH - margin.left - margin.right,
     height = SizeTrack.TRACK_HEIGHT - margin.top - margin.bottom;
 
     // set the ranges
-    var x = d3.scaleLinear().range([0, width]);
+    var x = d3.scaleTime().range([0, width]);
     var y = d3.scaleLinear().range([height, 0]);
 
     // define the line
     var valueline = d3.line()
-        .x(function(d: any) { return x(d[0]); })
-        .y(function(d: any) { return y(d[1]); });
+        .x(function(d: any) { return x(Number(convertedTime(d.time))); })
+        .y(function(d: any) { return y(Number(d.value)); });
+    
+    // var valueline = d3.line()
+    //     .x(function(d: any) { return x(d[0]); })
+    //     .y(function(d: any) { return y(d[1]); });
 
-    var valueline2 = d3.line()
-        .x(function(d: any) { return x(d[0]); })
-        .y(function(d: any) { return y(d[1]); });
+    // var valueline2 = d3.line()
+    //     .x(function(d: any) { return x(d[0]); })
+    //     .y(function(d: any) { return y(d[1]); });
 
     // append the svg obgect to the body of the page
     // appends a 'group' element to 'svg'
@@ -63,8 +71,8 @@ class LineChart extends React.Component<Props, States> {
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Scale the range of the data
-    x.domain([0, 10]);
-    y.domain([0, 100]);
+    x.domain([292580, 293390]);
+    y.domain([0, 10]);
 
     // Add the valueline path.
     svg.append('path')
@@ -75,13 +83,13 @@ class LineChart extends React.Component<Props, States> {
         .attr('stroke-width', '1px')
         .attr('fill', 'none');
     
-    svg.append('path')
-        .data([data2])
-        .attr('class', 'line')
-        .attr('d', valueline2)
-        .attr('stroke', 'blue')
-        .attr('stroke-width', '1px')
-        .attr('fill', 'none');
+    // svg.append('path')
+    //     .data([data2])
+    //     .attr('class', 'line')
+    //     .attr('d', valueline2)
+    //     .attr('stroke', 'blue')
+    //     .attr('stroke-width', '1px')
+    //     .attr('fill', 'none');
 
     // // Add the X Axis
     // svg.append('g')
@@ -117,13 +125,13 @@ class LineChart extends React.Component<Props, States> {
 
     svg.append('text')
             .attr('class', 'figure-name')
-            .text('HbA1c')
+            .text(this.props.title)
             .attr('x', SizeTrack.TRACK_WIDTH + 50)
             .attr('y', 85); 
   }
 
-  componentDidMount() {
-    this.drawChart();
+  componentWillReceiveProps(props: Props) {
+    this.drawChart(props.value);
     this.drawFigureBox();
   }
 
