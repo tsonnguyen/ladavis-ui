@@ -11,6 +11,9 @@ interface Props {
   name: string;
   title: string;
   value: POINT[];
+  range: [number, number];
+  unit: string;
+  color: string;
   position: number;
 }
 
@@ -23,7 +26,7 @@ class LineChart extends React.Component<Props, States> {
     super();
   }
 
-  drawChart(data: Object[]) {
+  drawChart(data: Object[], range: [number, number], color: string) {
     var self = this;
 
     // var data: Object[] = [
@@ -71,15 +74,15 @@ class LineChart extends React.Component<Props, States> {
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Scale the range of the data
-    x.domain([292580, 293390]);
-    y.domain([0, 10]);
+    x.domain([292780, 293190]);
+    y.domain(range);
 
     // Add the valueline path.
     svg.append('path')
         .data([data])
         .attr('class', 'line')
         .attr('d', valueline)
-        .attr('stroke', 'red')
+        .attr('stroke', color)
         .attr('stroke-width', '1px')
         .attr('fill', 'none');
     
@@ -101,7 +104,7 @@ class LineChart extends React.Component<Props, States> {
         .call(d3.axisLeft(y).ticks(5, 's'));
   }
 
-  drawFigureBox() {
+  drawFigureBox(color: string, unit: string) {
     var svg = d3.select('#' + this.props.name);
     svg.append('text')
             .attr('class', 'figure-value')
@@ -111,7 +114,7 @@ class LineChart extends React.Component<Props, States> {
 
     svg.append('text')
             .attr('class', 'figure-unit')
-            .text('mmHg')
+            .text(unit)
             .attr('x', SizeTrack.TRACK_WIDTH + 125)
             .attr('y', 55); 
 
@@ -121,7 +124,7 @@ class LineChart extends React.Component<Props, States> {
             .attr('y', 65)
             .attr('width', 130)
             .attr('height', 55)
-            .attr('fill', 'rgba(255, 0, 0, 0.7)');
+            .attr('fill', color);
 
     svg.append('text')
             .attr('class', 'figure-name')
@@ -131,8 +134,8 @@ class LineChart extends React.Component<Props, States> {
   }
 
   componentWillReceiveProps(props: Props) {
-    this.drawChart(props.value);
-    this.drawFigureBox();
+    this.drawChart(props.value, props.range, props.color);
+    this.drawFigureBox(props.color, props.unit);
   }
 
   render() {

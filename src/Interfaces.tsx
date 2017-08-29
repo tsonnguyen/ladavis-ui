@@ -4,6 +4,16 @@ interface ROOTSTATE {
 export default ROOTSTATE;
 
 export interface PATIENT {
+  info: {
+    id: string;
+    dob: number;
+    gender: string;
+    admittime: string;
+    dischtime: string;
+    deathtime: string;
+    diagnosis: string;
+    religion: string;
+  };
   systolic: POINT[];
   diastolic: POINT[];
   hemoA1c: POINT[];

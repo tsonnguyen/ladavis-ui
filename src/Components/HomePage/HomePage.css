@@ -4,14 +4,16 @@
 
 .patient-info {
   display: table-cell;
-  width: 16%;
-  padding-left: 2%;
+  width: 200px;
+  padding-left: 15px;
   vertical-align: top;
 }
 
 .patient-basic-info {
   border: 1px solid black;
-  height: 300px;
+  height: auto;
+  margin-top: 10px;
+  padding-bottom: 10px;
 }
 
 .patient-avatar {
@@ -33,12 +35,13 @@
 }
 
 .patient-basic-info-text {
-  font-size: 12px;
+  font-size: 16px;
   margin: 0;
+  margin-bottom: 3px;
 }
 
 .patient-health-info {
-  height: 300px;
+  height: auto;
   margin-top: 10px;
   border: 1px solid black;
 }
@@ -57,7 +60,7 @@
 
 .patient-chart {
   display: table-cell;
-  width: 80%;
+  width: 1070px;
   vertical-align: top;
 }
 

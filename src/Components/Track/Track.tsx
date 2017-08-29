@@ -15,6 +15,9 @@ interface Props {
   title2?: string;
   value: POINT[] | EVENT[] | NOTE[];
   value2?: POINT[] | EVENT[] | NOTE[];
+  unit?: string;
+  range?: [number, number];
+  color?: string;
   position: number;
 }
 
@@ -34,6 +37,9 @@ class Track extends React.Component<Props, States> {
         name={this.props.name} 
         title={this.props.title} 
         value={this.props.value as POINT[]}
+        range={this.props.range as [number, number]}
+        unit={this.props.unit as string}
+        color={this.props.color as string}
         position={50}
       />
     );
@@ -47,6 +53,8 @@ class Track extends React.Component<Props, States> {
         title2={this.props.title2 as string} 
         value={this.props.value as POINT[]}
         value2={this.props.value2 as POINT[]}
+        unit={this.props.unit as string}
+        range={this.props.range as [number, number]}
         position={350}
       />
     );

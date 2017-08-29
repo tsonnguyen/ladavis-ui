@@ -76,7 +76,7 @@ class EventChart extends React.Component<Props, States> {
         .enter().append('rect')
           .attr('class', 'bar2')
           .attr('x', function(d: any) { return x(Number(convertedTime(d.startdate))); })
-          .attr('y', function(d: any) { return y(1.5); })
+          .attr('y', function(d: any) { return y(1.7); })
           .attr('width', '10px')
           .attr('height', '10px')
           .attr('transform', 'translate(-5,0)');

@@ -14,6 +14,16 @@ import ROOTSTATE from './Interfaces';
 // tslint:disable:no-console
 const initialState: ROOTSTATE = {
   patient : {
+    info: {
+      id: '',
+      dob: 0,
+      gender: '',
+      admittime: '',
+      dischtime: '',
+      deathtime: '',
+      diagnosis: '',
+      religion: '',
+    },
     systolic: [],
     diastolic: [],
     hemoA1c: [],

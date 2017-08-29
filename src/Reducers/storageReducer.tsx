@@ -2,6 +2,16 @@ import { PATIENT } from '../Interfaces';
 
 export default function reducer(
   state: PATIENT = {
+    info: {
+      id: '',
+      dob: 0,
+      gender: '',
+      admittime: '',
+      dischtime: '',
+      deathtime: '',
+      diagnosis: '',
+      religion: '',
+    },
     systolic: [],
     diastolic: [],
     hemoA1c: [],

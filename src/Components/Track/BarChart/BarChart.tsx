@@ -13,6 +13,8 @@ interface Props {
   title2: string;
   value: POINT[];
   value2: POINT[];
+  unit: string;
+  range: [number, number];
   position: number;
 }
 
@@ -93,7 +95,7 @@ class BarChart extends React.Component<Props, States> {
         .call(d3.axisLeft(y).ticks(5, 's'));
   }
 
-  drawFigureBox() {
+  drawFigureBox(unit: string) {
     var svg = d3.select('#' + this.props.name);
     svg.append('text')
         .attr('class', 'figure-value-1')
@@ -109,13 +111,13 @@ class BarChart extends React.Component<Props, States> {
 
     svg.append('text')
         .attr('class', 'figure-unit')
-        .text('mmHg')
+        .text(unit)
         .attr('x', SizeTrack.TRACK_WIDTH + 85)
         .attr('y', 35); 
 
     svg.append('text')
         .attr('class', 'figure-unit')
-        .text('mmHg')
+        .text(unit)
         .attr('x', SizeTrack.TRACK_WIDTH + 85)
         .attr('y', 90); 
 
@@ -150,7 +152,7 @@ class BarChart extends React.Component<Props, States> {
 
   componentWillReceiveProps(props: Props) {
     this.drawChart(props.value, props.value2);
-    this.drawFigureBox();
+    this.drawFigureBox(props.unit);
   }
 
   render() {
