@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as d3 from 'd3';
 
 import { EVENT } from '../../../Interfaces';
-import { convertedTime } from  '../../../API';
+import { convertedTime } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
 import './EventChart.css';

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as d3 from 'd3';
+import { connect } from 'react-redux';
 
-import { POINT } from '../../../Interfaces';
-import { convertedTime } from  '../../../API';
+import ROOTSTATE, { PATIENT, POINT } from '../../../Interfaces';
+import { convertedTime } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
 import './LineChart.css';
@@ -10,23 +11,40 @@ import './LineChart.css';
 interface Props {
   name: string;
   title: string;
+  title2?: string;
   value: POINT[];
+  value2?: POINT[];
   range: [number, number];
   unit: string;
   color: string;
+  color2?: string;
   position: number;
+  patient?: PATIENT;
+  zoom?: [number, number];
 }
 
 interface States {
 
 }
 
-class LineChart extends React.Component<Props, States> {
+const mapStateToProps = (state: ROOTSTATE, ownProps: Props) => ({
+    patient: state.patient,
+    zoom: state.zoom
+});
+const mapDispatchToProps = (dispatch: any) => ({ });
+const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) => ({
+    ...ownProps,
+    patient: stateProps.patient,
+    zoom: stateProps.zoom
+});
+  
+class LineChart extends React.Component<any, States> {
   constructor() {
     super();
   }
 
-  drawChart(data: Object[], range: [number, number], color: string) {
+  drawChart(data: Object[], data2: Object[], range: [number, number], 
+            timeRange: [string, string], color: string, color2: string) {
     var self = this;
 
     // var data: Object[] = [
@@ -73,8 +91,9 @@ class LineChart extends React.Component<Props, States> {
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
+    console.log(data)
     // Scale the range of the data
-    x.domain([292780, 293190]);
+    x.domain([convertedTime(timeRange[0]), convertedTime(timeRange[1])]);
     y.domain(range);
 
     // Add the valueline path.
@@ -86,13 +105,15 @@ class LineChart extends React.Component<Props, States> {
         .attr('stroke-width', '1px')
         .attr('fill', 'none');
     
-    // svg.append('path')
-    //     .data([data2])
-    //     .attr('class', 'line')
-    //     .attr('d', valueline2)
-    //     .attr('stroke', 'blue')
-    //     .attr('stroke-width', '1px')
-    //     .attr('fill', 'none');
+    if (data2) {
+      svg.append('path')
+          .data([data2])
+          .attr('class', 'line')
+          .attr('d', valueline)
+          .attr('stroke', color2)
+          .attr('stroke-width', '1px')
+          .attr('fill', 'none');
+    }
 
     // // Add the X Axis
     // svg.append('g')
@@ -104,7 +125,7 @@ class LineChart extends React.Component<Props, States> {
         .call(d3.axisLeft(y).ticks(5, 's'));
   }
 
-  drawFigureBox(color: string, unit: string) {
+  drawSingleFigureBox(color: string, unit: string) {
     var svg = d3.select('#' + this.props.name);
     svg.append('text')
             .attr('class', 'figure-value')
@@ -133,9 +154,79 @@ class LineChart extends React.Component<Props, States> {
             .attr('y', 85); 
   }
 
+  drawDoubleFigureBox(color: string, color2: string, unit: string) {
+    var svg = d3.select('#' + this.props.name);
+    svg.append('text')
+        .attr('class', 'figure-value-1')
+        .text('822')
+        .attr('x', SizeTrack.TRACK_WIDTH + 40)
+        .attr('y', 35); 
+
+    svg.append('text')
+        .attr('class', 'figure-value-2')
+        .text('822')
+        .attr('x', SizeTrack.TRACK_WIDTH + 40)
+        .attr('y', 90); 
+
+    svg.append('text')
+        .attr('class', 'figure-unit')
+        .text(unit)
+        .attr('x', SizeTrack.TRACK_WIDTH + 85)
+        .attr('y', 35); 
+
+    svg.append('text')
+        .attr('class', 'figure-unit')
+        .text(unit)
+        .attr('x', SizeTrack.TRACK_WIDTH + 85)
+        .attr('y', 90); 
+
+    svg.append('rect')
+        .attr('class', 'figure-box')
+        .attr('x', SizeTrack.TRACK_WIDTH + 40)
+        .attr('y', 40)
+        .attr('width', 130)
+        .attr('height', 25)
+        .attr('fill', color);
+
+    svg.append('rect')
+        .attr('class', 'figure-box')
+        .attr('x', SizeTrack.TRACK_WIDTH + 40)
+        .attr('y', 95)
+        .attr('width', 130)
+        .attr('height', 25)
+        .attr('fill', color2);
+
+    svg.append('text')
+        .attr('class', 'figure-name')
+        .text(this.props.title)
+        .attr('x', SizeTrack.TRACK_WIDTH + 50)
+        .attr('y', 59); 
+
+    svg.append('text')
+        .attr('class', 'figure-name')
+        .text(this.props.title2 as string)
+        .attr('x', SizeTrack.TRACK_WIDTH + 50)
+        .attr('y', 114); 
+  }
+
   componentWillReceiveProps(props: Props) {
-    this.drawChart(props.value, props.range, props.color);
-    this.drawFigureBox(props.color, props.unit);
+    if (props && props.patient) {
+        let value = props.value;
+        let value2 = props.value2 as POINT[];
+        let range = props.range;
+        let timeRange = [props.patient.info.admittime, props.patient.info.dischtime] as [string, string];
+        let color = props.color;
+        let color2 = props.color2 as string;
+        let unit = props.unit;
+
+        this.drawChart(value, value2, range, timeRange, color, color2);
+
+        if (!this.props.title2) {
+        this.drawSingleFigureBox(color, unit);
+        } else {
+        this.drawDoubleFigureBox(color, color2 , unit);
+        }
+    }
   }
 
   render() {
@@ -144,4 +235,6 @@ class LineChart extends React.Component<Props, States> {
     );
   }
 }
-export default LineChart;
+// export default LineChart;
+const LineChartContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(LineChart);
+export default LineChartContainer;

@@ -1,5 +1,5 @@
 
-import { getPatientInfoById } from '../API';
+import { getPatientInfoById } from '../api';
 
 export function getPatientById(userId: number) {
   return {

@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
-import storage from './storageReducer';
+import patient from './patientReducer';
+import zoom from './zoomReducer';
 import ROOTSTATE from '../Interfaces';
 
 export default combineReducers<ROOTSTATE>({
-  patient: storage
+  patient: patient,
+  zoom: zoom
 });

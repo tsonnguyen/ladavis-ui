@@ -15,12 +15,39 @@ export function getPatientInfoById(userId: number ) {
   return instanceAxios.get(url, config);
 }
 
-// export function newPost(content: string, hashtags: string, imgs?: string[], previewUrl?: string, files?: string[]) {
-//   const body = {
-//     content: content,
-//     hashtags: hashtags,
-//     picture: imgs ? imgs.map((img) => (serverUrl + '/file' + img)).join(',') : '',
-//     previewURL: previewUrl
-//   };
-//   return instanceAxios.post('/feed', body, { headers: { sessionId: userToken } });
-// }
+const shiftYear = 87;
+function pad(d: number) {
+  return (d < 10) ? '0' + d.toString() : d.toString();
+}
+
+export function formatDate (dateString: string, isGetTime: boolean = false) {
+  let data = new Date(dateString);
+  let day = pad(data.getDate());
+  let month = pad(data.getMonth() + 1);
+  let year = data.getFullYear() - shiftYear;
+  let hour = pad(data.getHours());
+  let minute = pad(data.getMinutes());
+  let second = pad(data.getSeconds());
+  if (isGetTime) {
+    return day + '/' + month + '/' + year + ' '
+          + hour + ':' + minute + ':' + second;
+  } else {
+    return day + '/' + month + '/' + year;
+  }
+}
+
+function addDays (date: Date, days: number) {
+  var newDate: Date = new Date(date);
+  newDate.setDate(newDate.getDate() + days);
+  return newDate;
+}
+
+export function getDatesBetween(startDate: Date, stopDate: Date) {
+  var dateArray = new Array();
+  var currentDate = startDate;
+  while (currentDate <= stopDate) {
+      dateArray.push(new Date (currentDate));
+      currentDate = addDays(currentDate, 1);
+  }
+  return dateArray;
+}

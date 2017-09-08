@@ -1,5 +1,6 @@
 interface ROOTSTATE {
   patient: PATIENT;
+  zoom: [number, number];
 }
 export default ROOTSTATE;
 

@@ -18,6 +18,7 @@ interface Props {
   unit?: string;
   range?: [number, number];
   color?: string;
+  color2?: string;
   position: number;
 }
 
@@ -36,10 +37,13 @@ class Track extends React.Component<Props, States> {
       <LineChart 
         name={this.props.name} 
         title={this.props.title} 
+        title2={this.props.title2 as string} 
         value={this.props.value as POINT[]}
+        value2={this.props.value2 as POINT[]}
         range={this.props.range as [number, number]}
         unit={this.props.unit as string}
         color={this.props.color as string}
+        color2={this.props.color2 as string}
         position={50}
       />
     );
@@ -55,6 +59,8 @@ class Track extends React.Component<Props, States> {
         value2={this.props.value2 as POINT[]}
         unit={this.props.unit as string}
         range={this.props.range as [number, number]}
+        color={this.props.color as string}
+        color2={this.props.color2 as string}
         position={350}
       />
     );

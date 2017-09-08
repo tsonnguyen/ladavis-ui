@@ -1,18 +1,42 @@
 import * as React from 'react';
 import * as d3 from 'd3';
+import { connect } from 'react-redux';
+
+
+import ROOTSTATE from '../../Interfaces';
+
+import { getDatesBetween, formatDate } from '../../api';
+import { updateZoomRange } from '../../Actions/zoomActions';
 
 import './TimeBar.css';
 
-interface TimeBarProps {
-
+interface Props {
+  startTime: string;
+  endTime: string;
+  zoom?: [number, number];
+  updateZoomRange?: (zoomRange: [number, number]) => void;
 }
 
-interface TimeBarState {
+interface States {
   adjustPos: number;
   adjustLength: number;
 }
 
-class TimeBar extends React.Component<TimeBarProps, TimeBarState> {
+const mapStateToProps = (state: ROOTSTATE, ownProps: Props) => ({
+  zoom: state.zoom
+});
+const mapDispatchToProps = (dispatch: any) => ({ 
+  updateZoomRange: (zoomRange: [number, number]) => {
+    dispatch(updateZoomRange(zoomRange));
+  },
+});
+const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) => ({
+  ...ownProps,
+  zoom: stateProps.zoom,
+  updateZoomRange: dispatchProps.updateZoomRange
+});
+
+class TimeBar extends React.Component<any, States> {
   arrayPosition: number[] = [];
   leftEndPoint: number = 0;
   rightEndPoint: number = 750;
@@ -26,7 +50,7 @@ class TimeBar extends React.Component<TimeBarProps, TimeBarState> {
     };
   }
 
-  drawDate(position: number, width: number) {
+  drawDate(date: string, position: number, width: number) {
     var svg = d3.select('#date-bar');
     var groupDate = svg.append('g')
                       .attr('class', 'date-element')
@@ -38,7 +62,7 @@ class TimeBar extends React.Component<TimeBarProps, TimeBarState> {
     
     groupDate.append('text')
             .attr('class', 'date-element-text')
-            .text('17/07/2013')
+            .text(date)
             .attr('x', width / 2 - 25)
             .attr('y', 14);          
   }
@@ -140,12 +164,15 @@ class TimeBar extends React.Component<TimeBarProps, TimeBarState> {
       .call(d3.axisBottom(x).tickValues([0, 4, 8, 12, 16, 20, 0]));
   }
 
-  componentDidMount() {
-    for (var i = 0; i < 10; i++) {
+  componentWillReceiveProps(props: Props) { 
+    let dayBetweens = getDatesBetween(new Date(props.startTime), new Date(props.endTime));
+    
+    for (var i = 0; i < dayBetweens.length; i++) {
       this.arrayPosition.push(i * this.originalElementLength);
-      this.drawDate(i * this.originalElementLength, this.originalElementLength);
+      this.drawDate(formatDate(dayBetweens[i]), i * this.originalElementLength, this.originalElementLength);
       this.drawTimeBar(i * this.originalElementLength, this.originalElementLength);
     }
+    
     this.drawAdjustBar();
   }
 
@@ -163,4 +190,7 @@ class TimeBar extends React.Component<TimeBarProps, TimeBarState> {
     );
   }
 }
-export default TimeBar;
+
+// export default TimeBar;
+const TimeBarContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(TimeBar);
+export default TimeBarContainer;

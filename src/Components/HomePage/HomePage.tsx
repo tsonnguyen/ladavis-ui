@@ -1,126 +1,49 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 import Track from '../Track/Track';
 import TimeBar from '../TimeBar/TimeBar';
-import { PATIENT } from '../../Interfaces';
+import ROOTSTATE from '../../Interfaces';
 
 import './HomePage.css';
 
-import { getPatientInfoById } from '../../API';
+import { formatDate } from '../../api';
+import { getPatientById } from '../../Actions/patientActions';
 
-interface States {
-  patient: PATIENT;
+interface Props { 
+  patient: any;
+  getPatientById: (userId: number) => void;
 }
 
-class Home extends React.Component<{}, States> {
+interface States {
+}
+
+const mapStateToProps = (state: ROOTSTATE) => ({
+  patient: state.patient,
+});
+const mapDispatchToProps = (dispatch: any) => ({
+  getPatientById: (userId: number) => {
+    dispatch(getPatientById(userId));
+  },
+});
+
+class Home extends React.Component<Props, States> {
   constructor() {
     super();
-    this.state = {
-      patient : {
-        info: {
-          id: '',
-          dob: 0,
-          gender: '',
-          admittime: '',
-          dischtime: '',
-          deathtime: '',
-          diagnosis: '',
-          religion: '',
-        },
-        systolic: [],
-        diastolic: [],
-        hemoA1c: [],
-        glucoseBlood: [],
-        glucoseUrine: [],
-        creatinine: [],
-        albumin: [],
-        choles: [],
-        trigly: [],
-        simva: [],
-        lisin: [],
-        RR: [],
-        acar: [],
-        met: [],
-        Glit: [],
-        DPP4: [],
-        SH: [],
-        notes: [],
-      }
-    };
   }
 
   componentDidMount() {
-    getPatientInfoById(2345).then((res: any) => {
-      let patient = res.data.data;
-      patient.simva = [
-        {
-          startdate: '2165-05-19T17:00:00.000Z',
-          enddate: '2165-05-19T17:00:00.000Z',
-          drug: 'Simvastatin',
-          drug_name_generic: 'Simvastatin',
-          prod_strength: '10mg Tablet',
-          dose_val_rx: '10',
-          dose_unit_rx: 'mg',
-          form_val_disp: '1',
-          form_unit_disp: 'TAB'
-        },
-        {
-          startdate: '2165-06-05T17:00:00.000Z',
-          enddate: '2165-06-05T17:00:00.000Z',
-          drug: 'Simvastatin',
-          drug_name_generic: 'Simvastatin',
-          prod_strength: '10mg Tablet',
-          dose_val_rx: '10',
-          dose_unit_rx: 'mg',
-          form_val_disp: '1',
-          form_unit_disp: 'TAB'
-        }
-      ];
-
-      patient.lisin = [
-        {
-          startdate: '2165-05-19T17:00:00.000Z',
-          enddate: '2165-05-19T17:00:00.000Z',
-          drug: 'Lisinopril',
-          drug_name_generic: 'Lisinopril',
-          prod_strength: '5mg Tablet',
-          dose_val_rx: '5',
-          dose_unit_rx: 'mg',
-          form_val_disp: '1',
-          form_unit_disp: 'TAB'
-        },
-        {
-          startdate: '2165-05-24T17:00:00.000Z',
-          enddate: '2165-05-24T17:00:00.000Z',
-          drug: 'Lisinopril',
-          drug_name_generic: 'Lisinopril',
-          prod_strength: '5mg Tablet',
-          dose_val_rx: '5',
-          dose_unit_rx: 'mg',
-          form_val_disp: '1',
-          form_unit_disp: 'TAB'
-        },
-        {
-          startdate: '2165-06-05T17:00:00.000Z',
-          enddate: '2165-06-05T17:00:00.000Z',
-          drug: 'Lisinopril',
-          drug_name_generic: 'Lisinopril',
-          prod_strength: '10mg Tablet',
-          dose_val_rx: '10',
-          dose_unit_rx: 'mg',
-          form_val_disp: '1',
-          form_unit_disp: 'TAB'
-        }
-      ];
-
-      this.setState({
-        patient: patient
-      });
-    });
+    this.props.getPatientById(2345);
   }
 
+  // componentWillReceiveProps(props: Props) {
+  //   if (props.patient) {
+  //     let patient = props.patient;    
+  //   }
+  // }
+
   render() {
-    console.log(this.state.patient);
+    console.log(this.props.patient);
 
     return (
       <div className="patient">
@@ -130,19 +53,19 @@ class Home extends React.Component<{}, States> {
             <div className="patient-basic-info-box">
             <p className="patient-basic-info-text">PATIENT NAME</p>
             <p className="patient-basic-info-text">**********</p>
-              <p className="patient-basic-info-text">PATIENT ID: {this.state.patient.info.id}</p>
-              <p className="patient-basic-info-text">Age: {this.state.patient.info.dob}</p>
-              <p className="patient-basic-info-text">Gender: {this.state.patient.info.gender}</p>
-              <p className="patient-basic-info-text">Religion: {this.state.patient.info.religion}</p>
+              <p className="patient-basic-info-text">PATIENT ID: {this.props.patient.info.id}</p>
+              <p className="patient-basic-info-text">Age: {this.props.patient.info.dob}</p>
+              <p className="patient-basic-info-text">Gender: {this.props.patient.info.gender}</p>
+              <p className="patient-basic-info-text">Religion: {this.props.patient.info.religion}</p>
             </div>
           </div>
           <div className="patient-health-info">
             <div className="patient-health-title">ADMISSTION DATE</div>
-            <div className="patient-health-value">{this.state.patient.info.admittime}</div>
+            <div className="patient-health-value">{formatDate(this.props.patient.info.admittime, true)}</div>
             <div className="patient-health-title">DISCHARGE DATE</div>
-            <div className="patient-health-value">{this.state.patient.info.dischtime}</div>
+            <div className="patient-health-value">{formatDate(this.props.patient.info.dischtime, true)}</div>
             <div className="patient-health-title">DIAGNOSIS</div>
-            <div className="patient-health-value">{this.state.patient.info.diagnosis}</div>
+            <div className="patient-health-value">{this.props.patient.info.diagnosis}</div>
             
           </div>
         </div>
@@ -154,7 +77,7 @@ class Home extends React.Component<{}, States> {
                   type={'line-chart'} 
                   name={'HbA1c'} 
                   title={'HbA1c'} 
-                  value={this.state.patient.hemoA1c}
+                  value={this.props.patient.hemoA1c}
                   range={[0, 10]}
                   unit={'%'}
                   color={'rgba(255, 0, 0, 0.7)'}
@@ -167,11 +90,13 @@ class Home extends React.Component<{}, States> {
                 <Track 
                   type={'bar-chart'} 
                   name={'NBP'} 
-                  title={'systolic'} 
-                  title2={'diastolic'} 
-                  value={this.state.patient.systolic}
-                  value2={this.state.patient.diastolic}
+                  title={'NBP Systolic'} 
+                  title2={'NBP Diastolic'} 
+                  value={this.props.patient.systolic}
+                  value2={this.props.patient.diastolic}
                   unit={'mmHg'}
+                  color={'rgba(0, 0, 255, 0.7)'}
+                  color2={'rgba(255, 0, 0, 0.7)'}
                   position={0}
                 />
                 <Track 
@@ -179,25 +104,28 @@ class Home extends React.Component<{}, States> {
                   name={'PRES'} 
                   title={'Simva'} 
                   title2={'Lisin'}
-                  value={this.state.patient.simva}
-                  value2={this.state.patient.lisin}
+                  value={this.props.patient.simva}
+                  value2={this.props.patient.lisin}
                   position={120}
                 />
                 <Track 
                   type={'line-chart'} 
                   name={'Fat'} 
                   title={'Cholesterol'} 
-                  value={this.state.patient.choles}
-                  range={[0, 350]}
+                  title2={'Triglycerides'} 
+                  value={this.props.patient.choles}
+                  value2={this.props.patient.trigly}
+                  range={[0, 900]}
                   unit={'mg/dl'}
                   color={'rgba(0, 0, 255, 0.7)'}
+                  color2={'rgba(255, 0, 0, 0.7)'}
                   position={240}
                 />
                 <Track 
                   type={'line-chart'} 
                   name={'Glucose'} 
                   title={'Glucose'} 
-                  value={this.state.patient.glucoseBlood}
+                  value={this.props.patient.glucoseBlood}
                   range={[0, 350]}
                   unit={'mg/dl'}
                   color={'rgba(255, 0, 0, 0.7)'}
@@ -207,7 +135,7 @@ class Home extends React.Component<{}, States> {
                   type={'line-chart'} 
                   name={'Creatinine'} 
                   title={'Creatinine'} 
-                  value={this.state.patient.creatinine}
+                  value={this.props.patient.creatinine}
                   range={[0, 3]}
                   unit={'mg/dl'}
                   color={'rgba(0, 0, 255, 0.7)'}
@@ -221,7 +149,10 @@ class Home extends React.Component<{}, States> {
               </svg>
             </div>
             <div className="patient-chart-footer">
-              <TimeBar/> 
+              <TimeBar
+                startTime={this.props.patient.info.admittime}
+                endTime={this.props.patient.info.dischtime}
+              /> 
             </div>
           </div>
         </div>
@@ -229,4 +160,6 @@ class Home extends React.Component<{}, States> {
     );
   }
 }
-export default Home;
+// export default Home;
+const HomeContainer = connect(mapStateToProps, mapDispatchToProps)(Home);
+export default HomeContainer;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as d3 from 'd3';
 
 import { POINT } from '../../../Interfaces';
-import { convertedTime } from  '../../../API';
+import { convertedTime } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
 import './BarChart.css';
@@ -15,6 +15,8 @@ interface Props {
   value2: POINT[];
   unit: string;
   range: [number, number];
+  color: string;
+  color2: string;
   position: number;
 }
 
@@ -27,7 +29,7 @@ class BarChart extends React.Component<Props, States> {
     super();
   }
 
-  drawChart(data1: Object[], data2: Object[]) {
+  drawChart(data1: Object[], data2: Object[], color: string, color2: string) {
     var self = this;
 
     // var data = [
@@ -60,7 +62,7 @@ class BarChart extends React.Component<Props, States> {
                 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Scale the range of the data in the domains
-    x.domain([292810, 292813]);
+    x.domain([292810, 292811.8]);
     y.domain([0, 200]);
 
     // append the rectangles for the bar chart
@@ -68,6 +70,7 @@ class BarChart extends React.Component<Props, States> {
         .data(data1)
         .enter().append('rect')
           .attr('class', 'bar')
+          .attr('fill', color)
           .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('width', '10px')
           .attr('y', function(d: any) { return y(Number(d.value)); })
@@ -78,6 +81,7 @@ class BarChart extends React.Component<Props, States> {
         .data(data2)
         .enter().append('rect')
           .attr('class', 'bar2')
+          .attr('fill', color2)
           .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('width', '10px')
           .attr('y', function(d: any) { return y(Number(d.value)); })
@@ -95,7 +99,7 @@ class BarChart extends React.Component<Props, States> {
         .call(d3.axisLeft(y).ticks(5, 's'));
   }
 
-  drawFigureBox(unit: string) {
+  drawFigureBox(color: string, color2: string, unit: string) {
     var svg = d3.select('#' + this.props.name);
     svg.append('text')
         .attr('class', 'figure-value-1')
@@ -127,7 +131,7 @@ class BarChart extends React.Component<Props, States> {
         .attr('y', 40)
         .attr('width', 130)
         .attr('height', 25)
-        .attr('fill', 'rgba(255, 0, 0, 0.7)');
+        .attr('fill', color);
 
     svg.append('rect')
         .attr('class', 'figure-box')
@@ -135,7 +139,7 @@ class BarChart extends React.Component<Props, States> {
         .attr('y', 95)
         .attr('width', 130)
         .attr('height', 25)
-        .attr('fill', 'rgba(0, 0, 255, 0.7)');
+        .attr('fill', color2);
 
     svg.append('text')
         .attr('class', 'figure-name')
@@ -151,8 +155,8 @@ class BarChart extends React.Component<Props, States> {
   }
 
   componentWillReceiveProps(props: Props) {
-    this.drawChart(props.value, props.value2);
-    this.drawFigureBox(props.unit);
+    this.drawChart(props.value, props.value2, this.props.color, this.props.color2);
+    this.drawFigureBox(this.props.color, this.props.color2, props.unit);
   }
 
   render() {

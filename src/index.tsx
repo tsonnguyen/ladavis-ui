@@ -6,7 +6,7 @@ import './index.css';
 import { compose, applyMiddleware, createStore, Store, StoreEnhancer } from 'redux';
 import thunk from 'redux-thunk';
 import promise from 'redux-promise-middleware';
-import logger from 'redux-logger';
+// import logger from 'redux-logger';
 import reducer from './Reducers/reducers';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import ROOTSTATE from './Interfaces';
@@ -42,11 +42,12 @@ const initialState: ROOTSTATE = {
     DPP4: [],
     SH: [],
     notes: [],
-  }
+  },
+  zoom: [0, 100]
 };
 
 const hydrate: StoreEnhancer<ROOTSTATE> = autoRehydrate() as StoreEnhancer<ROOTSTATE>;
-const middleware: StoreEnhancer<ROOTSTATE> = applyMiddleware(promise(), thunk, logger);
+const middleware: StoreEnhancer<ROOTSTATE> = applyMiddleware(promise(), thunk);
 export const appStore: Store<ROOTSTATE> = createStore<ROOTSTATE>(reducer, initialState, compose(middleware, hydrate));
 
 persistStore(appStore, { whitelist: ['storage'] }, () => {
