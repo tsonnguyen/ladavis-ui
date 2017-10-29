@@ -6,14 +6,12 @@ import ROOTSTATE, { PATIENT, EVENT } from '../../../Interfaces';
 import { convertedTime } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
-import './EventChart.css';
+import './NoteChart.css';
 
 interface Props {
   name: string;
   title: string;
-  title2: string;
   value: EVENT[];
-  value2: EVENT[];
   position: number;
   patient?: PATIENT;
   zoom?: [number, number];
@@ -34,13 +32,12 @@ const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) 
   zoom: stateProps.zoom
 });
 
-
-class EventChart extends React.Component<any, States> {
+class NoteChart extends React.Component<any, States> {
   constructor() {
     super();
   }
 
-  drawChart(data1: Object[], data2: Object[], timeRange: [number, number]) {
+  drawChart(data: Object[], timeRange: [number, number]) {
     var self = this;
 
     // var data = [
@@ -65,10 +62,11 @@ class EventChart extends React.Component<any, States> {
     // append a 'group' element to 'svg'
     // moves the 'group' element to the top left margin
     var svg = d3.select('#' + self.props.name).append('svg')
-        .attr('class', 'event-chart')
+        .attr('class', 'note-chart')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
+          .attr('clip-path', 'url(#clipPath-' + self.props.name + ')')
           .attr('transform', 
                 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -78,22 +76,12 @@ class EventChart extends React.Component<any, States> {
 
     // append the rectangles for the bar chart
     svg.selectAll('.bar')
-        .data(data1)
+        .data(data)
         .enter().append('rect')
           .attr('class', 'bar')
-          .attr('x', function(d: any) { return x(Number(convertedTime(d.startdate))); })
-          .attr('y', function(d: any) { return y(2.8); })
-          .attr('width', '10px') 
-          .attr('height', '10px')
-          .attr('transform', 'translate(-5,0)');
-
-    svg.selectAll('.bar2')
-        .data(data2)
-        .enter().append('rect')
-          .attr('class', 'bar2')
-          .attr('x', function(d: any) { return x(Number(convertedTime(d.startdate))); })
+          .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('y', function(d: any) { return y(1.7); })
-          .attr('width', '10px')
+          .attr('width', '10px') 
           .attr('height', '10px')
           .attr('transform', 'translate(-5,0)');
 
@@ -113,58 +101,16 @@ class EventChart extends React.Component<any, States> {
             .attr('class', 'figure-box')
             .attr('x', SizeTrack.TRACK_WIDTH + 40)
             .attr('y', 20)
-            .attr('width', 90)
-            .attr('height', 30)
-            .attr('fill', 'rgba(255, 0, 0, 0.7)');
+            .attr('width', 130)
+            .attr('height', 100)
+            .attr('fill', 'rgba(0, 0, 255, 0.7)');
 
     svg.append('text')
             .attr('class', 'figure-name')
             .text(this.props.title)
-            .attr('x', SizeTrack.TRACK_WIDTH + 50)
-            .attr('y', 40); 
-
-    svg.append('rect')
-            .attr('class', 'figure-box')
-            .attr('x', SizeTrack.TRACK_WIDTH + 40)
-            .attr('y', 55)
-            .attr('width', 90)
-            .attr('height', 30)
-            .attr('fill', 'rgba(255, 0, 0, 0.7)');
-
-    svg.append('text')
-            .attr('class', 'figure-name')
-            .text(this.props.title2)
-            .attr('x', SizeTrack.TRACK_WIDTH + 50)
+            .attr('x', SizeTrack.TRACK_WIDTH + 78)
             .attr('y', 75); 
 
-    svg.append('rect')
-            .attr('class', 'figure-box')
-            .attr('x', SizeTrack.TRACK_WIDTH + 40)
-            .attr('y', 90)
-            .attr('width', 90)
-            .attr('height', 30)
-            .attr('fill', 'rgba(255, 0, 0, 0.7)');
-
-    svg.append('text')
-            .attr('class', 'figure-name')
-            .text('')
-            .attr('x', SizeTrack.TRACK_WIDTH + 50)
-            .attr('y', 110); 
-
-    svg.append('rect')
-            .attr('class', 'figure-box')
-            .attr('x', SizeTrack.TRACK_WIDTH + 135)
-            .attr('y', 20)
-            .attr('width', 35)
-            .attr('height', 100)
-            .attr('fill', 'rgba(255, 0, 0, 0.7)');
-
-    svg.append('text')
-            .attr('class', 'figure-name')
-            .text('')
-            .attr('x', 40)
-            .attr('y', -(SizeTrack.TRACK_WIDTH + 145))
-            .attr('transform', 'rotate(90)'); 
   }
 
   componentWillReceiveProps(props: Props) {
@@ -172,7 +118,7 @@ class EventChart extends React.Component<any, States> {
       let timeRange = [convertedTime(props.patient.info.admittime), 
         convertedTime(props.patient.info.dischtime)] as [number, number];
 
-      this.drawChart(props.value, props.value2, timeRange);
+      this.drawChart(props.value, timeRange);
       this.drawFigureBox();
     } else {
       let start = convertedTime(this.props.patient.info.admittime);
@@ -181,9 +127,9 @@ class EventChart extends React.Component<any, States> {
       let timeRange = [start + (end - start) * zoom[0], 
                       start + (end - start) * zoom[1]] as [number, number];
 
-      d3.select('#' + this.props.name).selectAll('.event-chart').remove();
+      d3.select('#' + this.props.name).selectAll('.note-chart').remove();
 
-      this.drawChart(props.value, props.value2, timeRange);
+      this.drawChart(props.value, timeRange);
 
     }
   }
@@ -194,6 +140,6 @@ class EventChart extends React.Component<any, States> {
     );
   }
 }
-//export default EventChart;
-const EventChartContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(EventChart);
-export default EventChartContainer;
+//export default NoteChart;
+const NoteChartContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(NoteChart);
+export default NoteChartContainer;

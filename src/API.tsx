@@ -36,7 +36,7 @@ export function formatDate (dateString: string, isGetTime: boolean = false) {
   }
 }
 
-function addDays (date: Date, days: number) {
+export function addDays (date: Date, days: number) {
   var newDate: Date = new Date(date);
   newDate.setDate(newDate.getDate() + days);
   return newDate;

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as d3 from 'd3';
+import { connect } from 'react-redux';
 
-import { POINT } from '../../../Interfaces';
+import ROOTSTATE, { PATIENT, POINT } from '../../../Interfaces';
 import { convertedTime } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
@@ -18,27 +19,33 @@ interface Props {
   color: string;
   color2: string;
   position: number;
+  patient?: PATIENT;
+  zoom?: [number, number];
 }
 
 interface States {
 
 }
 
-class BarChart extends React.Component<Props, States> {
+const mapStateToProps = (state: ROOTSTATE, ownProps: Props) => ({
+    patient: state.patient,
+    zoom: state.zoom
+});
+const mapDispatchToProps = (dispatch: any) => ({ });
+const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) => ({
+    ...ownProps,
+    patient: stateProps.patient,
+    zoom: stateProps.zoom
+});
+
+class BarChart extends React.Component<any, States> {
   constructor() {
     super();
   }
 
-  drawChart(data1: Object[], data2: Object[], color: string, color2: string) {
+  drawChart(data1: Object[], data2: Object[], range: [number, number], 
+            timeRange: [number, number], color: string, color2: string) {
     var self = this;
-
-    // var data = [
-    //   [1, 20, 80], 
-    //   [2, 20, 80], 
-    //   [3, 40, 20],
-    //   [5, 50, 10],
-    //   [10, 20, 80]
-    // ];
 
     // set the dimensions and margins of the graph
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -51,22 +58,23 @@ class BarChart extends React.Component<Props, States> {
     var y = d3.scaleLinear()
               .range([height, 0]);
               
-    // append the svg object to the body of the page
-    // append a 'group' element to 'svg'
-    // moves the 'group' element to the top left margin
     var svg = d3.select('#' + self.props.name).append('svg')
+        .attr('class', 'bar-chart')
         .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
-        .append('g')
-          .attr('transform', 
-                'translate(' + margin.left + ',' + margin.top + ')');
+        .attr('height', height + margin.top + margin.bottom);
+        
+    var chart = svg.append('g')
+            .attr('clip-path', 'url(#clipPath-' + self.props.name + ')')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Scale the range of the data in the domains
-    x.domain([292810, 292811.8]);
-    y.domain([0, 200]);
+    x.domain([timeRange[0], timeRange[1]]);
+    y.domain(range);
+    //x.domain([292810, 292811.8]);
+    //y.domain([0, 200]);
 
     // append the rectangles for the bar chart
-    svg.selectAll('.bar')
+    chart.selectAll('.bar')
         .data(data1)
         .enter().append('rect')
           .attr('class', 'bar')
@@ -77,7 +85,7 @@ class BarChart extends React.Component<Props, States> {
           .attr('height', function(d: any) { return height - y(Number(d.value)); })
           .attr('transform', 'translate(-10,0)');
     
-    svg.selectAll('.bar2')
+    chart.selectAll('.bar2')
         .data(data2)
         .enter().append('rect')
           .attr('class', 'bar2')
@@ -95,7 +103,7 @@ class BarChart extends React.Component<Props, States> {
 
     // add the y Axis
     svg.append('g')
-        .attr('transform', 'translate(0, 0)')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
         .call(d3.axisLeft(y).ticks(5, 's'));
   }
 
@@ -155,8 +163,38 @@ class BarChart extends React.Component<Props, States> {
   }
 
   componentWillReceiveProps(props: Props) {
-    this.drawChart(props.value, props.value2, this.props.color, this.props.color2);
-    this.drawFigureBox(this.props.color, this.props.color2, props.unit);
+    if (this.props.patient.info.id === '' && props && props.patient) {
+        let value = props.value;
+        let value2 = props.value2 as POINT[];
+        let range = props.range;
+        let timeRange = [convertedTime(props.patient.info.admittime), 
+            convertedTime(props.patient.info.dischtime)] as [number, number];
+        let color = props.color;
+        let color2 = props.color2 as string;
+        let unit = props.unit;
+
+        this.drawChart(value, value2, range, timeRange, color, color2);
+        this.drawFigureBox(color, color2 , unit);
+    } else {
+        let start = convertedTime(this.props.patient.info.admittime);
+        let end = convertedTime(this.props.patient.info.dischtime);
+        let zoom = (props.zoom) ? props.zoom : [0, 100];
+        // console.log(props.zoom);
+        // console.log(start + (end - start) * this.props.zoom[0]);
+        // console.log(start + (end - start) * this.props.zoom[1]);
+
+        let value = this.props.value;
+        let value2 = this.props.value2 as POINT[];
+        let range = this.props.range;
+        let timeRange = [start + (end - start) * zoom[0], 
+            start + (end - start) * zoom[1]] as [number, number];
+        let color = this.props.color;
+        let color2 = this.props.color2 as string;
+
+        d3.select('#' + this.props.name).selectAll('.bar-chart').remove();
+
+        this.drawChart(value, value2, range, timeRange, color, color2);
+    }
   }
 
   render() {
@@ -165,4 +203,6 @@ class BarChart extends React.Component<Props, States> {
     );
   }
 }
-export default BarChart;
+//export default BarChart;
+const BarChartContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(BarChart);
+export default BarChartContainer;

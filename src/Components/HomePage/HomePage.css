@@ -42,7 +42,7 @@
 
 .patient-health-info {
   height: auto;
-  margin-top: 10px;
+  margin-top: 8px;
   border: 1px solid black;
 }
 
@@ -57,6 +57,32 @@
   padding: 5px;
   border: 1px solid black;  
 }
+
+.patient-predict-diabete {
+  margin-top: 9px;
+}
+
+.patient-diabete-title {
+  padding: 5px;
+  background: grey;
+  color: white;
+  border: 1px solid black;
+}
+
+.patient-diabete-value {
+  padding: 5px;
+  border: 1px solid black;  
+}
+
+.patient-diabete-positive {
+  background: rgba(255, 0, 0, 0.81);
+  color: white;
+}
+
+.patient-diabete-negative {
+  background: rgba(60, 255, 0, 0.81);
+}
+
 
 .patient-chart {
   display: table-cell;

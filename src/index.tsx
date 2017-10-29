@@ -24,6 +24,7 @@ const initialState: ROOTSTATE = {
       diagnosis: '',
       religion: '',
     },
+    bmi: [],
     systolic: [],
     diastolic: [],
     hemoA1c: [],

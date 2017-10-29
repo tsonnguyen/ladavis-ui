@@ -15,6 +15,7 @@ export interface PATIENT {
     diagnosis: string;
     religion: string;
   };
+  bmi: POINT[];
   systolic: POINT[];
   diastolic: POINT[];
   hemoA1c: POINT[];

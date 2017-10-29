@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import ROOTSTATE from '../../Interfaces';
 
-import { getDatesBetween, formatDate } from '../../api';
+import { getDatesBetween, formatDate, addDays } from '../../api';
 import { updateZoomRange } from '../../Actions/zoomActions';
 
 import './TimeBar.css';
@@ -40,13 +40,16 @@ class TimeBar extends React.Component<any, States> {
   arrayPosition: number[] = [];
   leftEndPoint: number = 0;
   rightEndPoint: number = 750;
+  isZoom: boolean = true;
+  action: string = '';
+  zoomLevel: number = 1;
   originalElementLength: number = 75;
 
   constructor() {
     super();
     this.state = {
       adjustPos: 0,
-      adjustLength: 750,
+      adjustLength: 750
     };
   }
 
@@ -93,10 +96,15 @@ class TimeBar extends React.Component<any, States> {
         .on('drag', (d: any) => {
           if (self.state.adjustPos <= this.leftEndPoint && d3.event.dx < 0) { return; }
           if (self.state.adjustPos + self.state.adjustLength >= this.rightEndPoint && d3.event.dx > 0) { return; }
+          this.action = 'move';
           self.setState({
             adjustPos: (self.state.adjustPos + d3.event.dx < this.leftEndPoint) ? 
                                   this.leftEndPoint : self.state.adjustPos + d3.event.dx
           });
+          let start = (self.state.adjustPos + d3.event.dx < this.leftEndPoint) ? 
+              this.leftEndPoint : self.state.adjustPos + d3.event.dx;
+          let end = start + self.state.adjustLength;
+          this.props.updateZoomRange([start / 750, end / 750]);
         }));
 
     svg.append('rect')
@@ -106,11 +114,20 @@ class TimeBar extends React.Component<any, States> {
       .call(d3.drag()
         .on('drag', (d: any) => {
           if (self.state.adjustPos <= this.leftEndPoint && d3.event.dx < 0) { return; }
+          if (d3.event.dx > 0) {
+            this.action = 'zoom in';
+          } else if (d3.event.dx < 0) {
+            this.action = 'zoom out';
+          }
           self.setState({
             adjustPos: (self.state.adjustPos + d3.event.dx < this.leftEndPoint) ? 
                                 this.leftEndPoint : self.state.adjustPos + d3.event.dx,
             adjustLength: self.state.adjustLength - d3.event.dx
           });
+          let start = (self.state.adjustPos + d3.event.dx < this.leftEndPoint) ? 
+              this.leftEndPoint : self.state.adjustPos + d3.event.dx;
+          let end = start + self.state.adjustLength - d3.event.dx;
+          this.props.updateZoomRange([start / 750, end / 750]);
         }));
 
     svg.append('rect')
@@ -120,10 +137,20 @@ class TimeBar extends React.Component<any, States> {
       .call(d3.drag()
         .on('drag', (d: any) => {
           if (self.state.adjustPos + self.state.adjustLength >= this.rightEndPoint && d3.event.dx > 0) { return; }
+          if (d3.event.dx < 0) {
+            this.action = 'zoom in';
+          } else if (d3.event.dx > 0) {
+            this.action = 'zoom out';
+          }
           self.setState({
             adjustLength: (self.state.adjustLength + d3.event.dx > this.rightEndPoint) ? 
                               this.rightEndPoint : self.state.adjustLength + d3.event.dx
           });
+          let start = self.state.adjustPos;
+          let length = (self.state.adjustLength + d3.event.dx > this.rightEndPoint) ? 
+              this.rightEndPoint : self.state.adjustLength + d3.event.dx;
+          let end = start + length;
+          this.props.updateZoomRange([start / 750, end / 750]);
         }));
   }
 
@@ -140,40 +167,132 @@ class TimeBar extends React.Component<any, States> {
     d3.select('#adjust-bar').select('#adjust-pointer-right')
       .attr('transform', 'translate(' + (self.state.adjustPos + self.state.adjustLength - 2) + ', 40)');
 
-    let newWidth = this.originalElementLength / (this.state.adjustLength) * this.rightEndPoint;
-    this.arrayPosition = [];
-    for (var i = 0; i < 10; i++) {
-      this.arrayPosition.push(i * newWidth);
+    let dayBetweens = getDatesBetween(new Date(this.props.startTime), new Date(this.props.endTime));
+    let newWidth = this.originalElementLength / (this.state.adjustLength) * this.rightEndPoint / this.zoomLevel;
+
+    if (this.isZoom && this.action === 'zoom in' && 
+        newWidth > this.originalElementLength * 2) {
+      d3.select('#date-bar').selectAll('*').remove();
+      d3.select('#time-bar').selectAll('*').remove();
+      this.zoomLevel = this.zoomLevel * 2;
+      
+      let temp = Math.floor(dayBetweens.length / 10 / this.zoomLevel) + 1;
+      if (Math.floor(dayBetweens.length / 10 / (this.zoomLevel / 2)) === 0) {
+        temp = 0;
+      }
+
+      let run = 0;
+      this.arrayPosition = [];
+      for (i = 0; i < dayBetweens.length; i++) {
+        if (temp !== 0 && i % temp !== 0) { 
+          continue;
+        }
+        this.arrayPosition.push(run * this.originalElementLength);
+        this.drawDate(formatDate(dayBetweens[i]), run * this.originalElementLength, this.originalElementLength);
+        if (temp - 1 === 0) {
+          this.drawTimeBar(run * this.originalElementLength, this.originalElementLength);
+        }
+        run++;
+      }
+
+      // console.log(this.arrayPosition.length)
+      if (this.arrayPosition.length === dayBetweens.length) {
+        this.isZoom = false;
+      }
+    
+      run = 1;
+      while (run < 30) {
+        let nextDate = addDays(dayBetweens[i - 1], (temp) * run);
+        this.arrayPosition.push(run * this.originalElementLength);
+        this.drawDate(formatDate(nextDate.toString()), run * this.originalElementLength, this.originalElementLength);
+        run++;
+      }
+    } else if (this.action === 'zoom out' && 
+        newWidth <= this.originalElementLength / 2 + 30) {
+      d3.select('#date-bar').selectAll('*').remove();
+      d3.select('#time-bar').selectAll('*').remove();
+      this.zoomLevel = this.zoomLevel / 2;
+      
+      let temp = Math.ceil(dayBetweens.length / 10 / this.zoomLevel);
+      if (temp % 2 !== 0) {
+        temp++;
+      }
+
+      let run = 0;
+      this.arrayPosition = [];
+      for (i = 0; i < dayBetweens.length; i++) {
+        if (temp !== 0 && i % temp !== 0) { 
+          continue;
+        }
+        this.arrayPosition.push(run * this.originalElementLength);
+        this.drawDate(formatDate(dayBetweens[i]), run * this.originalElementLength, this.originalElementLength);
+        run++;
+      }
+
+      if (this.arrayPosition.length !== dayBetweens.length) {
+        this.isZoom = true;
+      }
+
+      run = 1;
+      if (temp % 2 === 0) {
+        temp--;
+      }
+      while (run < 30) {
+        let nextDate = addDays(dayBetweens[i - 1], (temp) * run);
+        this.arrayPosition.push(run * this.originalElementLength);
+        this.drawDate(formatDate(nextDate.toString()), run * this.originalElementLength, this.originalElementLength);
+        run++;
+      }
+    } else {
+      let length = this.arrayPosition.length;
+      this.arrayPosition = [];
+      for (var i = 0; i < length; i++) {
+        this.arrayPosition.push(i * newWidth);
+      }
+
+      let listDateElement = d3.select('#date-bar').selectAll('.date-element');
+      listDateElement.data(this.arrayPosition)
+        .attr('transform', function(d: any){
+            return 'translate(' + (d - self.state.adjustPos / self.state.adjustLength 
+              * self.rightEndPoint) + ', 0)';
+        });
+      listDateElement.select('.date-element-bkg').attr('width', newWidth);
+      listDateElement.select('.date-element-text').attr('x', newWidth / 2 - 25);
+      
+      let listTimeElement = d3.select('#time-bar').selectAll('.time-element');
+      let x = d3.scaleLinear().range([0, newWidth]).domain([0, 24]);
+      listTimeElement.data(this.arrayPosition)
+        .attr('transform', function(d: any){
+            return 'translate(' 
+              + (d - self.state.adjustPos / self.state.adjustLength * self.rightEndPoint - 0.5) + ', 20)';
+        })
+        .call(d3.axisBottom(x).tickValues([0, 4, 8, 12, 16, 20, 0]));
     }
-    
-    let listDateElement = d3.select('#date-bar').selectAll('.date-element');
-    listDateElement.data(this.arrayPosition)
-      .attr('transform', function(d: any){
-          return 'translate(' + (d - self.state.adjustPos / self.state.adjustLength * self.rightEndPoint) + ', 0)';
-      });
-    listDateElement.select('.date-element-bkg').attr('width', newWidth);
-    listDateElement.select('.date-element-text').attr('x', newWidth / 2 - 25);
-    
-    let listTimeElement = d3.select('#time-bar').selectAll('.time-element');
-    let x = d3.scaleLinear().range([0, newWidth]).domain([0, 24]);
-    listTimeElement.data(this.arrayPosition)
-      .attr('transform', function(d: any){
-          return 'translate(' 
-            + (d - self.state.adjustPos / self.state.adjustLength * self.rightEndPoint - 0.5) + ', 20)';
-      })
-      .call(d3.axisBottom(x).tickValues([0, 4, 8, 12, 16, 20, 0]));
   }
 
   componentWillReceiveProps(props: Props) { 
-    let dayBetweens = getDatesBetween(new Date(props.startTime), new Date(props.endTime));
-    
-    for (var i = 0; i < dayBetweens.length; i++) {
-      this.arrayPosition.push(i * this.originalElementLength);
-      this.drawDate(formatDate(dayBetweens[i]), i * this.originalElementLength, this.originalElementLength);
-      this.drawTimeBar(i * this.originalElementLength, this.originalElementLength);
+    if (!this.props.startTime) {
+      let dayBetweens = getDatesBetween(new Date(props.startTime), new Date(props.endTime));
+
+      let temp = Math.floor(dayBetweens.length / 10 / this.zoomLevel) + 2;
+      let run = 0;
+      for (var i = 0; i < dayBetweens.length; i++) {
+        if (i % temp !== 0) { 
+          continue;
+        }
+        this.arrayPosition.push(run * this.originalElementLength);
+        this.drawDate(formatDate(dayBetweens[i]), run * this.originalElementLength, this.originalElementLength);
+        // this.drawTimeBar(run * elementLength, elementLength);
+        run++;
+      }
+
+      let nextDate = addDays(dayBetweens[i - 1], temp - 1);
+      this.arrayPosition.push(run * this.originalElementLength);
+      this.drawDate(formatDate(nextDate.toString()), run * this.originalElementLength, this.originalElementLength);
+      // this.drawTimeBar(run * elementLength, elementLength);
+      
+      this.drawAdjustBar();
     }
-    
-    this.drawAdjustBar();
   }
 
   componentWillUpdate() {

@@ -44,22 +44,8 @@ class LineChart extends React.Component<any, States> {
   }
 
   drawChart(data: Object[], data2: Object[], range: [number, number], 
-            timeRange: [string, string], color: string, color2: string) {
+            timeRange: [number, number], color: string, color2: string) {
     var self = this;
-
-    // var data: Object[] = [
-    //   [Date.parse('2013-03-12 15:09:04') * 25 / 9 / 10000000 / 4, 20], 
-    //   [Date.parse('2013-03-12 16:09:04') * 25 / 9 / 10000000 / 4, 90],
-    //   [Date.parse('2013-03-12 17:09:04') * 25 / 9 / 10000000 / 4, 50],
-    //   [Date.parse('2013-03-12 18:09:04') * 25 / 9 / 10000000 / 4, 90]
-    // ];
-
-    // var data2 = [
-    //   [Date.parse('2013-03-12 15:09:04') * 25 / 9 / 10000000 / 4, 70], 
-    //   [Date.parse('2013-03-12 16:09:04') * 25 / 9 / 10000000 / 4, 30],
-    //   [Date.parse('2013-03-12 17:09:04') * 25 / 9 / 10000000 / 4, 80],
-    //   [Date.parse('2013-03-12 18:09:04') * 25 / 9 / 10000000 / 4, 50]
-    // ];
 
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = SizeTrack.TRACK_WIDTH - margin.left - margin.right,
@@ -82,22 +68,21 @@ class LineChart extends React.Component<any, States> {
     //     .x(function(d: any) { return x(d[0]); })
     //     .y(function(d: any) { return y(d[1]); });
 
-    // append the svg obgect to the body of the page
-    // appends a 'group' element to 'svg'
-    // moves the 'group' element to the top left margin
     var svg = d3.select('#' + self.props.name).append('svg')
+        .attr('class', 'line-chart')
         .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+        .attr('height', height + margin.top + margin.bottom);
+        
+    var chart = svg.append('g')
+            .attr('clip-path', 'url(#clipPath-' + self.props.name + ')')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    console.log(data)
     // Scale the range of the data
-    x.domain([convertedTime(timeRange[0]), convertedTime(timeRange[1])]);
+    x.domain([timeRange[0], timeRange[1]]);
     y.domain(range);
 
     // Add the valueline path.
-    svg.append('path')
+    chart.append('path')
         .data([data])
         .attr('class', 'line')
         .attr('d', valueline)
@@ -106,7 +91,7 @@ class LineChart extends React.Component<any, States> {
         .attr('fill', 'none');
     
     if (data2) {
-      svg.append('path')
+        chart.append('path')
           .data([data2])
           .attr('class', 'line')
           .attr('d', valueline)
@@ -122,6 +107,7 @@ class LineChart extends React.Component<any, States> {
 
     // Add the Y Axis
     svg.append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
         .call(d3.axisLeft(y).ticks(5, 's'));
   }
 
@@ -210,11 +196,16 @@ class LineChart extends React.Component<any, States> {
   }
 
   componentWillReceiveProps(props: Props) {
-    if (props && props.patient) {
+    // console.log(props);
+    if (this.props.patient.info.id === '' && props && props.patient) {
+        // console.log(convertedTime(props.patient.info.admittime));
+        // console.log(convertedTime(props.patient.info.dischtime));
+
         let value = props.value;
         let value2 = props.value2 as POINT[];
         let range = props.range;
-        let timeRange = [props.patient.info.admittime, props.patient.info.dischtime] as [string, string];
+        let timeRange = [convertedTime(props.patient.info.admittime), 
+            convertedTime(props.patient.info.dischtime)] as [number, number];
         let color = props.color;
         let color2 = props.color2 as string;
         let unit = props.unit;
@@ -222,10 +213,28 @@ class LineChart extends React.Component<any, States> {
         this.drawChart(value, value2, range, timeRange, color, color2);
 
         if (!this.props.title2) {
-        this.drawSingleFigureBox(color, unit);
+            this.drawSingleFigureBox(color, unit);
         } else {
-        this.drawDoubleFigureBox(color, color2 , unit);
+            this.drawDoubleFigureBox(color, color2 , unit);
         }
+    } else {
+        let start = convertedTime(this.props.patient.info.admittime);
+        let end = convertedTime(this.props.patient.info.dischtime);
+        let zoom = (props.zoom) ? props.zoom : [0, 100];
+        // console.log(props.zoom);
+        // console.log(start + (end - start) * this.props.zoom[0]);
+        // console.log(start + (end - start) * this.props.zoom[1]);
+
+        let value = this.props.value;
+        let value2 = this.props.value2 as POINT[];
+        let range = this.props.range;
+        let timeRange = [start + (end - start) * zoom[0], 
+            start + (end - start) * zoom[1]] as [number, number];
+        let color = this.props.color;
+        let color2 = this.props.color2 as string;
+
+        d3.select('#' + this.props.name).selectAll('.line-chart').remove();
+        this.drawChart(value, value2, range, timeRange, color, color2);
     }
   }
 

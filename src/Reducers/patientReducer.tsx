@@ -12,6 +12,7 @@ export default function reducer(
       diagnosis: '',
       religion: '',
     },
+    bmi: [],
     systolic: [],
     diastolic: [],
     hemoA1c: [],
@@ -38,8 +39,8 @@ export default function reducer(
 
       let simva = [
         {
-          startdate: '2165-05-19T17:00:00.000Z',
-          enddate: '2165-05-19T17:00:00.000Z',
+          startdate: '2103-08-19T17:00:00.000Z',
+          enddate: '2103-08-19T17:00:00.000Z',
           drug: 'Simvastatin',
           drug_name_generic: 'Simvastatin',
           prod_strength: '10mg Tablet',
@@ -49,8 +50,8 @@ export default function reducer(
           form_unit_disp: 'TAB'
         },
         {
-          startdate: '2165-06-05T17:00:00.000Z',
-          enddate: '2165-06-05T17:00:00.000Z',
+          startdate: '2103-09-05T17:00:00.000Z',
+          enddate: '2103-09-05T17:00:00.000Z',
           drug: 'Simvastatin',
           drug_name_generic: 'Simvastatin',
           prod_strength: '10mg Tablet',
@@ -62,8 +63,8 @@ export default function reducer(
       ];
       let lisin = [
         {
-          startdate: '2165-05-19T17:00:00.000Z',
-          enddate: '2165-05-19T17:00:00.000Z',
+          startdate: '2103-08-19T17:00:00.000Z',
+          enddate: '2103-05-19T17:00:00.000Z',
           drug: 'Lisinopril',
           drug_name_generic: 'Lisinopril',
           prod_strength: '5mg Tablet',
@@ -73,8 +74,8 @@ export default function reducer(
           form_unit_disp: 'TAB'
         },
         {
-          startdate: '2165-05-24T17:00:00.000Z',
-          enddate: '2165-05-24T17:00:00.000Z',
+          startdate: '2103-08-24T17:00:00.000Z',
+          enddate: '2103-08-24T17:00:00.000Z',
           drug: 'Lisinopril',
           drug_name_generic: 'Lisinopril',
           prod_strength: '5mg Tablet',
@@ -84,8 +85,8 @@ export default function reducer(
           form_unit_disp: 'TAB'
         },
         {
-          startdate: '2165-06-05T17:00:00.000Z',
-          enddate: '2165-06-05T17:00:00.000Z',
+          startdate: '2103-09-05T17:00:00.000Z',
+          enddate: '2103-09-05T17:00:00.000Z',
           drug: 'Lisinopril',
           drug_name_generic: 'Lisinopril',
           prod_strength: '10mg Tablet',
@@ -99,6 +100,7 @@ export default function reducer(
       return {
         ...state, 
         info: data.info,
+        bmi: data.bmi,
         systolic: data.systolic,
         diastolic: data.diastolic,
         hemoA1c: data.hemoA1c,

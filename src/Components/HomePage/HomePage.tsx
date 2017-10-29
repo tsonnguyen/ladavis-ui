@@ -33,6 +33,7 @@ class Home extends React.Component<Props, States> {
   }
 
   componentDidMount() {
+    // 10425, 13778
     this.props.getPatientById(2345);
   }
 
@@ -66,7 +67,10 @@ class Home extends React.Component<Props, States> {
             <div className="patient-health-value">{formatDate(this.props.patient.info.dischtime, true)}</div>
             <div className="patient-health-title">DIAGNOSIS</div>
             <div className="patient-health-value">{this.props.patient.info.diagnosis}</div>
-            
+          </div>
+          <div className="patient-predict-diabete">
+            <div className="patient-diabete-title">DIABETE DIAGNOSIS</div>
+            <div className="patient-diabete-value patient-diabete-positive">POSITIVE</div>
           </div>
         </div>
         <div className="patient-chart">
@@ -86,7 +90,27 @@ class Home extends React.Component<Props, States> {
               </svg>
             </div>
             <div className="patient-chart-body">
-              <svg className="svg-container" style={{height: 620}}>
+              <svg className="svg-container" style={{height: 980}}>
+                <Track 
+                  type={'line-chart'} 
+                  name={'BMI'} 
+                  title={'BMI'} 
+                  value={this.props.patient.bmi}
+                  range={[10, 40]}
+                  unit={'kg/m2'}
+                  color={'rgba(0, 0, 255, 0.7)'}
+                  position={0}
+                />
+                <Track 
+                  type={'line-chart'} 
+                  name={'Glucose'} 
+                  title={'Glucose'} 
+                  value={this.props.patient.glucoseBlood}
+                  range={[0, 350]}
+                  unit={'mg/dl'}
+                  color={'rgba(255, 0, 0, 0.7)'}
+                  position={120}
+                />
                 <Track 
                   type={'bar-chart'} 
                   name={'NBP'} 
@@ -94,19 +118,11 @@ class Home extends React.Component<Props, States> {
                   title2={'NBP Diastolic'} 
                   value={this.props.patient.systolic}
                   value2={this.props.patient.diastolic}
+                  range={[0, 200]}
                   unit={'mmHg'}
                   color={'rgba(0, 0, 255, 0.7)'}
                   color2={'rgba(255, 0, 0, 0.7)'}
-                  position={0}
-                />
-                <Track 
-                  type={'event-chart'} 
-                  name={'PRES'} 
-                  title={'Simva'} 
-                  title2={'Lisin'}
-                  value={this.props.patient.simva}
-                  value2={this.props.patient.lisin}
-                  position={120}
+                  position={240}
                 />
                 <Track 
                   type={'line-chart'} 
@@ -119,16 +135,6 @@ class Home extends React.Component<Props, States> {
                   unit={'mg/dl'}
                   color={'rgba(0, 0, 255, 0.7)'}
                   color2={'rgba(255, 0, 0, 0.7)'}
-                  position={240}
-                />
-                <Track 
-                  type={'line-chart'} 
-                  name={'Glucose'} 
-                  title={'Glucose'} 
-                  value={this.props.patient.glucoseBlood}
-                  range={[0, 350]}
-                  unit={'mg/dl'}
-                  color={'rgba(255, 0, 0, 0.7)'}
                   position={360}
                 />
                 <Track 
@@ -140,6 +146,32 @@ class Home extends React.Component<Props, States> {
                   unit={'mg/dl'}
                   color={'rgba(0, 0, 255, 0.7)'}
                   position={480}
+                />
+                <Track 
+                  type={'line-chart'} 
+                  name={'Albumin'} 
+                  title={'Albumin'} 
+                  value={this.props.patient.albumin}
+                  range={[0, 5]}
+                  unit={'mg/dl'}
+                  color={'rgba(255, 0, 0, 0.7)'}
+                  position={600}
+                />
+                <Track 
+                  type={'event-chart'} 
+                  name={'PRES'} 
+                  title={'Simva'} 
+                  title2={'Lisin'}
+                  value={this.props.patient.simva}
+                  value2={this.props.patient.lisin}
+                  position={720}
+                />
+                <Track 
+                  type={'note-chart'} 
+                  name={'NOTE'} 
+                  title={'NOTE'} 
+                  value={this.props.patient.notes}
+                  position={840}
                 />
                 {/* <Track type={'line-chart'} name={'line-chart'} position={0}/>
                 <Track type={'event-chart'} name={'event-chart'} position={120}/>

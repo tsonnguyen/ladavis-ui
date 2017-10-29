@@ -4,6 +4,7 @@ import LineChart from './LineChart/LineChart';
 import BarChart from './BarChart/BarChart';
 import EventChart from './EventChart/EventChart';
 import TimelineChart from './TimelineChart/TimelineChart';
+import NoteChart from './NoteChart/NoteChart';
 import { POINT, EVENT, NOTE } from '../../Interfaces';
 
 import './Track.css';
@@ -79,6 +80,17 @@ class Track extends React.Component<Props, States> {
     );
   }
 
+  renderNoteChart() {
+    return (
+      <NoteChart 
+        name={this.props.name} 
+        title={this.props.title} 
+        value={this.props.value as EVENT[]}
+        position={650}
+      />
+    );
+  }
+
   renderTimelineChart() {
     return (
       <TimelineChart name={this.props.name} position={650}/>
@@ -107,6 +119,16 @@ class Track extends React.Component<Props, States> {
     );
   }
 
+  renderTrackClipPath() {
+    return (
+      <defs>
+      <clipPath id={'clipPath-' + this.props.name}>
+        <rect x="0" y="20"  width="750" height="100" />
+      </clipPath >
+      </defs>
+    );
+  }
+
   render() {
     let renderComponent = null;
     switch (this.props.type) {
@@ -122,16 +144,22 @@ class Track extends React.Component<Props, States> {
     case 'timeline-chart':
         renderComponent = this.renderTimelineChart();
         break;
+    case 'note-chart':
+        renderComponent = this.renderNoteChart();
+        break;
     default:
         renderComponent = null;
     }
 
     return (
-      <svg className="track" y={this.props.position}>
-        {this.renderTrackBorder()}
-        {this.renderTrackDrag()}
-        {renderComponent}  
-      </svg>
+      <g className="track-group" >
+        {this.renderTrackClipPath()}
+        <svg className="track" y={this.props.position}>
+          {this.renderTrackBorder()}
+          {this.renderTrackDrag()}
+          {renderComponent}  
+        </svg>
+      </g>
     );
   }
 }
