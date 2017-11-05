@@ -2,7 +2,8 @@ import * as React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import Header from '../Header/Header';
-import HomePage from '../HomePage/HomePage';
+import SinglePatient from '../SinglePatient/SinglePatient';
+import ListPatient from '../ListPatient/ListPatient';
 
 import './App.css';
 
@@ -14,11 +15,12 @@ class App extends React.Component<{}, {}> {
   render() {
     return (
       <Router>
-        <div className="globalContainer">
+        <div className="globalContainer" style={{height: '100%'}}>
           <div id="mainBackground" />
           <Header />
           <div className="bodyContainer">
-            <Route exact={true} path="/"component={HomePage} />
+            <Route exact={true} path="/single-patient"component={SinglePatient} />
+            <Route exact={true} path="/list-patient"component={ListPatient} />
           </div>  
         </div>
       </Router>

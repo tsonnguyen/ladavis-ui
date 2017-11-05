@@ -43,15 +43,17 @@ const initialState: ROOTSTATE = {
     DPP4: [],
     SH: [],
     notes: [],
+    predict: []
   },
-  zoom: [0, 100]
+  zoom: [0, 1],
+  bar: []
 };
 
 const hydrate: StoreEnhancer<ROOTSTATE> = autoRehydrate() as StoreEnhancer<ROOTSTATE>;
 const middleware: StoreEnhancer<ROOTSTATE> = applyMiddleware(promise(), thunk);
 export const appStore: Store<ROOTSTATE> = createStore<ROOTSTATE>(reducer, initialState, compose(middleware, hydrate));
 
-persistStore(appStore, { whitelist: ['storage'] }, () => {
+persistStore(appStore, { whitelist: ['bar'] }, () => {
   // rehydration complete callback
 });
 

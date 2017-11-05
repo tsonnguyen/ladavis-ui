@@ -31,6 +31,7 @@ export default function reducer(
     DPP4: [],
     SH: [],
     notes: [],
+    predict: []
   }, 
   action: any) {
   switch (action.type) {
@@ -119,6 +120,7 @@ export default function reducer(
         DPP4: data.DPP4,
         SH: data.SH,
         notes: data.notes,
+        predict: data.predict
       };
     }
     default: return state;

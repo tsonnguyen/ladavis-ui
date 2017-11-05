@@ -34,7 +34,6 @@ const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) 
   zoom: stateProps.zoom
 });
 
-
 class EventChart extends React.Component<any, States> {
   constructor() {
     super();
@@ -194,6 +193,7 @@ class EventChart extends React.Component<any, States> {
     );
   }
 }
-//export default EventChart;
+
+// export default EventChart;
 const EventChartContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(EventChart);
 export default EventChartContainer;

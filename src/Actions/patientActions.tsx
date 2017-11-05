@@ -1,4 +1,3 @@
-
 import { getPatientInfoById } from '../api';
 
 export function getPatientById(userId: number) {

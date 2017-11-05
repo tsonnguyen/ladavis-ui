@@ -1,6 +1,7 @@
 interface ROOTSTATE {
   patient: PATIENT;
   zoom: [number, number];
+  bar: [number] | any;
 }
 export default ROOTSTATE;
 
@@ -34,6 +35,7 @@ export interface PATIENT {
   DPP4: EVENT[];
   SH: EVENT[];
   notes: NOTE[];
+  predict: Number[];
 }
 
 export interface POINT {

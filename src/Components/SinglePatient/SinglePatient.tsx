@@ -5,7 +5,7 @@ import Track from '../Track/Track';
 import TimeBar from '../TimeBar/TimeBar';
 import ROOTSTATE from '../../Interfaces';
 
-import './HomePage.css';
+import './SinglePatient.css';
 
 import { formatDate } from '../../api';
 import { getPatientById } from '../../Actions/patientActions';
@@ -16,6 +16,7 @@ interface Props {
 }
 
 interface States {
+  displayPredict: boolean;
 }
 
 const mapStateToProps = (state: ROOTSTATE) => ({
@@ -27,50 +28,78 @@ const mapDispatchToProps = (dispatch: any) => ({
   },
 });
 
-class Home extends React.Component<Props, States> {
+class SinglePatient extends React.Component<Props, States> {
+  skinThickness = Math.floor((Math.random() * 50) + 7);
+  pregnancy = 0;
+  insulin = Math.floor((Math.random() * 500) + 90);
+  diabetesPedigreeFunction = ((Math.random() * 1.6) + 0.085).toFixed(2);
+
   constructor() {
     super();
+    this.state = {
+      displayPredict: false
+    };
   }
 
   componentDidMount() {
+    var patientId = Number(window.location.href.split('?')[1].replace('patient=', ''));
     // 10425, 13778
-    this.props.getPatientById(2345);
+    this.props.getPatientById(patientId);
   }
 
-  // componentWillReceiveProps(props: Props) {
-  //   if (props.patient) {
-  //     let patient = props.patient;    
-  //   }
-  // }
+  hideNote() {
+    var notePatient = document.getElementById('note-patient');
+    if (notePatient) { 
+      notePatient.style.display = 'none'; 
+    }
+  }
 
   render() {
-    console.log(this.props.patient);
+    var isPredict = this.state.displayPredict;
+    var styleText = {
+      color: (this.state.displayPredict) ? 'green' : 'black',
+      fontWeight: (this.state.displayPredict) ? 'bold' : '100'
+    } as any;
 
     return (
       <div className="patient">
+        <div id="note-patient">
+          <div id="note-patient-tabbar">
+            <div id="note-patient-button" onClick={this.hideNote}>X</div>
+          </div>
+          <div id="note-patient-container">
+            <div id="note-patient-title"><strong>NOTE</strong></div>
+            <div id="note-patient-id" className="note-info">PATIENT ID: 1234</div>
+            <div id="note-patient-des" className="note-info">DESCRIPTION: abcxyz</div>
+            <div id="note-patient-cat" className="note-info">CATEGORY: abcxyz</div>
+            <div id="note-patient-time" className="note-info">RECORDED TIME: abcxyz</div>
+            <div><strong>TEXT:</strong></div>
+            <div id="note-patient-text" className="note-info">abcxyzabcxyzabcxyz</div>
+          </div>
+        </div>
         <div className="patient-info">
           <div className="patient-basic-info">
             <img className="patient-avatar" src={require('./img/avatar.png')} alt="Patient"/>
             <div className="patient-basic-info-box">
-            <p className="patient-basic-info-text">PATIENT NAME</p>
-            <p className="patient-basic-info-text">**********</p>
               <p className="patient-basic-info-text">PATIENT ID: {this.props.patient.info.id}</p>
-              <p className="patient-basic-info-text">Age: {this.props.patient.info.dob}</p>
+              <p className="patient-basic-info-text" style={styleText}>Age: {this.props.patient.info.age}</p>
               <p className="patient-basic-info-text">Gender: {this.props.patient.info.gender}</p>
-              <p className="patient-basic-info-text">Religion: {this.props.patient.info.religion}</p>
+              <p className="patient-basic-info-text">
+                Admission date: <br/> {formatDate(this.props.patient.info.admittime, true)}
+              </p>
             </div>
           </div>
           <div className="patient-health-info">
-            <div className="patient-health-title">ADMISSTION DATE</div>
-            <div className="patient-health-value">{formatDate(this.props.patient.info.admittime, true)}</div>
-            <div className="patient-health-title">DISCHARGE DATE</div>
-            <div className="patient-health-value">{formatDate(this.props.patient.info.dischtime, true)}</div>
             <div className="patient-health-title">DIAGNOSIS</div>
             <div className="patient-health-value">{this.props.patient.info.diagnosis}</div>
-          </div>
-          <div className="patient-predict-diabete">
-            <div className="patient-diabete-title">DIABETE DIAGNOSIS</div>
-            <div className="patient-diabete-value patient-diabete-positive">POSITIVE</div>
+            <div className="patient-health-title">PREGNANCY</div>
+            <div className="patient-health-value" style={styleText}>{this.pregnancy} (times)</div>
+            <div className="patient-health-title">SKIN THICKNESS</div>
+            <div className="patient-health-value" style={styleText}>{this.skinThickness} (mm)</div>
+            <div className="patient-health-title">INSULIN</div>
+            <div className="patient-health-value" style={styleText}>{this.insulin} (mu U/ml)</div>
+            <div className="patient-health-title">DIABETE PREDIGREE</div>
+            <div className="patient-health-value" style={styleText}>{this.diabetesPedigreeFunction}</div>
           </div>
         </div>
         <div className="patient-chart">
@@ -82,7 +111,7 @@ class Home extends React.Component<Props, States> {
                   name={'HbA1c'} 
                   title={'HbA1c'} 
                   value={this.props.patient.hemoA1c}
-                  range={[0, 10]}
+                  range={[0, 20]}
                   unit={'%'}
                   color={'rgba(255, 0, 0, 0.7)'}
                   position={0}
@@ -99,6 +128,7 @@ class Home extends React.Component<Props, States> {
                   range={[10, 40]}
                   unit={'kg/m2'}
                   color={'rgba(0, 0, 255, 0.7)'}
+                  predict={isPredict}
                   position={0}
                 />
                 <Track 
@@ -109,6 +139,7 @@ class Home extends React.Component<Props, States> {
                   range={[0, 350]}
                   unit={'mg/dl'}
                   color={'rgba(255, 0, 0, 0.7)'}
+                  predict={isPredict}
                   position={120}
                 />
                 <Track 
@@ -122,6 +153,7 @@ class Home extends React.Component<Props, States> {
                   unit={'mmHg'}
                   color={'rgba(0, 0, 255, 0.7)'}
                   color2={'rgba(255, 0, 0, 0.7)'}
+                  predict={isPredict}
                   position={240}
                 />
                 <Track 
@@ -173,18 +205,28 @@ class Home extends React.Component<Props, States> {
                   value={this.props.patient.notes}
                   position={840}
                 />
-                {/* <Track type={'line-chart'} name={'line-chart'} position={0}/>
-                <Track type={'event-chart'} name={'event-chart'} position={120}/>
-                <Track type={'timeline-chart'} name={'timeline-chart'} position={240}/>
-                <Track type={'line-chart'} name={'line-chart-2'} position={360}/>
-                <Track type={'event-chart'} name={'event-chart-2'} position={480}/> */}
               </svg>
             </div>
             <div className="patient-chart-footer">
+              <div className="patient-predict-diabete">
               <TimeBar
                 startTime={this.props.patient.info.admittime}
                 endTime={this.props.patient.info.dischtime}
               /> 
+              </div>
+              <div className="patient-predict-diabete" style={{paddingLeft: '10px'}}>
+                <div className="patient-diabete-title">DIABETE DIAGNOSIS</div>
+                <div 
+                  className={
+                    (!this.state.displayPredict) ?
+                    'patient-diabete-value patient-diabete-positive' :
+                    'patient-diabete-value patient-diabete-negative'
+                    }
+                  onClick={() => this.setState({displayPredict: !this.state.displayPredict})}
+                >
+                  {(!this.state.displayPredict) ? 'SHOW ABNORMAL' : 'HIDE ABNORMAL'}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -193,5 +235,5 @@ class Home extends React.Component<Props, States> {
   }
 }
 // export default Home;
-const HomeContainer = connect(mapStateToProps, mapDispatchToProps)(Home);
-export default HomeContainer;
+const SinglePatientContainer = connect(mapStateToProps, mapDispatchToProps)(SinglePatient);
+export default SinglePatientContainer;

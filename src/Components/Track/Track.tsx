@@ -18,6 +18,7 @@ interface Props {
   value2?: POINT[] | EVENT[] | NOTE[];
   unit?: string;
   range?: [number, number];
+  predict?: boolean;
   color?: string;
   color2?: string;
   position: number;
@@ -45,6 +46,7 @@ class Track extends React.Component<Props, States> {
         unit={this.props.unit as string}
         color={this.props.color as string}
         color2={this.props.color2 as string}
+        predict={this.props.predict}
         position={50}
       />
     );
@@ -62,6 +64,7 @@ class Track extends React.Component<Props, States> {
         range={this.props.range as [number, number]}
         color={this.props.color as string}
         color2={this.props.color2 as string}
+        predict={this.props.predict}
         position={350}
       />
     );
@@ -123,7 +126,7 @@ class Track extends React.Component<Props, States> {
     return (
       <defs>
       <clipPath id={'clipPath-' + this.props.name}>
-        <rect x="0" y="20"  width="750" height="100" />
+        <rect x="0" y="0" width="750" height="100" />
       </clipPath >
       </defs>
     );

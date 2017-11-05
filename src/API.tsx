@@ -4,6 +4,10 @@ export function convertedTime (time: string) {
   return Date.parse(time) * 25 / 9 / 10000000 / 4;
 }
 
+export function renvertedTime (time: number) {
+  return time / 25 * 9 * 10000000 * 4;
+}
+
 export const serverUrl = 'http://localhost:4000/ladavis/rest-api';
 var instanceAxios = axios.create({
   baseURL: serverUrl
@@ -12,6 +16,12 @@ var instanceAxios = axios.create({
 export function getPatientInfoById(userId: number ) {
   let config: AxiosRequestConfig = { headers: {} };
   let url: string = '/patient?id=' + userId;
+  return instanceAxios.get(url, config);
+}
+
+export function getAllPatient() {
+  let config: AxiosRequestConfig = { headers: {} };
+  let url: string = '/all-patients';
   return instanceAxios.get(url, config);
 }
 

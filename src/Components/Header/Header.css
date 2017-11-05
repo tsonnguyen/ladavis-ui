@@ -2,3 +2,52 @@
   background: grey;
   height: 40px;
 }
+
+.list-patient-button {
+  width: 150px;
+  height: 38px;
+  display: table-cell;
+  background: lightgrey;
+  cursor: pointer;
+  border: 1px solid black;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.patient-button {
+  display: table;
+  position: relative;
+  width: 150px;
+  height: 38px;
+  display: table-cell;
+  background: lightgrey;
+  cursor: pointer;
+  border: 1px solid black;
+  vertical-align: middle;
+}
+
+.patient-button-text {
+  display: table-cell;
+  text-align: center;
+  width: 125px;
+  height: 100%;
+  line-height: 35px;
+}
+
+.x-button {
+  background: rgba(255, 0, 0, 0.7);
+  border-left: 1px solid black;
+  text-align: center;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: white;
+  display: table-cell;
+  line-height: 35px;
+  width: 10px !important;
+  height: 100%;
+  margin-top: -1px;
+}
+
+.x-button:hover {
+  background: red;
+}

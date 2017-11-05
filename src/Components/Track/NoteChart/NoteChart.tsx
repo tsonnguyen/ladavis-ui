@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 
 import ROOTSTATE, { PATIENT, EVENT } from '../../../Interfaces';
-import { convertedTime } from  '../../../api';
+import { convertedTime, formatDate } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
 import './NoteChart.css';
@@ -70,29 +70,57 @@ class NoteChart extends React.Component<any, States> {
           .attr('transform', 
                 'translate(' + margin.left + ',' + margin.top + ')');
 
-    // Scale the range of the data in the domains
     x.domain([timeRange[0], timeRange[1]]);
     y.domain([0, 3]);
 
-    // append the rectangles for the bar chart
-    svg.selectAll('.bar')
+    svg.append('defs').append('pattern')
+      .attr('id', 'notebg')
+      .append('image')
+        .attr('src', require('./note.png'))
+        .attr('width', 4)
+        .attr('height', 4);
+
+    svg.selectAll('.note-bar')
         .data(data)
-        .enter().append('rect')
-          .attr('class', 'bar')
+        .enter().append('image')
+          .attr('class', 'note-bar')
+          .attr('xlink:href', require('./note.png'))
           .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('y', function(d: any) { return y(1.7); })
-          .attr('width', '10px') 
-          .attr('height', '10px')
-          .attr('transform', 'translate(-5,0)');
+          .attr('width', '20px') 
+          .attr('height', '20px')
+          .attr('transform', 'translate(-5,0)')
+          .on('mousedown', function(d: any) { 
+            var idHTML = document.getElementById('note-patient-id');
+            if (idHTML) {
+              idHTML.innerHTML = '<strong>PATIENT ID</strong>: ' + self.props.patient.info.id;
+            }
 
-    // add the x Axis
-    // svg.append('g')
-    //     .attr('transform', 'translate(0,' + height + ')')
-    //     .call(d3.axisBottom(x));
+            var desHTML = document.getElementById('note-patient-des');
+            if (desHTML) {
+              desHTML.innerHTML = '<strong>DESCRIPTION</strong>: ' + d.description;
+            }
 
-    // add the y Axis
-    // svg.append('g')
-    //     .call(d3.axisLeft(y));
+            var timeHTML = document.getElementById('note-patient-time');
+            if (timeHTML) {
+              timeHTML.innerHTML = '<strong>RECORDED TIME</strong>: ' + formatDate(d.time, false);
+            }
+
+            var catHTML = document.getElementById('note-patient-cat');
+            if (catHTML) {
+              catHTML.innerHTML = '<strong>CATEGORY</strong>: ' + d.category;
+            }
+
+            var textHTML = document.getElementById('note-patient-text');
+            if (textHTML) {
+              textHTML.innerHTML = d.text;
+            }
+
+            var notePatientHTML = document.getElementById('note-patient');
+            if (notePatientHTML) {
+              notePatientHTML.style.display = 'block';
+            }
+          });
   }
 
   drawFigureBox() {
@@ -140,6 +168,7 @@ class NoteChart extends React.Component<any, States> {
     );
   }
 }
-//export default NoteChart;
+
+// export default NoteChart;
 const NoteChartContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(NoteChart);
 export default NoteChartContainer;

@@ -1,0 +1,192 @@
+.patient {
+  display: table;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.patient-info {
+  display: table-cell;
+  width: 200px;
+  padding-left: 15px;
+  vertical-align: top;
+}
+
+.patient-basic-info {
+  border: 1px solid black;
+  height: auto;
+  margin-top: 10px;
+  padding-bottom: 10px;
+}
+
+.patient-avatar {
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 10px;
+  padding-top: 10px;
+  border: 1px solid black;
+}
+
+.patient-basic-info-box {
+  width: 80%;
+  margin-top: 5px;
+  margin-left: 10%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid black;
+  text-align: center;
+}
+
+.patient-basic-info-text {
+  font-size: 16px;
+  margin: 0;
+  margin-bottom: 3px;
+}
+
+.patient-health-info {
+  height: auto;
+  margin-top: 8px;
+  border: 1px solid black;
+}
+
+.patient-health-title {
+  padding: 5px;
+  background: grey;
+  color: white;
+  border: 1px solid black;
+}
+
+.patient-health-value {
+  padding: 5px;
+  border: 1px solid black;  
+}
+
+.patient-predict-diabete {
+  margin-top: 9px;
+  display: table-cell;
+  vertical-align: top;
+}
+
+.patient-diabete-title {
+  padding: 5px;
+  background: grey;
+  color: white;
+  border: 1px solid black;
+}
+
+.patient-diabete-value {
+  padding: 5px;
+  border: 1px solid black;  
+  cursor: pointer;
+}
+
+.patient-diabete-positive {
+  background: rgba(255, 0, 0, 0.81);
+  color: white;
+}
+
+.patient-diabete-negative {
+  background: rgba(60, 255, 0, 0.81);
+}
+
+
+.patient-chart {
+  display: table-cell;
+  width: 1070px;
+  vertical-align: top;
+}
+
+.patient-chart-header {
+  height: 135px;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  border: 1px solid black;
+}
+
+.patient-chart-header .svg-container {
+  width: 100%;
+}
+
+.patient-chart-body {
+  height: 375px;
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  border: 1px solid black;
+  overflow: auto;
+}
+
+.patient-chart-body .svg-container {
+  width: 100%;
+}
+
+.patient-chart-footer {
+  height: 70px;
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-top: 10px;
+  padding-left: 50px;
+  border: 1px solid black;
+}
+
+#note-patient {
+  display: none;
+  position:absolute;
+  left:0;
+  right:0;
+  height: 100%;
+  padding-top: 50px;
+}
+
+#note-patient-tabbar {
+  position: relative;
+  height: 20px;
+  background: lightgrey;
+  width: 520px;
+  margin: 0 auto;
+  padding-left: 20px;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+}
+
+#note-patient-button {
+  border-left: 1px solid black;
+  width: 20px;
+  text-align: center;
+  height: 20px;
+  position: absolute;
+  right: 0;
+  font-weight: bold;
+  background: red;
+  color: white;
+  cursor: pointer;
+}
+
+#note-patient-container {
+  margin: 0 auto;
+  width: 500px;
+  background: white;
+  border: 1px solid black;
+  padding: 20px;
+  padding-top: 10px;
+}
+
+#note-patient-title {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.note-info {
+  margin-bottom: 5px;
+}
+
+#note-patient-text {
+  height: 200px;
+  border: 1px solid black;
+  margin-top: 10px;
+  padding: 10px;
+  overflow: scroll;
+}
