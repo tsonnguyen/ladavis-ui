@@ -1,106 +1,10 @@
-.patient {
-  display: table;
-}
-
-.patient-info {
-  display: table-cell;
-  width: 200px;
-  padding-left: 15px;
-  vertical-align: top;
-}
-
-.patient-basic-info {
-  border: 1px solid black;
-  height: auto;
-  margin-top: 10px;
-  padding-bottom: 10px;
-}
-
-.patient-avatar {
-  width: 80%;
-  margin-left: 10%;
-  margin-top: 10px;
-  padding-top: 10px;
-  border: 1px solid black;
-}
-
-.patient-basic-info-box {
-  width: 80%;
-  margin-top: 5px;
-  margin-left: 10%;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  border: 1px solid black;
-  text-align: center;
-}
-
-.patient-basic-info-text {
-  font-size: 13px;
-  margin: 0;
-  margin-bottom: 3px;
-}
-
-.patient-health-info {
-  height: auto;
-  margin-top: 8px;
-  border: 1px solid black;
-}
-
-.patient-health-title {
-  padding: 5px;
-  background: grey;
-  color: white;
-  border: 1px solid black;
-}
-
-.patient-health-value {
-  padding: 5px;
-  border: 1px solid black;  
-}
-
-.patient-predict-diabete {
-  margin-top: 9px;
-  display: table-cell;
-  vertical-align: top;
-}
-
-.patient-diabete-title {
-  padding: 5px;
-  background: grey;
-  color: white;
-  border: 1px solid black;
-}
-
-.patient-diabete-value {
-  padding: 5px;
-  border: 1px solid black;  
-}
-
-.patient-diabete-positive {
-  background: rgba(255, 0, 0, 0.81);
-  color: white;
-}
-
-.patient-diabete-negative {
-  background: rgba(60, 255, 0, 0.81);
-}
-
-
-.patient-chart {
+.list-patient .patient-chart {
   display: table-cell;
   width: 1070px;
   vertical-align: top;
 }
 
-.patient-chart-header {
-  height: 135px;
-  margin-top: 10px;
-  margin-left: 20px;
-  margin-right: 20px;
-  border: 1px solid black;
-}
-
-.patient-chart-header .svg-container {
+.list-patient .patient-chart-header .svg-container {
   width: 100%;
 }
 
@@ -119,16 +23,6 @@
 
 .patient-chart-body .svg-container {
   width: 100%;
-}
-
-.patient-chart-footer {
-  height: 70px;
-  margin-top: 20px;
-  margin-left: 20px;
-  margin-right: 20px;
-  padding-top: 10px;
-  padding-left: 50px;
-  border: 1px solid black;
 }
 
 .patient-basic-info-container {

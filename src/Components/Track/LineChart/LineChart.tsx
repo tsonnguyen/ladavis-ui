@@ -77,6 +77,15 @@ class LineChart extends React.Component<any, States> {
     x.domain([timeRange[0], timeRange[1]]);
     y.domain(range);
 
+    chart.append('text')
+        .attr('class', 'text-selector')
+        .attr('fill', color)
+        .text('')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('font-size', 12)
+        .attr('transform', 'translate(-10,0)');
+
     chart.append('rect')
         .attr('class', 'selector')
         .attr('fill', 'transparent')
@@ -110,6 +119,15 @@ class LineChart extends React.Component<any, States> {
     //       .attr('transform', 'translate(-10,0)');
 
     if (data2) {
+        chart.append('text')
+            .attr('class', 'text-selector-2')
+            .attr('fill', color)
+            .text('')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('font-size', 12)
+            .attr('transform', 'translate(-10,0)');
+
         chart.append('rect')
             .attr('class', 'selector-2')
             .attr('fill', 'transparent')
@@ -162,7 +180,7 @@ class LineChart extends React.Component<any, States> {
     // Add the Y Axis
     svg.append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-        .call(d3.axisLeft(y).ticks(5, 's'));
+        .call(d3.axisLeft(y).ticks(5, 's').tickSizeOuter(0));
 
     svg.append('rect')
       .attr('class', 'overlay')
@@ -178,26 +196,38 @@ class LineChart extends React.Component<any, States> {
             selectDate = Math.round(selectDate);
             if (Math.abs(dataTime - selectDate) < (timeRange[1] - timeRange[0]) / 50) {
                 var displayValue = Number((data[i] as any).value);
-                if (data2 && data2.length !== 0) {
-                    d3.select('#' + self.props.name).select('.figure-value-1').text(displayValue);
-                    let selector = d3.select('#' + self.props.name).select('.selector');
-                    selector.attr('fill', color)
-                            .attr('x', x(dataTime) + 5)
-                            .attr('y', y(displayValue) - 5);
+                let textMove = 0;
+                if (Number(i) === 0) {
+                    textMove = 10;
+                } else if (Number(i) === data.length - 1) {
+                    textMove = -10;
+                }
 
+                let selector = d3.select('#' + self.props.name).select('.selector');
+                selector.attr('fill', color)
+                        .attr('x', x(dataTime) + 5)
+                        .attr('y', y(displayValue) - 5);
+
+                
+                let textSelector = d3.select('#' + self.props.name).select('.text-selector');
+                textSelector.attr('fill', color)
+                        .text(displayValue)
+                        .attr('x', x(dataTime) + textMove)
+                        .attr('y', y(displayValue) - 10);
+
+                if (data2 && data2.length !== 0) {
                     let displayValue2 = Number((data2[i] as any).value);
                     let selector2 = d3.select('#' + self.props.name).select('.selector-2');
-                    d3.select('#' + self.props.name).select('.figure-value-2').text(displayValue2);
                     selector2.attr('fill', color2)
                              .attr('x', x(dataTime) + 5)
                              .attr('y', y(displayValue2) - 5);
-                } else {
-                    let selector = d3.select('#' + self.props.name).select('.selector');
-                    d3.select('#' + self.props.name).select('.figure-value').text(displayValue);
-                    selector.attr('fill', color)
-                            .attr('x', x(dataTime) + 5)
-                            .attr('y', y(displayValue) - 5);
-                }
+
+                    let textSelector2 = d3.select('#' + self.props.name).select('.text-selector-2');
+                    textSelector2.attr('fill', color2)
+                            .text(displayValue)
+                            .attr('x', x(dataTime) + textMove)
+                            .attr('y', y(displayValue2) - 10);
+                } 
 
             }
         }
@@ -298,7 +328,7 @@ class LineChart extends React.Component<any, States> {
 
     let color = this.props.color;
     let color2 = this.props.color2 as string;
-    let unit = this.props.unit;
+    // let unit = this.props.unit;
 
     if (this.props.value.length !== 0) {
       let start;
@@ -324,11 +354,11 @@ class LineChart extends React.Component<any, States> {
       this.drawChart(value, value2, range, timeRange, color, color2, predict, this.props.predict, this.props.name);
     }
 
-    if (!this.props.title2) {
-      this.drawSingleFigureBox(color, unit, this.props.name, this.props.title);
-    } else {
-      this.drawDoubleFigureBox(color, color2 , unit, this.props.name, this.props.title, this.props.title2);
-    }
+    // if (!this.props.title2) {
+    //   this.drawSingleFigureBox(color, unit, this.props.name, this.props.title);
+    // } else {
+    //   this.drawDoubleFigureBox(color, color2 , unit, this.props.name, this.props.title, this.props.title2);
+    // }
   }
 
   componentWillReceiveProps(props: Props) {
@@ -336,7 +366,7 @@ class LineChart extends React.Component<any, States> {
 
     let color = props.color;
     let color2 = props.color2 as string;
-    let unit = props.unit;
+    // let unit = props.unit;
 
     if (props.value.length !== 0) {
       let value = props.value;
@@ -359,11 +389,11 @@ class LineChart extends React.Component<any, States> {
                      (props.patient as any).predict, props.predict, this.props.name);
     }
     
-    if (!props.title2) {
-      this.drawSingleFigureBox(color, unit, this.props.name, props.title);
-    } else {
-      this.drawDoubleFigureBox(color, color2 , unit, this.props.name, props.title, props.title2 as any);
-    }
+    // if (!props.title2) {
+    //   this.drawSingleFigureBox(color, unit, this.props.name, props.title);
+    // } else {
+    //   this.drawDoubleFigureBox(color, color2 , unit, this.props.name, props.title, props.title2 as any);
+    // }
   }
 
   render() {

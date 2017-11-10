@@ -1,3 +1,6 @@
+* {
+  font-family: sans-serif;
+}
 .row > *{
   display: inline-block;
   vertical-align:top;
@@ -13,6 +16,7 @@ div.row {
   height: 6px;
   background-color: rgba(0,0,0,0);
   border-radius: 100px;
+  left: 10;
 }
 .slimScroll::-webkit-scrollbar:hover {
 background-color: rgba(0, 0, 0, 0.09);

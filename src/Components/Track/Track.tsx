@@ -34,6 +34,20 @@ class Track extends React.Component<Props, States> {
     super();
   }
 
+  calculatePostionUnit(textLength: number) {
+    if (textLength >= 10) {
+      return 145;
+    } else if (textLength >= 8) {
+      return 140;
+    } else if (textLength >= 6) {
+      return 125;
+    } else if (textLength >= 4) {
+      return 105;
+    } else {
+      return 75;
+    }
+  }
+
   renderLineChart() {
     return (
       <LineChart 
@@ -100,6 +114,54 @@ class Track extends React.Component<Props, States> {
     );
   }
 
+  renderHeader() {
+    return (
+      <g>
+        <rect 
+          className="track-header"
+          width="791px"
+          height="40px"
+          x="-1"  
+          y={this.props.position + 10} 
+        />
+        <rect 
+          width="15"
+          height="15"
+          x="20"  
+          y={this.props.position + 22} 
+          fill={this.props.color}
+        />
+        <text className="track-name" fontWeight="bold" x="40" y={this.props.position + 35} >
+          {this.props.title.toLocaleUpperCase()}
+        </text>
+        { (this.props.title2) ?
+          <g> 
+            <rect 
+              width="15"
+              height="15"
+              x="180"  
+              y={this.props.position + 22} 
+              fill={this.props.color2}
+            />
+            <text className="track-name" fontWeight="bold" x="200" y={this.props.position + 35} >
+              {this.props.title2.toLocaleUpperCase()}
+            </text>
+          </g> : null
+        }
+        { (this.props.unit) ?
+          <text 
+            className="track-name" 
+            fontWeight="bold" 
+            x={(this.props.title2) ? 335 : this.calculatePostionUnit(this.props.title.length)}
+            y={this.props.position + 35} 
+          >
+            ({this.props.unit})
+          </text> : null
+        }
+      </g>
+    );
+  }
+
   renderTrackBorder() {
     return (
       <rect 
@@ -115,7 +177,7 @@ class Track extends React.Component<Props, States> {
     return (
       <rect 
         className="track-drag" 
-        x="800" 
+        x="11" 
         y="20.5" 
         transform="translate(0,0)" 
       />
@@ -157,7 +219,8 @@ class Track extends React.Component<Props, States> {
     return (
       <g className="track-group" >
         {this.renderTrackClipPath()}
-        <svg className="track" y={this.props.position}>
+        {this.renderHeader()}
+        <svg className="track" x="-11" y={this.props.position + 30}>
           {this.renderTrackBorder()}
           {this.renderTrackDrag()}
           {renderComponent}  

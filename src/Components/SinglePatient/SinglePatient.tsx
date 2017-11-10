@@ -3,8 +3,11 @@ import { connect } from 'react-redux';
 
 import Track from '../Track/Track';
 import TimeBar from '../TimeBar/TimeBar';
+import SwitchButton from '../SwitchButton/SwitchButton';
 import ROOTSTATE from '../../Interfaces';
+var Dropdown = require('react-dropdown').default;
 
+import './Dropdown.css';
 import './SinglePatient.css';
 
 import { formatDate } from '../../api';
@@ -54,58 +57,112 @@ class SinglePatient extends React.Component<Props, States> {
     }
   }
 
-  render() {
-    var isPredict = this.state.displayPredict;
+  renderNotePatient() {
+    return (
+      <div id="note-patient">
+        <div id="note-patient-tabbar">
+          <div id="note-patient-button" onClick={this.hideNote}>X</div>
+        </div>
+        <div id="note-patient-container">
+          <div id="note-patient-title"><strong>NOTE</strong></div>
+          <div id="note-patient-id" className="note-info">PATIENT ID: 1234</div>
+          <div id="note-patient-des" className="note-info">DESCRIPTION: abcxyz</div>
+          <div id="note-patient-cat" className="note-info">CATEGORY: abcxyz</div>
+          <div id="note-patient-time" className="note-info">RECORDED TIME: abcxyz</div>
+          <div><strong>TEXT:</strong></div>
+          <div id="note-patient-text" className="note-info slimScroll">abcxyzabcxyzabcxyz</div>
+        </div>
+      </div>
+    );
+  }
+
+  renderPatientInfo() {
     var styleText = {
       color: (this.state.displayPredict) ? 'green' : 'black',
       fontWeight: (this.state.displayPredict) ? 'bold' : '100'
     } as any;
 
     return (
-      <div className="patient">
-        <div id="note-patient">
-          <div id="note-patient-tabbar">
-            <div id="note-patient-button" onClick={this.hideNote}>X</div>
-          </div>
-          <div id="note-patient-container">
-            <div id="note-patient-title"><strong>NOTE</strong></div>
-            <div id="note-patient-id" className="note-info">PATIENT ID: 1234</div>
-            <div id="note-patient-des" className="note-info">DESCRIPTION: abcxyz</div>
-            <div id="note-patient-cat" className="note-info">CATEGORY: abcxyz</div>
-            <div id="note-patient-time" className="note-info">RECORDED TIME: abcxyz</div>
-            <div><strong>TEXT:</strong></div>
-            <div id="note-patient-text" className="note-info slimScroll">abcxyzabcxyzabcxyz</div>
-          </div>
-        </div>
-        <div className="patient-info">
-          <div className="patient-basic-info">
-            <img className="patient-avatar" src={require('./img/avatar.png')} alt="Patient"/>
-            <div className="patient-basic-info-box">
-              <p className="patient-basic-info-text">PATIENT ID: {this.props.patient.info.id}</p>
-              <p className="patient-basic-info-text" style={styleText}>Age: {this.props.patient.info.age}</p>
-              <p className="patient-basic-info-text">Gender: {this.props.patient.info.gender}</p>
-              <p className="patient-basic-info-text">
-                Admission date: <br/> {formatDate(this.props.patient.info.admittime, true)}
-              </p>
-            </div>
-          </div>
-          <div className="patient-health-info">
-            <div className="patient-health-title">DIAGNOSIS</div>
+      <div className="patient-info">
+        <div className="patient-basic-info">
+          <img className="patient-avatar" src={require('./img/avatar.png')} alt="Patient"/>
+          <p className="patient-basic-info-text patient-name">PATIENT ID: {this.props.patient.info.id}</p>
+          <div className="patient-health-info slimScroll">
+            <div className="patient-health-title">Age</div>
+            <div className="patient-health-value">{this.props.patient.info.age}</div>
+            <div className="patient-health-title">Gender</div>
+            <div className="patient-health-value">{this.props.patient.info.gender}</div>
+            <div className="patient-health-title">Admission</div>
+            <div className="patient-health-value">{formatDate(this.props.patient.info.admittime, true)}</div>
+            <div className="patient-health-title">Pre-diagnosis</div>
             <div className="patient-health-value">{this.props.patient.info.diagnosis}</div>
-            <div className="patient-health-title">PREGNANCY</div>
-            <div className="patient-health-value" style={styleText}>{this.pregnancy} (times)</div>
-            <div className="patient-health-title">SKIN THICKNESS</div>
-            <div className="patient-health-value" style={styleText}>{this.skinThickness} (mm)</div>
-            <div className="patient-health-title">INSULIN</div>
-            <div className="patient-health-value" style={styleText}>{this.insulin} (mu U/ml)</div>
-            <div className="patient-health-title">DIABETE PREDIGREE</div>
+            <div className="patient-health-title">Pregnancy (times)</div>
+            <div className="patient-health-value" style={styleText}>{this.pregnancy}</div>
+            <div className="patient-health-title">Skin thickness (mm)</div>
+            <div className="patient-health-value" style={styleText}>{this.skinThickness}</div>
+            <div className="patient-health-title">Insulin (mu U/ml)</div>
+            <div className="patient-health-value" style={styleText}>{this.insulin}</div>
+            <div className="patient-health-title">Diabete predigree</div>
             <div className="patient-health-value" style={styleText}>{this.diabetesPedigreeFunction}</div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  renderFeatureSelection() {
+    const options = [
+      { value: 'one', label: 'One' },
+      { value: 'two', label: 'Two' }
+    ];
+
+    return (
+      <div className="patient-feature-selection">
+        <div className="top-feature-selection">
+          <div className="title-area">PIN FEATURE</div>
+          <div className="select-area">
+            <Dropdown options={options} placeholder="Select a feature" />
+          </div>
+        </div>
+        <div className="body-feature-selection">
+          <div className="title-area">DISPLAY FEATURE</div>
+          <div className="search-area">
+            <input type="text"/>
+          </div>
+          <div className="list-feature">
+            <div className="feature">
+              <div className="feature-button">
+                <SwitchButton isChecked={false} />
+              </div>
+              <div className="feature-text">
+                Glucose
+              </div>
+            </div>
+            <div className="feature">
+              <div className="feature-button">
+                <SwitchButton isChecked={false} />
+              </div>
+              <div className="feature-text">
+                BMI
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  render() {
+    var isPredict = this.state.displayPredict;
+
+    return (
+      <div className="patient">
+        {this.renderNotePatient()}
+        {this.renderPatientInfo()}
         <div className="patient-chart">
-          <div className="patient-chart-figure">
+          <div className="patient-chart-figure" style={{marginTop: '-10px'}}>
             <div className="patient-chart-header">
-              <svg className="svg-container" style={{height: 140}}>
+              <svg className="svg-container" style={{height: 155}}>
                 <Track 
                   type={'line-chart'} 
                   name={'HbA1c'} 
@@ -118,8 +175,9 @@ class SinglePatient extends React.Component<Props, States> {
                 />
               </svg>
             </div>
-            <div className="patient-chart-body slimScroll">
-              <svg className="svg-container" style={{height: 980}}>
+            <hr style={{width: '788px', margin: 0, marginLeft: '20px'}}/>
+            <div className="patient-chart-body">
+              <svg className="svg-container" style={{height: 1118}}>
                 <Track 
                   type={'line-chart'} 
                   name={'BMI'} 
@@ -129,7 +187,7 @@ class SinglePatient extends React.Component<Props, States> {
                   unit={'kg/m2'}
                   color={'rgba(0, 0, 255, 0.7)'}
                   predict={isPredict}
-                  position={0}
+                  position={-10}
                 />
                 <Track 
                   type={'line-chart'} 
@@ -140,7 +198,7 @@ class SinglePatient extends React.Component<Props, States> {
                   unit={'mg/dl'}
                   color={'rgba(255, 0, 0, 0.7)'}
                   predict={isPredict}
-                  position={120}
+                  position={130}
                 />
                 <Track 
                   type={'bar-chart'} 
@@ -154,7 +212,7 @@ class SinglePatient extends React.Component<Props, States> {
                   color={'rgba(0, 0, 255, 0.7)'}
                   color2={'rgba(255, 0, 0, 0.7)'}
                   predict={isPredict}
-                  position={240}
+                  position={270}
                 />
                 <Track 
                   type={'line-chart'} 
@@ -163,11 +221,11 @@ class SinglePatient extends React.Component<Props, States> {
                   title2={'Triglycerides'} 
                   value={this.props.patient.choles}
                   value2={this.props.patient.trigly}
-                  range={[0, 900]}
+                  range={[0, 1000]}
                   unit={'mg/dl'}
                   color={'rgba(0, 0, 255, 0.7)'}
                   color2={'rgba(255, 0, 0, 0.7)'}
-                  position={360}
+                  position={410}
                 />
                 <Track 
                   type={'line-chart'} 
@@ -177,7 +235,7 @@ class SinglePatient extends React.Component<Props, States> {
                   range={[0, 3]}
                   unit={'mg/dl'}
                   color={'rgba(0, 0, 255, 0.7)'}
-                  position={480}
+                  position={550}
                 />
                 <Track 
                   type={'line-chart'} 
@@ -187,7 +245,7 @@ class SinglePatient extends React.Component<Props, States> {
                   range={[0, 5]}
                   unit={'mg/dl'}
                   color={'rgba(255, 0, 0, 0.7)'}
-                  position={600}
+                  position={690}
                 />
                 <Track 
                   type={'event-chart'} 
@@ -196,17 +254,18 @@ class SinglePatient extends React.Component<Props, States> {
                   title2={'Lisin'}
                   value={this.props.patient.simva}
                   value2={this.props.patient.lisin}
-                  position={720}
+                  position={830}
                 />
                 <Track 
                   type={'note-chart'} 
                   name={'NOTE'} 
                   title={'NOTE'} 
                   value={this.props.patient.notes}
-                  position={840}
+                  position={970}
                 />
               </svg>
             </div>
+            <hr style={{width: '788px', margin: 0, marginLeft: '20px'}}/>
             <div className="patient-chart-footer">
               <div className="patient-predict-diabete">
               <TimeBar
@@ -214,7 +273,7 @@ class SinglePatient extends React.Component<Props, States> {
                 endTime={this.props.patient.info.dischtime}
               /> 
               </div>
-              <div className="patient-predict-diabete" style={{paddingLeft: '10px'}}>
+              {/* <div className="patient-predict-diabete" style={{paddingLeft: '10px'}}>
                 <div className="patient-diabete-title">DIABETE DIAGNOSIS</div>
                 <div 
                   className={
@@ -226,10 +285,11 @@ class SinglePatient extends React.Component<Props, States> {
                 >
                   {(!this.state.displayPredict) ? 'SHOW ABNORMAL' : 'HIDE ABNORMAL'}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
+        {this.renderFeatureSelection()}
       </div>
     );
   }

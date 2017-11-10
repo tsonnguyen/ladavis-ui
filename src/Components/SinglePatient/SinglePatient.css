@@ -13,18 +13,24 @@
 }
 
 .patient-basic-info {
+  position: relative;
   border: 1px solid black;
   height: auto;
   margin-top: 10px;
-  padding-bottom: 10px;
 }
 
 .patient-avatar {
-  width: 80%;
-  margin-left: 10%;
-  margin-top: 10px;
-  padding-top: 10px;
-  border: 1px solid black;
+  width: 100%;
+  border-bottom: 1px solid black;
+}
+
+.patient-name {
+  margin-top: -4px !important;
+  margin-bottom: 0 !important;
+  font-weight: bold;
+  color: white;
+  background: #ff8a6b;
+  padding: 5px;
 }
 
 .patient-basic-info-box {
@@ -44,27 +50,33 @@
 }
 
 .patient-health-info {
-  height: auto;
-  margin-top: 8px;
-  border: 1px solid black;
+  height: 442px;
+  overflow-y: scroll;
 }
 
 .patient-health-title {
   padding: 5px;
-  background: grey;
-  color: white;
-  border: 1px solid black;
+  padding-top: 15px;
+  color: #ff8a6b;
+  font-size: 12px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-weight: bold;
 }
 
 .patient-health-value {
   padding: 5px;
-  border: 1px solid black;  
+  padding-bottom: 15px;
+  padding-top: 0;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-bottom: 1px solid lightgrey;
 }
 
 .patient-predict-diabete {
-  margin-top: 9px;
   display: table-cell;
   vertical-align: top;
+  border-left: 1px solid black;
 }
 
 .patient-diabete-title {
@@ -89,19 +101,17 @@
   background: rgba(60, 255, 0, 0.81);
 }
 
-
 .patient-chart {
   display: table-cell;
-  width: 1070px;
+  width: 840px;
   vertical-align: top;
 }
 
 .patient-chart-header {
-  height: 135px;
+  height: 160px !important;
   margin-top: 10px;
   margin-left: 20px;
   margin-right: 20px;
-  border: 1px solid black;
 }
 
 .patient-chart-header .svg-container {
@@ -109,12 +119,15 @@
 }
 
 .patient .patient-chart-body {
-  height: 375px;
-  margin-top: 20px;
+  width: 805px;
+  height: 394px;
   margin-left: 20px;
-  margin-right: 20px;
-  border: 1px solid black;
+
   overflow: auto;
+}
+
+.patient .patient-chart-body::-webkit-scrollbar {
+  display: none;
 }
 
 .patient-chart-body .svg-container {
@@ -122,13 +135,100 @@
 }
 
 .patient-chart-footer {
-  height: 70px;
-  margin-top: 20px;
+  width: 750px;
+  height: 61px;
+  margin-top: 13px;
   margin-left: 20px;
   margin-right: 20px;
-  padding-top: 10px;
-  padding-left: 50px;
+  padding-left: 38px;
   border: 1px solid black;
+  overflow: hidden;
+}
+
+.patient-feature-selection {
+  display: table-cell;
+  width: 238px;
+  vertical-align: top;
+}
+
+.top-feature-selection {
+  margin-top: 10px;
+  margin-left: -10px;
+  width: 225px;
+  height: 140px;
+  border: 1px solid black;
+}
+
+.body-feature-selection {
+  margin-top: 10px;
+  margin-left: -10px;
+  width: 225px;
+  height: 394px;
+  border: 1px solid black;
+}
+
+.patient-feature-selection input {
+  width: 185px;
+  margin-top: 10px;
+  margin-left: 10px;
+  border: 1px solid black;
+  padding: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 20px;
+  outline: none;
+}
+
+.patient-feature-selection .title-area {
+  display: table-cell;
+  width: 230px;
+  height: 40px;
+  border-bottom: 1px solid black;
+  vertical-align: middle;
+  padding-left: 10px;
+}
+
+.patient-feature-selection .Dropdown-control   {
+  width: 200px;
+  outline: none;
+  margin-top: 25px;
+  margin-left: 12px;
+  padding-left: 5px;
+}
+
+.patient-feature-selection .Dropdown-menu {
+  width: 200px;
+  margin-left: 12px;
+  padding-left: 5px;
+}
+
+.patient-feature-selection .list-feature {
+  margin-top: 5px;
+  margin-left: -1px;
+}
+
+.patient-feature-selection .Dropdown-placeholder {
+  padding-left: 5px;
+}
+
+.patient-feature-selection .feature {
+  width: 206px;
+  display: table;
+  padding: 10px;
+  border-bottom: 1px solid black;
+}
+
+.patient-feature-selection .feature-button {
+  width: 40px;
+  padding-left: 10px;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.patient-feature-selection .feature-text {
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 10px;
 }
 
 #note-patient {

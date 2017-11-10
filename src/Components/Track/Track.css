@@ -3,21 +3,45 @@
   width: 1020px;
 }
 
+.track-group .tick:nth-child(2) {
+  display: none;
+}
+
+.track-group .tick:last-child{
+  display: none;
+}
+
 .track-border {
   height: 100px;
   width: 750px;
   fill: transparent;
-  stroke-width: 3;
+  stroke-width: 1;
   stroke: rgb(0,0,0)
+}
+/* 
+.patient-chart-header .track-border {
+  width: 760px;
+}
+
+.patient-chart-header .track-header {
+  width: 801px;
+} */
+
+.track-header {
+  fill: #ff8a6b;
+}
+
+.track-name {
+  fill: white;
+
 }
 
 .track-drag {
   height: 100px;
-  width: 30px;
+  width: 40px;
   fill: transparent;
-  stroke-width: 3;
+  stroke-width: 1;
   stroke: rgb(0,0,0);
-  cursor: pointer;
 }
 
 .tick line {
@@ -40,4 +64,8 @@
 .figure-box {
   stroke: black;
   stroke-width: 2px;
+}
+
+.overlay {
+  cursor: pointer;
 }
