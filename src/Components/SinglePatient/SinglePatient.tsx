@@ -74,7 +74,7 @@ class SinglePatient extends React.Component<Props, States> {
             <div id="note-patient-cat" className="note-info">CATEGORY: abcxyz</div>
             <div id="note-patient-time" className="note-info">RECORDED TIME: abcxyz</div>
             <div><strong>TEXT:</strong></div>
-            <div id="note-patient-text" className="note-info">abcxyzabcxyzabcxyz</div>
+            <div id="note-patient-text" className="note-info slimScroll">abcxyzabcxyzabcxyz</div>
           </div>
         </div>
         <div className="patient-info">
@@ -118,7 +118,7 @@ class SinglePatient extends React.Component<Props, States> {
                 />
               </svg>
             </div>
-            <div className="patient-chart-body">
+            <div className="patient-chart-body slimScroll">
               <svg className="svg-container" style={{height: 980}}>
                 <Track 
                   type={'line-chart'} 

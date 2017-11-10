@@ -49,7 +49,7 @@ class Track extends React.Component<Props, States> {
         predict={this.props.predict}
         position={50}
       />
-    );
+    ) ;
   }
 
   renderBarChart() {

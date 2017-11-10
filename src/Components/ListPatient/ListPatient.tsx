@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+// import * as d3 from 'd3';
 
 import Track from '../Track/Track';
 // import TimeBar from '../TimeBar/TimeBar';
@@ -20,6 +21,7 @@ interface Props {
 
 interface States {
   listPatient: any;
+  selectedFeature: string;
 }
 
 const mapStateToProps = (state: ROOTSTATE) => ({
@@ -43,7 +45,8 @@ class ListPatient extends React.Component<Props, States> {
   constructor() {
     super();
     this.state = {
-      listPatient: []
+      listPatient: [],
+      selectedFeature: 'Hb'
     };
   }
 
@@ -57,37 +60,121 @@ class ListPatient extends React.Component<Props, States> {
   }
 
   singlePatient(index: number, patient: any) {
+    // d3.select('#' + 'patient-' + patient.id).selectAll('*').remove();
+
+    var chart = null;
+    switch (this.state.selectedFeature) {
+      case 'Hb':
+        chart = (
+          <Track 
+            type={'line-chart'} 
+            name={'hb-patient-' + patient.id} 
+            title={'HbA1c'} 
+            value={patient.hemoA1c}
+            range={[0, 20]}
+            unit={'%'}
+            color={'rgba(255, 0, 0, 0.7)'}
+            position={-5}
+          />
+        );
+        break;
+      case 'Glu':
+        chart = (
+          <Track 
+            type={'line-chart'} 
+            name={'glu-patient-' + patient.id} 
+            title={'Glucose'} 
+            value={patient.glucoseBlood}
+            range={[0, 1200]}
+            unit={'mg/dl'}
+            color={'rgba(255, 0, 0, 0.7)'}
+            position={-5}
+          />
+        );
+        break;
+      case 'BP':
+        chart = (
+          <Track 
+            type={'line-chart'} 
+            name={'bp-patient-' + patient.id} 
+            title={'NBP Systolic'} 
+            title2={'NBP Diastolic'} 
+            value={patient.systolic}
+            value2={patient.diastolic}
+            range={[0, 300]}
+            unit={'mmHg'}
+            color={'rgba(0, 0, 255, 0.7)'}
+            color2={'rgba(255, 0, 0, 0.7)'}
+            position={-5}
+          />
+        );
+        break;
+      case 'Fat':
+        chart = (
+          <Track 
+            type={'line-chart'} 
+            name={'fat-patient-' + patient.id} 
+            title={'Cholesterol'} 
+            title2={'Triglycerides'} 
+            value={patient.choles}
+            value2={patient.trigly}
+            range={[0, 900]}
+            unit={'mg/dl'}
+            color={'rgba(0, 0, 255, 0.7)'}
+            color2={'rgba(255, 0, 0, 0.7)'}
+            position={-5}
+          />
+        );
+        break;
+      case 'Cr':
+        chart = (
+          <Track 
+            type={'line-chart'} 
+            name={'cr-patient-' + patient.id} 
+            title={'Creatinine'} 
+            value={patient.creatinine}
+            range={[0, 10]}
+            unit={'mg/dl'}
+            color={'rgba(255, 0, 0, 0.7)'}
+            position={-5}
+          />
+        );
+        break;
+      case 'Alb':
+        chart = (
+          <Track 
+            type={'line-chart'} 
+            name={'alb-patient-' + patient.id} 
+            title={'Albumin'} 
+            value={patient.albumin}
+            range={[0, 5]}
+            unit={'mg/dl'}
+            color={'rgba(255, 0, 0, 0.7)'}
+            position={-5}
+          />
+        );
+        break;
+      default: break;
+    }
     return(
       <div key={index}>
         <div 
           className="patient-basic-info-container"
-          style={{
-            display: 'inline-block', verticalAlign: 'top', width: 'calc(16% - 27px)', paddingTop: '5px',
-            paddingBottom: '5px', marginTop: '15px', marginLeft: '13px', paddingLeft: '10px', paddingRight: '2px',
-            border: '1px solid black'
-          }}
           onClick={() => { 
             this.props.addPatient(patient.id); 
             window.location.href = '/single-patient?patient=' + patient.id;
           }}
         >
-          <p className="patient-basic-info-text">PATIENT ID: {patient.id}</p>
-          <p className="patient-basic-info-text">Age: {patient.dob}</p>
-          <p className="patient-basic-info-text">Gender: {patient.gender}</p>
-          <p className="patient-basic-info-text">Diagnosis: DIABETES</p>
+          <div className="patient-basic-info-subcontainer">
+            <p className="patient-basic-info-text">PATIENT ID: {patient.id}</p>
+            <p className="patient-basic-info-text">Age: {patient.dob}</p>
+            <p className="patient-basic-info-text">Gender: {patient.gender}</p>
+            <p className="patient-basic-info-text">Diagnosis: DIABETES</p>
+          </div>
         </div>
-        <div style={{display: 'inline-block', verticalAlign: 'top', width: '84%'}}>
-          <svg className="svg-container" style={{height: '130px'}}>
-            <Track 
-              type={'line-chart'} 
-              name={'patient-' + patient.id} 
-              title={'HbA1c'} 
-              value={patient.hemoA1c}
-              range={[0, 20]}
-              unit={'%'}
-              color={'rgba(255, 0, 0, 0.7)'}
-              position={-5}
-            />
+        <div className="patient-chart-container">
+          <svg id={'patient-' + patient.id} className="svg-container" style={{height: '130px'}}>
+            {chart}
           </svg>
         </div>
       </div>
@@ -105,8 +192,52 @@ class ListPatient extends React.Component<Props, States> {
 
     return (
       <div className="list-patient">
-        <div className="patient-chart-body"  style={{width: '95%', height: '625px', display: 'block'}}>
+        <div className="patient-chart-body slimScroll">
           {listPatient}
+        </div>
+        <div className="select-feature-bar">
+          <div 
+            className={(this.state.selectedFeature === 'Hb') ? 'selected-feature' : 'select-feature'}
+            onClick={() => { this.setState({selectedFeature: 'Hb'}); }} 
+            title="Hemoglobin A1c"
+          >
+            Hb
+          </div>
+          <div 
+            className={(this.state.selectedFeature === 'Glu') ? 'selected-feature' : 'select-feature'}
+            onClick={() => { this.setState({selectedFeature: 'Glu'}); }} 
+            title="Glucose"
+          >
+            Glu
+          </div>
+          <div 
+            className={(this.state.selectedFeature === 'BP') ? 'selected-feature' : 'select-feature'}
+            onClick={() => { this.setState({selectedFeature: 'BP'}); }} 
+            title="Blood pressure"
+          >
+            BP
+          </div>
+          <div 
+            className={(this.state.selectedFeature === 'Fat') ? 'selected-feature' : 'select-feature'}
+            onClick={() => { this.setState({selectedFeature: 'Fat'}); }} 
+            title="Fat"
+          >
+            Fat
+          </div>
+          <div 
+            className={(this.state.selectedFeature === 'Cr') ? 'selected-feature' : 'select-feature'}
+            onClick={() => { this.setState({selectedFeature: 'Cr'}); }} 
+            title="Creatine"
+          >
+            Cr
+          </div>
+          <div 
+            className={(this.state.selectedFeature === 'Alb') ? 'selected-feature' : 'select-feature'}
+            onClick={() => { this.setState({selectedFeature: 'Alb'}); }} 
+            title="Albumin"
+          >
+            Alb
+          </div>
         </div>
       </div>
     );

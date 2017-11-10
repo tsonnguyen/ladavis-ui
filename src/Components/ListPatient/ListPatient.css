@@ -104,13 +104,17 @@
   width: 100%;
 }
 
-.patient-chart-body {
-  height: 375px;
-  margin-top: 20px;
-  margin-left: 20px;
+.list-patient {
+  height: 660px;
+
+}
+
+.list-patient .patient-chart-body {
+  width: 95%;
+  height: 100%;
   margin-right: 20px;
-  border: 1px solid black;
   overflow: auto;
+  border-right: 1px solid black;
 }
 
 .patient-chart-body .svg-container {
@@ -128,5 +132,103 @@
 }
 
 .patient-basic-info-container {
+  position: relative;
   cursor: pointer;
+  display: inline-block;
+  vertical-align: top;
+  width: calc(19% - 27px);
+}
+
+.patient-basic-info-subcontainer {
+  position: absolute;
+  border: 1px solid black;
+  border-radius: 10px;
+  width: 180px;
+  height: 85px;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  margin-top: 15px;
+  margin-left: 25px;
+  padding-left: 10px; 
+  padding-right: 2px;
+  vertical-align: middle;
+  font-size: 16px;
+}
+
+.patient-basic-info-subcontainer p{
+  font-size: 16px;
+}
+
+.patient-basic-info-subcontainer:hover {
+  background: lightcoral;
+  border: 1px solid red;
+  color: white
+}
+
+.patient-chart-container {
+  display: inline-block; 
+  vertical-align: top; 
+  width: 81%;
+  /* margin-left: 260px; */
+}
+
+.slimScroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: rgba(0,0,0,0);
+  border-radius: 100px;
+}
+.slimScroll::-webkit-scrollbar:hover {
+background-color: rgba(0, 0, 0, 0.09);
+}
+.slimScroll::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.5);
+  border-radius: 100px;
+}
+.slimScroll::-webkit-scrollbar-thumb:active {
+  background: rgba(0,0,0,0.61);
+  border-radius: 100px;
+}
+
+.select-feature-bar {
+  position: fixed;
+  right: 0;
+  top: 40px;
+  width: 62px;
+  padding-top: 10px;
+}
+
+.select-feature-bar .select-feature {
+  border: 1px solid black;
+  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.select-feature-bar .selected-feature {
+  background: lightcoral;
+  border: 1px solid red;
+  color: white;
+  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.select-feature-bar .select-feature:hover {
+  background: lightgreen;
+  border: 1px solid green;
 }

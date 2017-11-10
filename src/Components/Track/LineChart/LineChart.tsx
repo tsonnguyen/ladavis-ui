@@ -48,7 +48,7 @@ class LineChart extends React.Component<any, States> {
 
   drawChart(data: Object[], data2: Object[], range: [number, number], 
             timeRange: [number, number], color: string, color2: string, 
-            predict: Number[]|null = null, isPredict: any) {
+            predict: Number[]|null = null, isPredict: any, name: string) {
     var self = this;
 
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -64,7 +64,7 @@ class LineChart extends React.Component<any, States> {
         .x(function(d: any) { return x(Number(convertedTime(d.time))); })
         .y(function(d: any) { return y(Number(d.value)); });
     
-    var svg = d3.select('#' + self.props.name).append('svg')
+    var svg = d3.select('#' + name).append('svg')
         .attr('class', 'line-chart')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom);
@@ -79,7 +79,7 @@ class LineChart extends React.Component<any, States> {
 
     chart.append('rect')
         .attr('class', 'selector')
-        .attr('fill', color)
+        .attr('fill', 'transparent')
         .attr('rx', '100')
         .attr('ry', '100')
         .attr('x', '0px')
@@ -96,23 +96,23 @@ class LineChart extends React.Component<any, States> {
         .attr('stroke-width', '3px')
         .attr('fill', 'none');
     
-    chart.selectAll('.point')
-        .data(data)
-        .enter().append('rect')
-          .attr('class', 'bar')
-          .attr('fill', color)
-          .attr('rx', '100')
-          .attr('ry', '100')
-          .attr('x', function(d: any) { return x(Number(convertedTime(d.time))) + 7; })
-          .attr('width', '5px')
-          .attr('y', function(d: any) { return y(Number(d.value)) - 2.5; })
-          .attr('height', '5px')
-          .attr('transform', 'translate(-10,0)');
+    // chart.selectAll('.point')
+    //     .data(data)
+    //     .enter().append('rect')
+    //       .attr('class', 'bar')
+    //       .attr('fill', color)
+    //       .attr('rx', '100')
+    //       .attr('ry', '100')
+    //       .attr('x', function(d: any) { return x(Number(convertedTime(d.time))) + 7; })
+    //       .attr('width', '5px')
+    //       .attr('y', function(d: any) { return y(Number(d.value)) - 2.5; })
+    //       .attr('height', '5px')
+    //       .attr('transform', 'translate(-10,0)');
 
     if (data2) {
         chart.append('rect')
             .attr('class', 'selector-2')
-            .attr('fill', color2)
+            .attr('fill', 'transparent')
             .attr('rx', '100')
             .attr('ry', '100')
             .attr('x', '0px')
@@ -129,18 +129,18 @@ class LineChart extends React.Component<any, States> {
           .attr('stroke-width', '3px')
           .attr('fill', 'none');
 
-        chart.selectAll('.point-2')
-          .data(data2)
-          .enter().append('rect')
-            .attr('class', 'bar')
-            .attr('fill', color2)
-            .attr('rx', '100')
-            .attr('ry', '100')
-            .attr('x', function(d: any) { return x(Number(convertedTime(d.time))) + 7; })
-            .attr('width', '5px')
-            .attr('y', function(d: any) { return y(Number(d.value)) - 2.5; })
-            .attr('height', '5px')
-            .attr('transform', 'translate(-10,0)');
+        // chart.selectAll('.point-2')
+        //   .data(data2)
+        //   .enter().append('rect')
+        //     .attr('class', 'bar')
+        //     .attr('fill', color2)
+        //     .attr('rx', '100')
+        //     .attr('ry', '100')
+        //     .attr('x', function(d: any) { return x(Number(convertedTime(d.time))) + 7; })
+        //     .attr('width', '5px')
+        //     .attr('y', function(d: any) { return y(Number(d.value)) - 2.5; })
+        //     .attr('height', '5px')
+        //     .attr('transform', 'translate(-10,0)');
     }
 
     if (isPredict === true && predict) {
@@ -178,21 +178,24 @@ class LineChart extends React.Component<any, States> {
             selectDate = Math.round(selectDate);
             if (Math.abs(dataTime - selectDate) < (timeRange[1] - timeRange[0]) / 50) {
                 var displayValue = Number((data[i] as any).value);
-                if (data2) {
+                if (data2 && data2.length !== 0) {
                     d3.select('#' + self.props.name).select('.figure-value-1').text(displayValue);
                     let selector = d3.select('#' + self.props.name).select('.selector');
-                    selector.attr('x', x(dataTime) + 5)
+                    selector.attr('fill', color)
+                            .attr('x', x(dataTime) + 5)
                             .attr('y', y(displayValue) - 5);
 
                     let displayValue2 = Number((data2[i] as any).value);
                     let selector2 = d3.select('#' + self.props.name).select('.selector-2');
                     d3.select('#' + self.props.name).select('.figure-value-2').text(displayValue2);
-                    selector2.attr('x', x(dataTime) + 5)
+                    selector2.attr('fill', color2)
+                             .attr('x', x(dataTime) + 5)
                              .attr('y', y(displayValue2) - 5);
                 } else {
                     let selector = d3.select('#' + self.props.name).select('.selector');
                     d3.select('#' + self.props.name).select('.figure-value').text(displayValue);
-                    selector.attr('x', x(dataTime) + 5)
+                    selector.attr('fill', color)
+                            .attr('x', x(dataTime) + 5)
                             .attr('y', y(displayValue) - 5);
                 }
 
@@ -201,8 +204,8 @@ class LineChart extends React.Component<any, States> {
       });
   }
 
-  drawSingleFigureBox(color: string, unit: string) {
-    var svg = d3.select('#' + this.props.name);
+  drawSingleFigureBox(color: string, unit: string, name: string, title: string) {
+    var svg = d3.select('#' + name);
     svg.append('text')
             .attr('class', 'figure-value')
             .text('None')
@@ -225,13 +228,14 @@ class LineChart extends React.Component<any, States> {
 
     svg.append('text')
             .attr('class', 'figure-name')
-            .text(this.props.title)
+            .text(title)
             .attr('x', SizeTrack.TRACK_WIDTH + 50)
             .attr('y', 85); 
   }
 
-  drawDoubleFigureBox(color: string, color2: string, unit: string) {
-    var svg = d3.select('#' + this.props.name);
+  drawDoubleFigureBox(color: string, color2: string, unit: string, name: string, 
+                      title: string, title2: string) {
+    var svg = d3.select('#' + name);
     svg.append('text')
         .attr('class', 'figure-value-1')
         .text('None')
@@ -274,13 +278,13 @@ class LineChart extends React.Component<any, States> {
 
     svg.append('text')
         .attr('class', 'figure-name')
-        .text(this.props.title)
+        .text(title)
         .attr('x', SizeTrack.TRACK_WIDTH + 50)
         .attr('y', 59); 
 
     svg.append('text')
         .attr('class', 'figure-name')
-        .text(this.props.title2 as string)
+        .text(title2 as string)
         .attr('x', SizeTrack.TRACK_WIDTH + 50)
         .attr('y', 114); 
   }
@@ -291,75 +295,74 @@ class LineChart extends React.Component<any, States> {
     }
 
     d3.select('#' + this.props.name).selectAll('.line-chart').remove();
-    
-    let start;
-    let end;
 
-    if (this.props.patient.info.admittime) {
-        start = convertedTime(this.props.patient.info.admittime);
-        end = convertedTime(this.props.patient.info.dischtime);
-    } else {
-        start = convertedTime(this.props.value[0].time);
-        end = convertedTime(this.props.value[this.props.value.length - 1].time);
-    }
-    
-    let zoom = (this.props.zoom) ? this.props.zoom : [0, 1];
-
-    let value = this.props.value;
-    let value2 = this.props.value2 as POINT[];
-    let range = this.props.range;
-    let timeRange = [start + (end - start) * zoom[0], 
-        start + (end - start) * zoom[1]] as [number, number];
     let color = this.props.color;
     let color2 = this.props.color2 as string;
     let unit = this.props.unit;
-    let predict = (this.props.patient) ? this.props.patient.predict : null;
 
-    this.drawChart(value, value2, range, timeRange, color, color2, predict, this.props.predict);
+    if (this.props.value.length !== 0) {
+      let start;
+      let end;
 
-    if (!this.props.title2) {
-        this.drawSingleFigureBox(color, unit);
-    } else {
-        this.drawDoubleFigureBox(color, color2 , unit);
-    }
-  }
-
-  componentWillReceiveProps(props: Props) {
-    d3.select('#' + this.props.name).selectAll('.line-chart').remove();
-
-    if (this.props.patient.info.id === '' && props && props.patient) {
-
-      let value = props.value;
-      let value2 = props.value2 as POINT[];
-      let range = props.range;
-      let timeRange = [convertedTime(props.patient.info.admittime), 
-          convertedTime(props.patient.info.dischtime)] as [number, number];
-      let color = props.color;
-      let color2 = props.color2 as string;
-      let unit = props.unit;
-
-      this.drawChart(value, value2, range, timeRange, color, color2, props.patient.predict, props.predict);
-
-      if (!this.props.title2) {
-          this.drawSingleFigureBox(color, unit);
+      if (this.props.patient.info.admittime) {
+          start = convertedTime(this.props.patient.info.admittime);
+          end = convertedTime(this.props.patient.info.dischtime);
       } else {
-          this.drawDoubleFigureBox(color, color2 , unit);
+          start = convertedTime(this.props.value[0].time);
+          end = convertedTime(this.props.value[this.props.value.length - 1].time);
       }
-    } else {
-      let start = convertedTime(this.props.patient.info.admittime);
-      let end = convertedTime(this.props.patient.info.dischtime);
-      let zoom = (props.zoom) ? props.zoom : [0, 1];
+      
+      let zoom = (this.props.zoom) ? this.props.zoom : [0, 1];
 
       let value = this.props.value;
       let value2 = this.props.value2 as POINT[];
       let range = this.props.range;
       let timeRange = [start + (end - start) * zoom[0], 
           start + (end - start) * zoom[1]] as [number, number];
-      let color = this.props.color;
-      let color2 = this.props.color2 as string;
-      let predict = (props.patient) ? props.patient.predict : null;
+      let predict = (this.props.patient) ? this.props.patient.predict : null;
 
-      this.drawChart(value, value2, range, timeRange, color, color2, predict, props.predict);
+      this.drawChart(value, value2, range, timeRange, color, color2, predict, this.props.predict, this.props.name);
+    }
+
+    if (!this.props.title2) {
+      this.drawSingleFigureBox(color, unit, this.props.name, this.props.title);
+    } else {
+      this.drawDoubleFigureBox(color, color2 , unit, this.props.name, this.props.title, this.props.title2);
+    }
+  }
+
+  componentWillReceiveProps(props: Props) {
+    d3.select('#' + this.props.name).selectAll('*').remove();
+
+    let color = props.color;
+    let color2 = props.color2 as string;
+    let unit = props.unit;
+
+    if (props.value.length !== 0) {
+      let value = props.value;
+      let value2 = props.value2 as POINT[];
+      let range = props.range;
+
+      let start = convertedTime((props.patient as any).info.admittime);
+      let end = convertedTime((props.patient as any).info.dischtime);
+
+      if (isNaN(start)) {
+        start = convertedTime(props.value[0].time);
+        end = convertedTime(props.value[props.value.length - 1].time);
+      }
+
+      let zoom = (props.zoom) ? props.zoom : [0, 1];
+      let timeRange = [start + (end - start) * zoom[0], 
+            start + (end - start) * zoom[1]] as [number, number];
+    
+      this.drawChart(value, value2, range, timeRange, color, color2, 
+                     (props.patient as any).predict, props.predict, this.props.name);
+    }
+    
+    if (!props.title2) {
+      this.drawSingleFigureBox(color, unit, this.props.name, props.title);
+    } else {
+      this.drawDoubleFigureBox(color, color2 , unit, this.props.name, props.title, props.title2 as any);
     }
   }
 

@@ -108,7 +108,7 @@
   width: 100%;
 }
 
-.patient-chart-body {
+.patient .patient-chart-body {
   height: 375px;
   margin-top: 20px;
   margin-left: 20px;
