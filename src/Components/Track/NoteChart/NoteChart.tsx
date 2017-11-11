@@ -37,7 +37,7 @@ class NoteChart extends React.Component<any, States> {
     super();
   }
 
-  drawChart(data: Object[], timeRange: [number, number]) {
+  drawChart(data: Object[], timeRange: [number, number], name: string) {
     var self = this;
 
     // var data = [
@@ -61,12 +61,12 @@ class NoteChart extends React.Component<any, States> {
     // append the svg object to the body of the page
     // append a 'group' element to 'svg'
     // moves the 'group' element to the top left margin
-    var svg = d3.select('#' + self.props.name).append('svg')
+    var svg = d3.select('#' + name).append('svg')
         .attr('class', 'note-chart')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
-          .attr('clip-path', 'url(#clipPath-' + self.props.name + ')')
+          .attr('clip-path', 'url(#clipPath-' + name + ')')
           .attr('transform', 
                 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -137,29 +137,50 @@ class NoteChart extends React.Component<any, States> {
             .attr('class', 'figure-name')
             .text(this.props.title)
             .attr('x', SizeTrack.TRACK_WIDTH + 78)
-            .attr('y', 75); 
+            .attr('y', 75);
+  }
 
+  componentDidMount() {
+    d3.select('#' + this.props.name).selectAll('.note-chart').remove();
+
+    if (this.props.value.length !== 0) {
+      let start = convertedTime((this.props.patient as any).info.admittime);
+      let end = convertedTime((this.props.patient as any).info.dischtime);
+      
+      let zoom = (this.props.zoom) ? this.props.zoom : [0, 1];
+
+      let value = this.props.value;
+      let timeRange = [start + (end - start) * zoom[0], 
+          start + (end - start) * zoom[1]] as [number, number];
+
+      this.drawChart(value, timeRange, this.props.name);
+    }
   }
 
   componentWillReceiveProps(props: Props) {
-    if (this.props.patient.info.id === '' && props && props.patient) {
-      let timeRange = [convertedTime(props.patient.info.admittime), 
-        convertedTime(props.patient.info.dischtime)] as [number, number];
-
-      this.drawChart(props.value, timeRange);
-      this.drawFigureBox();
+    d3.select('#' + this.props.name).selectAll('.note-chart').remove();
+    
+    let name;
+    if (props.name.includes('top')) {
+      name = props.name;
     } else {
-      let start = convertedTime(this.props.patient.info.admittime);
-      let end = convertedTime(this.props.patient.info.dischtime);
-      let zoom = (props.zoom) ? props.zoom : [0, 100];
-      let timeRange = [start + (end - start) * zoom[0], 
-                      start + (end - start) * zoom[1]] as [number, number];
-
-      d3.select('#' + this.props.name).selectAll('.note-chart').remove();
-
-      this.drawChart(props.value, timeRange);
-
+      name = this.props.name;
     }
+
+    if (props.value.length !== 0) {
+      let value = props.value;
+      // let unit = props.unit;
+
+      let start = convertedTime((props.patient as any).info.admittime);
+      let end = convertedTime((props.patient as any).info.dischtime);
+
+      let zoom = (props.zoom) ? props.zoom : [0, 1];
+      let timeRange = [start + (end - start) * zoom[0], 
+            start + (end - start) * zoom[1]] as [number, number];
+    
+      this.drawChart(value, timeRange, name);
+      // this.drawFigureBox(color, color2 , unit);
+    } 
   }
 
   render() {

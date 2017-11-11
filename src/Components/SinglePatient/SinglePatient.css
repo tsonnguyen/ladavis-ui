@@ -25,7 +25,7 @@
 }
 
 .patient-name {
-  margin-top: -4px !important;
+  margin-top: -5px !important;
   margin-bottom: 0 !important;
   font-weight: bold;
   color: white;
@@ -205,6 +205,8 @@
 .patient-feature-selection .list-feature {
   margin-top: 5px;
   margin-left: -1px;
+  height: 311px;
+  overflow: scroll
 }
 
 .patient-feature-selection .Dropdown-placeholder {
@@ -212,7 +214,7 @@
 }
 
 .patient-feature-selection .feature {
-  width: 206px;
+  width: 202px;
   display: table;
   padding: 10px;
   border-bottom: 1px solid black;
@@ -228,7 +230,8 @@
 .patient-feature-selection .feature-text {
   display: table-cell;
   vertical-align: middle;
-  padding-left: 10px;
+  padding-left: 15px;
+  font-size: 14px;
 }
 
 #note-patient {

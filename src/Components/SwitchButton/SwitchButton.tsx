@@ -3,6 +3,7 @@ import './SwitchButton.css';
 
 interface Props {
   isChecked: boolean;
+  callback: Function;
 }
 
 interface States {
@@ -45,7 +46,11 @@ export default class SwitchButton extends React.Component<Props, States> {
   }
   
   _handleChange = () => {
-    this.setState( { isChecked: !this.state.isChecked } );
+    let newState = !this.state.isChecked;
+    this.setState({ 
+      isChecked: newState
+    });
+    this.props.callback(newState);
   }
   
 }

@@ -20,6 +20,26 @@ interface Props {
 
 interface States {
   displayPredict: boolean;
+  searchFeature: string;
+  topFeature: string;
+  isBMI: boolean;
+  isGlucose: boolean;
+  isNBP: boolean;
+  isFat: boolean;
+  isCreatine: boolean;
+  isAlbumin: boolean;
+  isDrug: boolean;
+  isNote: boolean;
+  listPosition: {
+    albumin: number;
+    bp: number;
+    bmi: number;
+    creatine: number;
+    fat: number;
+    glucose: number;
+    note: number;
+    drug: number;
+  };
 }
 
 const mapStateToProps = (state: ROOTSTATE) => ({
@@ -31,16 +51,48 @@ const mapDispatchToProps = (dispatch: any) => ({
   },
 });
 
+
+
 class SinglePatient extends React.Component<Props, States> {
   skinThickness = Math.floor((Math.random() * 50) + 7);
   pregnancy = 0;
   insulin = Math.floor((Math.random() * 500) + 90);
   diabetesPedigreeFunction = ((Math.random() * 1.6) + 0.085).toFixed(2);
+  featureOptions = [
+    { value: 'Albumin', label: 'Albumin' },
+    { value: 'Blood pressure', label: 'Blood pressure' },
+    { value: 'BMI', label: 'BMI' },
+    { value: 'Creatine', label: 'Creatine' },
+    { value: 'Fat', label: 'Fat' },
+    { value: 'Glucose', label: 'Glucose' },
+    { value: 'Note', label: 'Note' },
+    { value: 'Prescription', label: 'Prescription' }
+  ];
 
   constructor() {
     super();
     this.state = {
-      displayPredict: false
+      displayPredict: false,
+      topFeature: 'HbA1c',
+      searchFeature: '',
+      isBMI: true,
+      isGlucose: true,
+      isNBP: true,
+      isFat: true,
+      isCreatine: true,
+      isAlbumin: true,
+      isDrug: true,
+      isNote: true, 
+      listPosition: {
+        albumin: 690,
+        bp: 270,
+        bmi: -10,
+        creatine: 550,
+        fat: 410,
+        glucose: 130,
+        note: 970,
+        drug: 830
+      }
     };
   }
 
@@ -111,49 +163,255 @@ class SinglePatient extends React.Component<Props, States> {
   }
 
   renderFeatureSelection() {
-    const options = [
-      { value: 'one', label: 'One' },
-      { value: 'two', label: 'Two' }
-    ];
+    let isChoose = (value: string) => {
+      let searchValue = this.state.searchFeature.toLocaleLowerCase();
+      let considerValue = value.toLocaleLowerCase();
+      if (considerValue.indexOf(searchValue) > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    let selectFeature = (isCheck: boolean, name: string) => {
+      let callback = (newState: boolean) => {
+        if (name === 'Albumin') {
+          this.setState({ isAlbumin: newState });
+        } else if (name === 'Blood pressure') {
+          this.setState({ isNBP: newState });
+        } else if (name === 'BMI') {
+          this.setState({ isBMI: newState });
+        } else if (name === 'Creatine') {
+          this.setState({ isCreatine: newState });
+        } else if (name === 'Fat') {
+          this.setState({ isFat: newState });
+        } else if (name === 'Glucose') {
+          this.setState({ isGlucose: newState });
+        } else if (name === 'HbA1c') {
+          // this.setState({ isH: newState});
+        } else if (name === 'Note') {
+          this.setState({ isNote: newState });
+        } else if (name === 'Prescription') {
+          this.setState({ isDrug: newState });
+        }
+      };
+
+      return (isChoose(name)) ? (
+        <div className="feature">
+          <div className="feature-button">
+            <SwitchButton isChecked={isCheck} callback={callback}/>
+          </div>
+          <div className="feature-text">{name}</div>
+        </div>
+      ) : null;
+    };
 
     return (
       <div className="patient-feature-selection">
         <div className="top-feature-selection">
           <div className="title-area">PIN FEATURE</div>
           <div className="select-area">
-            <Dropdown options={options} placeholder="Select a feature" />
+            <Dropdown 
+              options={this.featureOptions} 
+              value={this.state.topFeature}
+              placeholder="Select a feature"
+              onChange={(e: any) => {
+                this.setState({
+                  topFeature: e.value
+                });
+              }}
+            />
           </div>
         </div>
         <div className="body-feature-selection">
           <div className="title-area">DISPLAY FEATURE</div>
           <div className="search-area">
-            <input type="text"/>
+            <input 
+              defaultValue={this.state.searchFeature}
+              onChange={(e) => { this.setState({searchFeature: e.target.value}); }} 
+              type="text"
+            />
           </div>
-          <div className="list-feature">
-            <div className="feature">
-              <div className="feature-button">
-                <SwitchButton isChecked={false} />
-              </div>
-              <div className="feature-text">
-                Glucose
-              </div>
-            </div>
-            <div className="feature">
-              <div className="feature-button">
-                <SwitchButton isChecked={false} />
-              </div>
-              <div className="feature-text">
-                BMI
-              </div>
-            </div>
+          <div className="list-feature slimScroll">
+            {selectFeature(this.state.isAlbumin, 'Albmin')} 
+            {selectFeature(this.state.isNBP, 'Blood pressure')}
+            {selectFeature(this.state.isBMI, 'BMI')}
+            {selectFeature(this.state.isCreatine, 'Creatine')}
+            {selectFeature(this.state.isFat, 'Fat')}
+            {selectFeature(this.state.isGlucose, 'Glucose')}
+            {selectFeature(this.state.isNote, 'Note')}
+            {selectFeature(this.state.isDrug, 'Prescription')}
           </div>
         </div>
       </div>
-    )
+    );
+  }
+
+  renderAlbumin(position: number, color: string, isTop: boolean = false) {
+    return (
+      <Track 
+        type={'line-chart'} 
+        name={(isTop) ? 'Albumin-Top' : 'Albumin'} 
+        title={'Albumin'} 
+        value={this.props.patient.albumin}
+        range={[0, 5]}
+        unit={'mg/dl'}
+        color={color}
+        position={position}
+      />
+    );
+  }
+
+  renderBP(position: number, color1: string, color2: string, isPredict: boolean, isTop: boolean = false) {
+    return (
+      <Track 
+        type={'bar-chart'} 
+        name={(isTop) ? 'NBP-Top' : 'NBP'} 
+        title={'NBP Systolic'} 
+        title2={'NBP Diastolic'} 
+        value={this.props.patient.systolic}
+        value2={this.props.patient.diastolic}
+        range={[0, 200]}
+        unit={'mmHg'}
+        color={color1}
+        color2={color2}
+        predict={isPredict}
+        position={position}
+      />
+    );
+  }
+  
+  renderBMI(position: number, color: string, isPredict: boolean, isTop: boolean = false) {
+    return (
+      <Track 
+        type={'line-chart'} 
+        name={(isTop) ? 'BMI-Top' : 'BMI'} 
+        title={'BMI'} 
+        value={this.props.patient.bmi}
+        range={[10, 40]}
+        unit={'kg/m2'}
+        color={color}
+        predict={isPredict}
+        position={position}
+      />
+    );
+  }
+
+  renderCreatine(position: number, color: string, isTop: boolean = false) {
+    return (
+      <Track 
+        type={'line-chart'} 
+        name={(isTop) ? 'Creatinine-Top' : 'Creatinine'} 
+        title={'Creatinine'} 
+        value={this.props.patient.creatinine}
+        range={[0, 3]}
+        unit={'mg/dl'}
+        color={color}
+        position={position}
+      />
+    );
+  }
+
+  renderFat(position: number, color1: string, color2: string, isTop: boolean = false) {
+    return (
+      <Track 
+        type={'line-chart'} 
+        name={(isTop) ? 'Fat-Top' : 'Fat'} 
+        title={'Cholesterol'} 
+        title2={'Triglycerides'} 
+        value={this.props.patient.choles}
+        value2={this.props.patient.trigly}
+        range={[0, 1000]}
+        unit={'mg/dl'}
+        color={color1}
+        color2={color2}
+        position={position}
+      />
+    );
+  }
+
+  renderGlucose(position: number, color: string, isPredict: boolean, isTop: boolean = false) {
+    return (
+      <Track 
+        type={'line-chart'} 
+        name={(isTop) ? 'Glucose-Top' : 'Glucose'} 
+        title={'Glucose'} 
+        value={this.props.patient.glucoseBlood}
+        range={[0, 350]}
+        unit={'mg/dl'}
+        color={color}
+        predict={isPredict}
+        position={position}
+      />
+    );
+  }
+
+  renderHbA1c(position: number, color: string, isTop: boolean = false) {
+    return (
+      <Track 
+        type={'line-chart'} 
+        name={(isTop) ? 'HbA1c-Top' : 'HbA1c'} 
+        title={'HbA1c'} 
+        value={this.props.patient.hemoA1c}
+        range={[0, 20]}
+        unit={'%'}
+        color={color}
+        position={position}
+      />
+    );
+  }
+
+  renderNote(position: number, isTop: boolean = false) {
+    return (
+      <Track 
+        type={'note-chart'} 
+        name={(isTop) ? 'Note-Top' : 'Note'} 
+        title={'Note'} 
+        value={this.props.patient.notes}
+        position={position}
+      />
+    );
+  }
+
+  renderPrescription(position: number, isTop: boolean = false) {
+    return (
+      <Track 
+        type={'event-chart'} 
+        name={(isTop) ? 'Pres-Top' : 'Pres'} 
+        title={'Simva'} 
+        title2={'Lisin'}
+        value={this.props.patient.simva}
+        value2={this.props.patient.lisin}
+        position={position}
+      />
+    );
   }
 
   render() {
-    var isPredict = this.state.displayPredict;
+    let isPredict = this.state.displayPredict;
+    let topChart = () => {
+      if (this.state.topFeature === 'Albumin') {
+        return this.renderAlbumin(0, 'rgba(255, 0, 0, 0.7)', true);
+      } else if (this.state.topFeature === 'Blood pressure') {
+        return this.renderBP(0, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)', isPredict, true);
+      } else if (this.state.topFeature === 'BMI') {
+        return this.renderBMI(0, 'rgba(0, 0, 255, 0.7)', isPredict, true);
+      } else if (this.state.topFeature === 'Creatine') {
+        return this.renderCreatine(0, 'rgba(0, 0, 255, 0.7)', true);
+      } else if (this.state.topFeature === 'Fat') {
+        return this.renderFat(0, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)', true);
+      } else if (this.state.topFeature === 'Glucose') {
+        return this.renderGlucose(0, 'rgba(255, 0, 0, 0.7)', isPredict, true);
+      } else if (this.state.topFeature === 'HbA1c') {
+        return this.renderHbA1c(0, 'rgba(255, 0, 0, 0.7)', true);
+      } else if (this.state.topFeature === 'Note') {
+        return this.renderNote(0, true);
+      } else if (this.state.topFeature === 'Prescription') {
+        return this.renderPrescription(0, true);
+      } else {
+        return null;
+      }
+    };
 
     return (
       <div className="patient">
@@ -163,106 +421,21 @@ class SinglePatient extends React.Component<Props, States> {
           <div className="patient-chart-figure" style={{marginTop: '-10px'}}>
             <div className="patient-chart-header">
               <svg className="svg-container" style={{height: 155}}>
-                <Track 
-                  type={'line-chart'} 
-                  name={'HbA1c'} 
-                  title={'HbA1c'} 
-                  value={this.props.patient.hemoA1c}
-                  range={[0, 20]}
-                  unit={'%'}
-                  color={'rgba(255, 0, 0, 0.7)'}
-                  position={0}
-                />
+                {topChart()}
               </svg>
             </div>
             <hr style={{width: '788px', margin: 0, marginLeft: '20px'}}/>
             <div className="patient-chart-body">
               <svg className="svg-container" style={{height: 1118}}>
-                <Track 
-                  type={'line-chart'} 
-                  name={'BMI'} 
-                  title={'BMI'} 
-                  value={this.props.patient.bmi}
-                  range={[10, 40]}
-                  unit={'kg/m2'}
-                  color={'rgba(0, 0, 255, 0.7)'}
-                  predict={isPredict}
-                  position={-10}
-                />
-                <Track 
-                  type={'line-chart'} 
-                  name={'Glucose'} 
-                  title={'Glucose'} 
-                  value={this.props.patient.glucoseBlood}
-                  range={[0, 350]}
-                  unit={'mg/dl'}
-                  color={'rgba(255, 0, 0, 0.7)'}
-                  predict={isPredict}
-                  position={130}
-                />
-                <Track 
-                  type={'bar-chart'} 
-                  name={'NBP'} 
-                  title={'NBP Systolic'} 
-                  title2={'NBP Diastolic'} 
-                  value={this.props.patient.systolic}
-                  value2={this.props.patient.diastolic}
-                  range={[0, 200]}
-                  unit={'mmHg'}
-                  color={'rgba(0, 0, 255, 0.7)'}
-                  color2={'rgba(255, 0, 0, 0.7)'}
-                  predict={isPredict}
-                  position={270}
-                />
-                <Track 
-                  type={'line-chart'} 
-                  name={'Fat'} 
-                  title={'Cholesterol'} 
-                  title2={'Triglycerides'} 
-                  value={this.props.patient.choles}
-                  value2={this.props.patient.trigly}
-                  range={[0, 1000]}
-                  unit={'mg/dl'}
-                  color={'rgba(0, 0, 255, 0.7)'}
-                  color2={'rgba(255, 0, 0, 0.7)'}
-                  position={410}
-                />
-                <Track 
-                  type={'line-chart'} 
-                  name={'Creatinine'} 
-                  title={'Creatinine'} 
-                  value={this.props.patient.creatinine}
-                  range={[0, 3]}
-                  unit={'mg/dl'}
-                  color={'rgba(0, 0, 255, 0.7)'}
-                  position={550}
-                />
-                <Track 
-                  type={'line-chart'} 
-                  name={'Albumin'} 
-                  title={'Albumin'} 
-                  value={this.props.patient.albumin}
-                  range={[0, 5]}
-                  unit={'mg/dl'}
-                  color={'rgba(255, 0, 0, 0.7)'}
-                  position={690}
-                />
-                <Track 
-                  type={'event-chart'} 
-                  name={'PRES'} 
-                  title={'Simva'} 
-                  title2={'Lisin'}
-                  value={this.props.patient.simva}
-                  value2={this.props.patient.lisin}
-                  position={830}
-                />
-                <Track 
-                  type={'note-chart'} 
-                  name={'NOTE'} 
-                  title={'NOTE'} 
-                  value={this.props.patient.notes}
-                  position={970}
-                />
+                {(this.state.isBMI) ? 
+                  this.renderBMI(this.state.listPosition.bmi, 'rgba(0, 0, 255, 0.7)', isPredict) : null}
+                {this.renderGlucose(this.state.listPosition.glucose, 'rgba(255, 0, 0, 0.7)', isPredict)}
+                {this.renderBP(this.state.listPosition.bp, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)', isPredict)}
+                {this.renderFat(this.state.listPosition.fat, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)')}
+                {this.renderCreatine(this.state.listPosition.creatine, 'rgba(0, 0, 255, 0.7)')}
+                {this.renderAlbumin(this.state.listPosition.albumin, 'rgba(255, 0, 0, 0.7)')}
+                {this.renderPrescription(this.state.listPosition.drug)}
+                {this.renderNote(this.state.listPosition.note)}
               </svg>
             </div>
             <hr style={{width: '788px', margin: 0, marginLeft: '20px'}}/>

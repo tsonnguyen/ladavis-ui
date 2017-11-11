@@ -46,7 +46,7 @@ class BarChart extends React.Component<any, States> {
 
   drawChart(data1: Object[], data2: Object[], range: [number, number], 
             timeRange: [number, number], color: string, color2: string, 
-            predict: Number[]|null = null, isPredict: any) {
+            predict: Number[]|null = null, isPredict: any, name: string) {
     var self = this;
 
     // set the dimensions and margins of the graph
@@ -60,13 +60,13 @@ class BarChart extends React.Component<any, States> {
     var y = d3.scaleLinear()
               .range([height, 0]);
               
-    var svg = d3.select('#' + self.props.name).append('svg')
+    var svg = d3.select('#' + name).append('svg')
         .attr('class', 'bar-chart')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom);
         
     var chart = svg.append('g')
-            .attr('clip-path', 'url(#clipPath-' + self.props.name + ')')
+            .attr('clip-path', 'url(#clipPath-' + name + ')')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     x.domain([timeRange[0], timeRange[1]]);
@@ -233,39 +233,72 @@ class BarChart extends React.Component<any, States> {
         .attr('y', 114); 
   }
 
-  componentWillReceiveProps(props: Props) {
+  componentDidMount() {
     d3.select('#' + this.props.name).selectAll('.bar-chart').remove();
 
-    if (this.props.patient.info.id === '' && props && props.patient) {
-      let value = props.value;
-      let value2 = props.value2 as POINT[];
-      let range = props.range;
-      let timeRange = [convertedTime(props.patient.info.admittime), 
-          convertedTime(props.patient.info.dischtime)] as [number, number];
-      let color = props.color;
-      let color2 = props.color2 as string;
-      let unit = props.unit;
+    let color = this.props.color;
+    let color2 = this.props.color2 as string;
+    // let unit = this.props.unit;
 
-      this.drawChart(value, value2, range, timeRange, color, color2, props.patient.predict, props.predict);
-      this.drawFigureBox(color, color2 , unit);
-    } else {
-      let start = convertedTime(this.props.patient.info.admittime);
-      let end = convertedTime(this.props.patient.info.dischtime);
-      let zoom = (props.zoom) ? props.zoom : [0, 100];
-      // console.log(props.zoom);
-      // console.log(start + (end - start) * this.props.zoom[0]);
-      // console.log(start + (end - start) * this.props.zoom[1]);
+    if (this.props.value.length !== 0) {
+      let start;
+      let end;
+
+      if (this.props.patient.info.admittime) {
+          start = convertedTime(this.props.patient.info.admittime);
+          end = convertedTime(this.props.patient.info.dischtime);
+      } else {
+          start = convertedTime(this.props.value[0].time);
+          end = convertedTime(this.props.value[this.props.value.length - 1].time);
+      }
+      
+      let zoom = (this.props.zoom) ? this.props.zoom : [0, 1];
 
       let value = this.props.value;
       let value2 = this.props.value2 as POINT[];
       let range = this.props.range;
       let timeRange = [start + (end - start) * zoom[0], 
           start + (end - start) * zoom[1]] as [number, number];
-      let color = this.props.color;
-      let color2 = this.props.color2 as string;
-      let predict = (props.patient) ? props.patient.predict : null;
+      let predict = (this.props.patient) ? this.props.patient.predict : null;
 
-      this.drawChart(value, value2, range, timeRange, color, color2, predict, props.predict);
+      this.drawChart(value, value2, range, timeRange, color, color2, predict, this.props.predict, this.props.name);
+    }
+  }
+
+  componentWillReceiveProps(props: Props) {
+
+    d3.select('#' + this.props.name).selectAll('.bar-chart').remove();
+
+    let color = props.color;
+    let color2 = props.color2 as string;
+    let name;
+    if (props.name.includes('Top')) {
+        name = props.name;
+    } else {    
+        name = this.props.name;
+    }
+
+    if (props.value.length !== 0) {
+        let value = props.value;
+        let value2 = props.value2 as POINT[];
+        let range = props.range;
+        // let unit = props.unit;
+
+        let start = convertedTime((props.patient as any).info.admittime);
+        let end = convertedTime((props.patient as any).info.dischtime);
+  
+        if (isNaN(start)) {
+          start = convertedTime(props.value[0].time);
+          end = convertedTime(props.value[props.value.length - 1].time);
+        }
+  
+        let zoom = (props.zoom) ? props.zoom : [0, 1];
+        let timeRange = [start + (end - start) * zoom[0], 
+              start + (end - start) * zoom[1]] as [number, number];
+      
+        this.drawChart(value, value2, range, timeRange, color, color2, 
+                       (props.patient as any).predict, props.predict, name);
+        // this.drawFigureBox(color, color2 , unit);
     }
   }
 

@@ -39,9 +39,7 @@ class EventChart extends React.Component<any, States> {
     super();
   }
 
-  drawChart(data1: Object[], data2: Object[], timeRange: [number, number]) {
-    var self = this;
-
+  drawChart(data1: Object[], data2: Object[], timeRange: [number, number], name: string) {
     // var data = [
     //   [1, 1, 80], 
     //   [3, 0, 20],
@@ -63,7 +61,7 @@ class EventChart extends React.Component<any, States> {
     // append the svg object to the body of the page
     // append a 'group' element to 'svg'
     // moves the 'group' element to the top left margin
-    var svg = d3.select('#' + self.props.name).append('svg')
+    var svg = d3.select('#' + name).append('svg')
         .attr('class', 'event-chart')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
@@ -166,25 +164,49 @@ class EventChart extends React.Component<any, States> {
             .attr('transform', 'rotate(90)'); 
   }
 
-  componentWillReceiveProps(props: Props) {
-    if (this.props.patient.info.id === '' && props && props.patient) {
-      let timeRange = [convertedTime(props.patient.info.admittime), 
-        convertedTime(props.patient.info.dischtime)] as [number, number];
+  componentDidMount() {
+    d3.select('#' + this.props.name).selectAll('.event-chart').remove();
 
-      this.drawChart(props.value, props.value2, timeRange);
-      this.drawFigureBox();
-    } else {
-      let start = convertedTime(this.props.patient.info.admittime);
-      let end = convertedTime(this.props.patient.info.dischtime);
-      let zoom = (props.zoom) ? props.zoom : [0, 100];
+    if (this.props.value.length !== 0) {
+      let start = convertedTime((this.props.patient as any).info.admittime);
+      let end = convertedTime((this.props.patient as any).info.dischtime);
+      
+      let zoom = (this.props.zoom) ? this.props.zoom : [0, 1];
+
+      let value = this.props.value;
+      let value2 = this.props.value2 as any;
       let timeRange = [start + (end - start) * zoom[0], 
-                      start + (end - start) * zoom[1]] as [number, number];
+          start + (end - start) * zoom[1]] as [number, number];
 
-      d3.select('#' + this.props.name).selectAll('.event-chart').remove();
-
-      this.drawChart(props.value, props.value2, timeRange);
-
+      this.drawChart(value, value2, timeRange, this.props.name);
     }
+  }
+
+  componentWillReceiveProps(props: Props) {
+    d3.select('#' + this.props.name).selectAll('.event-chart').remove();
+
+    let name;
+    if (props.name.includes('top')) {
+      name = props.name;
+    } else {
+      name = this.props.name;
+    }
+
+    if (props.value.length !== 0) {
+      let value = props.value;
+      let value2 = props.value2 as any;
+      // let unit = props.unit;
+
+      let start = convertedTime((props.patient as any).info.admittime);
+      let end = convertedTime((props.patient as any).info.dischtime);
+
+      let zoom = (props.zoom) ? props.zoom : [0, 1];
+      let timeRange = [start + (end - start) * zoom[0], 
+            start + (end - start) * zoom[1]] as [number, number];
+    
+      this.drawChart(value, value2, timeRange, name);
+      // this.drawFigureBox(color, color2 , unit);
+    } 
   }
 
   render() {

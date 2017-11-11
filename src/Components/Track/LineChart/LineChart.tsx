@@ -320,10 +320,6 @@ class LineChart extends React.Component<any, States> {
   }
 
   componentDidMount() {
-    if (!this.props.name.includes('patient')) {
-        return;
-    }
-
     d3.select('#' + this.props.name).selectAll('.line-chart').remove();
 
     let color = this.props.color;
@@ -366,6 +362,12 @@ class LineChart extends React.Component<any, States> {
 
     let color = props.color;
     let color2 = props.color2 as string;
+    let name;
+    if (props.name.includes('top')) {
+        name = props.name;
+    } else {
+        name = this.props.name;
+    }
     // let unit = props.unit;
 
     if (props.value.length !== 0) {
@@ -386,7 +388,7 @@ class LineChart extends React.Component<any, States> {
             start + (end - start) * zoom[1]] as [number, number];
     
       this.drawChart(value, value2, range, timeRange, color, color2, 
-                     (props.patient as any).predict, props.predict, this.props.name);
+                     (props.patient as any).predict, props.predict, name);
     }
     
     // if (!props.title2) {
