@@ -13,7 +13,7 @@
 	width: 40px;
 	height: 20px;
 	border-radius: 999px;
-	background-color: #00B0F2;
+	background-color: #393e44;
 	-webkit-transition-duration: .4s;
 	transition-duration: .4s;
 	-webkit-transition-property: background-color, box-shadow;
@@ -39,7 +39,7 @@
 .switch-container input[type="checkbox"].switch:checked + div {
 	width: 36px;
 	background-position: 0 0;
-	background-color: #3b89ec;
+	background-color: #393e44;
 }
 
 .switch-container input[type="checkbox"].switch + div {
@@ -49,7 +49,7 @@
 
 
 .switch-container input[type="checkbox"].switch:checked + div {
-	background-color: #57BB00;
+	background-color: #4ed8da;
 }
 
 .switch-container input[type="checkbox"].switch + div > div {

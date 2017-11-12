@@ -15,7 +15,7 @@ class App extends React.Component<{}, {}> {
   render() {
     return (
       <Router>
-        <div className="globalContainer" style={{height: '100%'}}>
+        <div className="globalContainer" style={{height: '100%', background: 'lightgrey'}}>
           <div id="mainBackground" />
           <Header />
           <div className="bodyContainer">

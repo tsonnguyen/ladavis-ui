@@ -19,6 +19,7 @@ interface Props {
 interface States {
   listPatient: any;
   selectedFeature: string;
+  searchFeature: string;
 }
 
 const mapStateToProps = (state: ROOTSTATE) => ({
@@ -43,7 +44,8 @@ class ListPatient extends React.Component<Props, States> {
     super();
     this.state = {
       listPatient: [],
-      selectedFeature: 'Hb'
+      selectedFeature: 'Hb',
+      searchFeature: ''
     };
   }
 
@@ -104,7 +106,7 @@ class ListPatient extends React.Component<Props, States> {
           value={patient.hemoA1c}
           range={[0, 20]}
           unit={'%'}
-          color={'rgba(255, 0, 0, 0.7)'}
+          color={'#c14dd9'}
           position={-5}
         />
         {listTimeBar}
@@ -127,7 +129,7 @@ class ListPatient extends React.Component<Props, States> {
           value={patient.glucoseBlood}
           range={[0, 1200]}
           unit={'mg/dl'}
-          color={'rgba(255, 0, 0, 0.7)'}
+          color={'#c14dd9'}
           position={-5}
         />
         {listTimeBar}
@@ -152,8 +154,8 @@ class ListPatient extends React.Component<Props, States> {
           value2={patient.diastolic}
           range={[0, 300]}
           unit={'mmHg'}
-          color={'rgba(0, 0, 255, 0.7)'}
-          color2={'rgba(255, 0, 0, 0.7)'}
+          color={'#4ed8da'}
+          color2={'#c14dd9'}
           position={-5}
         />
         {listTimeBar}
@@ -176,7 +178,7 @@ class ListPatient extends React.Component<Props, States> {
           value={patient.creatinine}
           range={[0, 10]}
           unit={'mg/dl'}
-          color={'rgba(255, 0, 0, 0.7)'}
+          color={'#c14dd9'}
           position={-5}
         />
         {listTimeBar}
@@ -206,8 +208,8 @@ class ListPatient extends React.Component<Props, States> {
           value2={patient.trigly}
           range={[0, 900]}
           unit={'mg/dl'}
-          color={'rgba(0, 0, 255, 0.7)'}
-          color2={'rgba(255, 0, 0, 0.7)'}
+          color={'#4ed8da'}
+          color2={'#c14dd9'}
           position={-5}
         />
         {listTimeBar}
@@ -235,7 +237,7 @@ class ListPatient extends React.Component<Props, States> {
           value={patient.albumin}
           range={[0, 5]}
           unit={'mg/dl'}
-          color={'rgba(255, 0, 0, 0.7)'}
+          color={'#c14dd9'}
           position={-5}
         />
         {listTimeBar}
@@ -297,56 +299,45 @@ class ListPatient extends React.Component<Props, States> {
   // <div class="title-area">PIN FEATURE</div>
 
   renderFeatureSelection() {
+    let isChoose = (value: string) => {
+      let searchValue = this.state.searchFeature.toLocaleLowerCase();
+      let considerValue = value.toLocaleLowerCase();
+      if (considerValue.indexOf(searchValue) > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    let singleChoice = (name: string, title: string) => {
+      return isChoose(title) ? (
+        <div 
+          className={(this.state.selectedFeature === name) 
+                    ? 'single-feature selected-feature' : 'single-feature select-feature'}
+          onClick={() => { this.setState({selectedFeature: name}); }} 
+          title={title}
+        >
+          {title}
+        </div>
+      ) : null;
+    };
+
     return (
       <div className="select-feature-bar">
         <div className="title-area">PIN FEATURE</div>
         <div className="search-area">
           <input 
             type="text"
+            placeholder={'Search'}
+            onChange={(e) => { this.setState({searchFeature: e.target.value}); }} 
           />
         </div>
-        <div 
-          className={(this.state.selectedFeature === 'Hb') ? 'selected-feature' : 'select-feature'}
-          onClick={() => { this.setState({selectedFeature: 'Hb'}); }} 
-          title="Hemoglobin A1c"
-        >
-          Hb
-        </div>
-        <div 
-          className={(this.state.selectedFeature === 'Glu') ? 'selected-feature' : 'select-feature'}
-          onClick={() => { this.setState({selectedFeature: 'Glu'}); }} 
-          title="Glucose"
-        >
-          Glu
-        </div>
-        <div 
-          className={(this.state.selectedFeature === 'BP') ? 'selected-feature' : 'select-feature'}
-          onClick={() => { this.setState({selectedFeature: 'BP'}); }} 
-          title="Blood pressure"
-        >
-          BP
-        </div>
-        <div 
-          className={(this.state.selectedFeature === 'Fat') ? 'selected-feature' : 'select-feature'}
-          onClick={() => { this.setState({selectedFeature: 'Fat'}); }} 
-          title="Fat"
-        >
-          Fat
-        </div>
-        <div 
-          className={(this.state.selectedFeature === 'Cr') ? 'selected-feature' : 'select-feature'}
-          onClick={() => { this.setState({selectedFeature: 'Cr'}); }} 
-          title="Creatine"
-        >
-          Cr
-        </div>
-        <div 
-          className={(this.state.selectedFeature === 'Alb') ? 'selected-feature' : 'select-feature'}
-          onClick={() => { this.setState({selectedFeature: 'Alb'}); }} 
-          title="Albumin"
-        >
-          Alb
-        </div>
+        {singleChoice('Hb', 'Hemoglobin A1c')}
+        {singleChoice('Glu', 'Glucose')}
+        {singleChoice('BP', 'Blood pressure')}
+        {singleChoice('Fat', 'Fat')}
+        {singleChoice('Cr', 'Creatine')}
+        {singleChoice('Alb', 'Albumin')}
       </div>
     );
   }

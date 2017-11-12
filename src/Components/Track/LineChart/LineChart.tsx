@@ -191,8 +191,8 @@ class LineChart extends React.Component<any, States> {
 
     svg.append('rect')
       .attr('class', 'overlay')
-      .attr('width', width + 10)
-      .attr('height', height)
+      .attr('width', width)
+      .attr('height', height + 10)
       .attr('fill', 'transparent')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
       .on('mousemove', function() {

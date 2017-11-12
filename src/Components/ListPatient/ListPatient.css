@@ -10,11 +10,12 @@
 
 .list-patient {
   height: 660px;
+  background: #22252a;
 }
 
 .list-patient .patient-chart-body {
   width: 1030px;
-  height: calc(100% - 15px);
+  height: calc(100% - 9px);
   margin-right: 20px;
   padding-top: 10px;
   overflow: auto;
@@ -37,25 +38,28 @@
   position: absolute;
   border: 1px solid black;
   width: 180px;
-  height: 145px;
-  padding-top: 10px;
+  height: 121px;
+  padding-top: 35px;
   padding-bottom: 5px;
-  margin-top: 6px;
+  margin-top: 4px;
   margin-left: 25px;
   padding-left: 10px; 
   padding-right: 2px;
   vertical-align: middle;
   font-size: 16px;
+  color: rgb(207, 209, 210);
+  background: rgb(57, 62, 68);
 }
 
 .list-patient .patient-basic-info-subcontainer p{
   font-size: 16px;
+  
 }
 
 .list-patient .patient-basic-info-subcontainer:hover {
-  background: lightcoral;
-  border: 1px solid red;
-  color: white
+  color: rgb(34, 37, 42);
+  background: #4ed8da;
+  font-weight: bold;
 }
 
 .list-patient .patient-chart-container {
@@ -88,54 +92,51 @@ background-color: rgba(0, 0, 0, 0.09);
   right: 0;
   top: 40px;
   width: 248px;
-  padding-top: 10px;
+  height: 658px;
+  background: #2d3136;
+}
+
+.select-feature-bar .single-feature {
+  width: 228px;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #cfd1d2;
 }
 
 .select-feature-bar .select-feature {
-  border-bottom: 1px solid black;
-  width: 248px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 20px;
-  text-align: center;
-  font-weight: bold;
-  cursor: pointer;
 }
 
 .select-feature-bar .selected-feature {
-  background: lightcoral;
-  border-bottom: 1px solid red;
-  color: white;
-  width: 248px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 20px;
-  text-align: center;
-  font-weight: bold;
-  cursor: pointer;
+  color: #4ed8da;
+  border-left: 5px solid #4ed8da;
 }
 
 .select-feature-bar .select-feature:hover {
-  background: lightgreen;
-  border: 1px solid green;
+  color: #4ed8da;
 }
 
 .select-feature-bar .title-area {
   display: table-cell;
   width: 237px;
-  height: 40px;
-  border-bottom: 1px solid black;
+  height: 60px;
   vertical-align: middle;
-  padding-left: 10px;
+  padding-left: 15px;
+  color: #cfd1d2;
+  background: #393e44;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .select-feature-bar .search-area input {
   width: 205px;
-  margin-top: 10px;
+  margin-top: 20px;
   margin-left: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   border: 1px solid black;
   padding: 10px;;
-  border-radius: 20px;
+  border-radius: 8px;
   outline: none;
 }

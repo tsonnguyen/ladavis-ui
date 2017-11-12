@@ -229,7 +229,12 @@ class SinglePatient extends React.Component<Props, States> {
           <div className="feature-button">
             <SwitchButton isChecked={isCheck} callback={callback}/>
           </div>
-          <div className="feature-text">{name}</div>
+          <div 
+            className="feature-text"
+            style={{color: (isCheck) ? '#4ed8da' : '#cfd1d2'}}
+          >
+            {name}
+          </div>
         </div>
       ) : null;
     };
@@ -257,6 +262,7 @@ class SinglePatient extends React.Component<Props, States> {
             <input 
               defaultValue={this.state.searchFeature}
               onChange={(e) => { this.setState({searchFeature: e.target.value}); }} 
+              placeholder={'Search'}
               type="text"
             />
           </div>
@@ -269,6 +275,19 @@ class SinglePatient extends React.Component<Props, States> {
             {selectFeature(this.state.isGlucose, 'Glucose')}
             {selectFeature(this.state.isNote, 'Note')}
             {selectFeature(this.state.isDrug, 'Prescription')}
+          </div>
+          <div className="diagnosis">
+            <div className="diagnosis-title">DIABETE DIAGNOSIS</div>
+            <div 
+              className={
+                (!this.state.displayPredict) ?
+                'patient-diabete-value patient-diabete-positive' :
+                'patient-diabete-value patient-diabete-negative'
+                }
+              onClick={() => this.setState({displayPredict: !this.state.displayPredict})}
+            >
+              {(!this.state.displayPredict) ? 'SHOW ABNORMAL' : 'HIDE ABNORMAL'}
+            </div>
           </div>
         </div>
       </div>
@@ -480,19 +499,19 @@ class SinglePatient extends React.Component<Props, States> {
     let isPredict = this.state.displayPredict;
     let topChart = () => {
       if (this.state.topFeature === 'Albumin') {
-        return this.renderAlbumin(0, 'rgba(255, 0, 0, 0.7)', true);
+        return this.renderAlbumin(0, '#c14dd9', true);
       } else if (this.state.topFeature === 'Blood pressure') {
-        return this.renderBP(0, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)', isPredict, true);
+        return this.renderBP(0, '#4ed8da', '#c14dd9', isPredict, true);
       } else if (this.state.topFeature === 'BMI') {
-        return this.renderBMI(0, 'rgba(0, 0, 255, 0.7)', isPredict, true);
+        return this.renderBMI(0, '#4ed8da', isPredict, true);
       } else if (this.state.topFeature === 'Creatine') {
-        return this.renderCreatine(0, 'rgba(0, 0, 255, 0.7)', true);
+        return this.renderCreatine(0, '#4ed8da', true);
       } else if (this.state.topFeature === 'Fat') {
-        return this.renderFat(0, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)', true);
+        return this.renderFat(0, '#4ed8da', '#c14dd9', true);
       } else if (this.state.topFeature === 'Glucose') {
-        return this.renderGlucose(0, 'rgba(255, 0, 0, 0.7)', isPredict, true);
+        return this.renderGlucose(0, '#c14dd9', isPredict, true);
       } else if (this.state.topFeature === 'HbA1c') {
-        return this.renderHbA1c(0, 'rgba(255, 0, 0, 0.7)', true);
+        return this.renderHbA1c(0, '#c14dd9', true);
       } else if (this.state.topFeature === 'Note') {
         return this.renderNote(0, true);
       } else if (this.state.topFeature === 'Prescription') {
@@ -523,26 +542,35 @@ class SinglePatient extends React.Component<Props, States> {
                 {topChart()}
               </svg>
             </div>
-            <hr style={{width: '777px', margin: 0, marginLeft: '20px'}}/>
+            {/* <hr 
+              style={{
+                width: '777px', 
+                margin: 0, 
+                marginLeft: '25px', 
+                marginTop: '-5px',
+                marginBottom: '5px'
+              }}
+            />
+            <hr style={{width: '777px', margin: 0, marginLeft: '25px'}}/> */}
             <div className="patient-chart-body">
               <svg className="svg-container" style={{height: heightBody}}>
                 {(this.state.isBMI) ? 
-                  this.renderBMI(this.state.listPosition.bmi, 'rgba(0, 0, 255, 0.7)', isPredict) 
+                  this.renderBMI(this.state.listPosition.bmi, '#4ed8da', isPredict) 
                   : null}
                 {(this.state.isGlucose) ? 
-                  this.renderGlucose(this.state.listPosition.glucose, 'rgba(255, 0, 0, 0.7)', isPredict) 
+                  this.renderGlucose(this.state.listPosition.glucose, '#c14dd9', isPredict) 
                   : null}
                 {(this.state.isNBP) ? 
-                  this.renderBP(this.state.listPosition.bp, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)', isPredict) 
+                  this.renderBP(this.state.listPosition.bp, '#4ed8da', '#c14dd9', isPredict) 
                   : null}
                 {(this.state.isFat) ? 
-                  this.renderFat(this.state.listPosition.fat, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)') 
+                  this.renderFat(this.state.listPosition.fat, '#4ed8da', '#c14dd9') 
                   : null}
                 {(this.state.isCreatine) ? 
-                  this.renderCreatine(this.state.listPosition.creatine, 'rgba(0, 0, 255, 0.7)') 
+                  this.renderCreatine(this.state.listPosition.creatine, '#4ed8da') 
                   : null}
                 {(this.state.isAlbumin) ? 
-                  this.renderAlbumin(this.state.listPosition.albumin, 'rgba(255, 0, 0, 0.7)') 
+                  this.renderAlbumin(this.state.listPosition.albumin, '#c14dd9') 
                   : null}
                 {(this.state.isDrug) ? 
                   this.renderPrescription(this.state.listPosition.drug)
@@ -552,27 +580,15 @@ class SinglePatient extends React.Component<Props, States> {
                   : null}
               </svg>
             </div>
-            <hr style={{width: '777px', margin: 0, marginLeft: '20px'}}/>
+            {/* <hr style={{width: '777px', margin: 0, marginTop: '-2px', marginLeft: '25px'}}/> */}
             <div className="patient-chart-footer">
+              <div className="patient-chart-footer-header"/>
               <div className="patient-predict-diabete">
-              <TimeBar
-                startTime={this.props.patient.info.admittime}
-                endTime={this.props.patient.info.dischtime}
-              /> 
+                <TimeBar
+                  startTime={this.props.patient.info.admittime}
+                  endTime={this.props.patient.info.dischtime}
+                /> 
               </div>
-              {/* <div className="patient-predict-diabete" style={{paddingLeft: '10px'}}>
-                <div className="patient-diabete-title">DIABETE DIAGNOSIS</div>
-                <div 
-                  className={
-                    (!this.state.displayPredict) ?
-                    'patient-diabete-value patient-diabete-positive' :
-                    'patient-diabete-value patient-diabete-negative'
-                    }
-                  onClick={() => this.setState({displayPredict: !this.state.displayPredict})}
-                >
-                  {(!this.state.displayPredict) ? 'SHOW ABNORMAL' : 'HIDE ABNORMAL'}
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

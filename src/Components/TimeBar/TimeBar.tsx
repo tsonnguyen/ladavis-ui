@@ -301,10 +301,10 @@ class TimeBar extends React.Component<any, States> {
   render() {
     return (
       <svg className="time-bar" y="-20">
-        {/* <rect x="-20" y="0" width="30" height="30"/> */}
+        <rect x="0" y="20" width="740" height="20" fill="#393e44"/>
         <svg id="date-bar" className="time-bar-element" />
         <svg id="time-bar" className="time-bar-element"/>
-        <svg id="adjust-bar" className="time-bar-element"/>
+        <svg id="adjust-bar" className="time-bar-element"/>     
       </svg>
     );
   }

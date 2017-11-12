@@ -5,19 +5,20 @@
 
 .date-element-bkg {
   height: 20px;
-  fill: none;
-  stroke: black;
+  fill: #12bebd;
+  stroke: none;
 }
 
 .date-element-text {
   font-size: 12px;
   font-weight: bold;
+  fill: #3c3f3c;
 }
 
 #adjust-pointer {
   height: 20px;
-  fill: rgba(255, 0, 0, 0.81);;
-  stroke: red;
+  fill: rgba(255, 66, 66, 0.81);
+  stroke: rgba(255, 66, 66, 0.81);
 }
 
 .adjust-pointer-y {
@@ -25,4 +26,14 @@
   height: 20px;
   fill: transparent;
   cursor: ew-resize;
+}
+
+.time-element .tick line {
+  stroke: rgb(207, 209, 210);
+  stroke-width: 2px;
+}
+
+.time-element .tick text {
+  
+  fill: rgb(207, 209, 210);
 }

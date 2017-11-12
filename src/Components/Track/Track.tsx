@@ -237,14 +237,41 @@ class Track extends React.Component<Props, States> {
     );
   }
 
-  renderTrackBorder() {
+  renderTrackBackground() {
     return (
       <rect 
-        className="track-border" 
-        x="50" 
-        y="20.5" 
+        className="track-background" 
+        x="40" 
+        y={this.props.position + 50} 
         transform="translate(0,0)" 
       />
+    );
+  }
+
+  renderTrackBorder() {
+    return (
+      <g className="track-border-group">
+        {/* <rect 
+          className="track-border" 
+          x="50" 
+          y="20.5" 
+          transform="translate(0,0)" 
+        /> */}
+        <rect 
+          className="track-border" 
+          x="50" 
+          y="20.5" 
+          transform="translate(0,0)" 
+        />
+        {/* {(this.props.name.includes('Top')) ?
+          <rect 
+            className="track-border-side" 
+            x="50" 
+            y="123" 
+            transform="translate(0,0)" 
+          /> 
+        : null} */}
+      </g>
     );
   }
 
@@ -297,6 +324,7 @@ class Track extends React.Component<Props, States> {
         {this.renderHeader()}
         {this.renderGridIcon()}
         {this.renderMoveTrackIcon()}
+        {this.renderTrackBackground()}
         <svg className="track" x="-11" y={this.props.position + 30}>
           {this.renderTrackBorder()}
           {this.renderTrackDrag()}

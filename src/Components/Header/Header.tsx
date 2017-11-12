@@ -39,14 +39,14 @@ class Header extends React.Component<Props, States> {
         <div 
           key={index} 
           className="patient-button" 
-          style={(selectedPatientId === patient) ? {background: 'white'} : {}}
+          style={{background: (selectedPatientId === patient) ? '#515357' : '#3b3b3d'}}
         >
           <div style={{display: 'table', width: '100%', height: '100%'}}>
             <div 
               className="patient-button-text"
               onClick={() => window.location.href = '/single-patient?patient=' + patient}
             >
-              {'PATIENT ' + patient}
+              {'Patient ' + patient}
             </div>
             <div 
               className="x-button"
@@ -71,10 +71,10 @@ class Header extends React.Component<Props, States> {
       <div className="header">
         <div 
           className="list-patient-button"
-          style={(checkList) ? {background: 'white'} : {}}
+          style={{background: (checkList) ? '#515357' : '#3b3b3d'}}
           onClick={() => window.location.href = '/list-patient'}
         >
-          LIST OF PATIENT
+          List of patients
         </div>
         {this.listPatient()}
       </div>

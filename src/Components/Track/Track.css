@@ -11,12 +11,33 @@
   display: none;
 }
 
+.track-group .tick text {
+  fill: rgb(207, 209, 210);
+}
+
+.track-group .tick line {
+  stroke: rgb(207, 209, 210);
+}
+
+.track-group  .domain {
+  display: none;
+  stroke: #cfd1d2;
+}
+
 .track-border {
-  height: 100px;
+  height: 120px;
+  width: 1px;
+  fill: transparent;
+  stroke-width: 1;
+  stroke: rgb(207, 209, 210);
+}
+
+.track-border-side {
+  height: 1px;
   width: 740px;
   fill: transparent;
   stroke-width: 1;
-  stroke: rgb(0,0,0)
+  stroke: rgb(207, 209, 210);
 }
 /* 
 .patient-chart-header .track-border {
@@ -33,15 +54,23 @@
 
 .track-name {
   fill: white;
+}
 
+.track-background {
+  width: 740px;
+  height: 100px;
+  fill: #393e44;
+}
+
+.list-patient .track-drag {
+  display:none;
 }
 
 .track-drag {
   height: 100px;
   width: 40px;
-  fill: transparent;
+  fill: #393e44;
   stroke-width: 1;
-  stroke: rgb(0,0,0);
 }
 
 .tick line {
