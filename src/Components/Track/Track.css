@@ -13,7 +13,7 @@
 
 .track-border {
   height: 100px;
-  width: 750px;
+  width: 740px;
   fill: transparent;
   stroke-width: 1;
   stroke: rgb(0,0,0)
@@ -68,4 +68,21 @@
 
 .overlay {
   cursor: pointer;
+}
+
+.move-track-icon {
+  cursor: pointer;
+}
+
+.grid-icon {
+  cursor: pointer;
+}
+
+.grid-icon-text {
+  font-size: 12px;
+}
+
+.y-grid .tick line{
+  stroke: rgb(172, 172, 172);
+  stroke-width: 1px
 }

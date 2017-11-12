@@ -19,7 +19,7 @@ div.row {
   left: 10;
 }
 .slimScroll::-webkit-scrollbar:hover {
-background-color: rgba(0, 0, 0, 0.09);
+  background-color: rgba(0, 0, 0, 0.09);
 }
 .slimScroll::-webkit-scrollbar-thumb {
   background: rgba(0,0,0,0.5);

@@ -22,16 +22,21 @@ interface Props {
   color?: string;
   color2?: string;
   position: number;
+  moveTrackCallback?: Function;
 }
 
 interface States {
-
+  isGrid: boolean;
 }
 
 class Track extends React.Component<Props, States> {
 
   constructor() {
     super();
+
+    this.state = {
+      isGrid: false
+    };
   }
 
   calculatePostionUnit(textLength: number) {
@@ -61,6 +66,7 @@ class Track extends React.Component<Props, States> {
         color={this.props.color as string}
         color2={this.props.color2 as string}
         predict={this.props.predict}
+        isGrid={this.state.isGrid}
         position={50}
       />
     ) ;
@@ -79,6 +85,7 @@ class Track extends React.Component<Props, States> {
         color={this.props.color as string}
         color2={this.props.color2 as string}
         predict={this.props.predict}
+        isGrid={this.state.isGrid}
         position={350}
       />
     );
@@ -119,7 +126,7 @@ class Track extends React.Component<Props, States> {
       <g>
         <rect 
           className="track-header"
-          width="791px"
+          width="781px"
           height="40px"
           x="-1"  
           y={this.props.position + 10} 
@@ -162,6 +169,74 @@ class Track extends React.Component<Props, States> {
     );
   }
 
+  renderGridIcon() {
+    return (
+      <g>
+        {/* <image 
+          className="grid-icon"
+          xlinkHref={require('./img/grid.png')}
+          width="25"
+          height="25"
+          x="725"
+          y={this.props.position + 18}
+        /> */}
+        <rect 
+          className="grid-icon"
+          fill="#444faf"
+          rx="5" 
+          ry="5"
+          width="45"
+          height="25"
+          x="700"
+          y={this.props.position + 18}
+        />
+        <text 
+          className="grid-icon grid-icon-text" 
+          x="707" 
+          y={this.props.position + 35} 
+          fill="white"
+          onMouseDown={() => {
+            this.setState({isGrid: !this.state.isGrid});
+          }}
+        >
+          GRID
+        </text>
+      </g>
+    );
+  }
+
+  renderMoveTrackIcon() {
+    // points={this.props.position + ',30 ' + (this.props.position + 10) + ',0 ' + (this.props.position + 20) + ',30'} 
+    var positionTop = this.props.position + 28;
+    var positionBot = this.props.position + 32;
+    return (
+      <g>
+        <polygon 
+          className="move-track-icon move-up-track"
+          fill="white"
+          stroke="white" 
+          points={'760,' + positionTop + ' 765,' + (positionTop - 10) + ' 770,' + positionTop} 
+          onMouseDown={() => {
+            if (this.props.moveTrackCallback) {
+              this.props.moveTrackCallback(this.props.name, 'up');
+            }
+          }}
+        />
+        <polygon 
+          className="move-track-icon move-down-track"
+          fill="white"
+          stroke="white" 
+          points={'760,' + positionBot + ' 765,' + (positionBot + 10) + ' 770,' + positionBot} 
+          onMouseDown={() => {
+            if (this.props.moveTrackCallback) {
+              this.props.moveTrackCallback(this.props.name, 'down');
+            }
+          }}
+        />
+      </g>
+    );
+  }
+
   renderTrackBorder() {
     return (
       <rect 
@@ -188,7 +263,7 @@ class Track extends React.Component<Props, States> {
     return (
       <defs>
       <clipPath id={'clipPath-' + this.props.name}>
-        <rect x="0" y="0" width="750" height="100" />
+        <rect x="0" y="0" width="740" height="100" />
       </clipPath >
       </defs>
     );
@@ -220,6 +295,8 @@ class Track extends React.Component<Props, States> {
       <g className="track-group" >
         {this.renderTrackClipPath()}
         {this.renderHeader()}
+        {this.renderGridIcon()}
+        {this.renderMoveTrackIcon()}
         <svg className="track" x="-11" y={this.props.position + 30}>
           {this.renderTrackBorder()}
           {this.renderTrackDrag()}

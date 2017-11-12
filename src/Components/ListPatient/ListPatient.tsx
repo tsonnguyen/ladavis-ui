@@ -1,17 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-// import * as d3 from 'd3';
 
 import Track from '../Track/Track';
-// import TimeBar from '../TimeBar/TimeBar';
 import ROOTSTATE from '../../Interfaces';
 
-import './ListPatient.css';
-
-// import { formatDate } from '../../api';
 import { getPatientById } from '../../Actions/patientActions';
 import { addPatient } from '../../Actions/barActions';
-import { getAllPatient } from '../../api';
+import { getAllPatient, getDatesBetween, formatDate } from '../../api';
+
+import './ListPatient.css';
 
 interface Props { 
   patient: any;
@@ -59,100 +56,215 @@ class ListPatient extends React.Component<Props, States> {
     });
   }
 
+  timeBar(listDay: any) {
+    let temp = Math.floor(listDay.length / 10 ) + 1;
+    let run = 0;
+    let singleTimeLength = 74;
+    if (listDay.length <= 10) {
+      singleTimeLength = singleTimeLength * 10 / listDay.length;
+    }
+
+    return listDay.map((day: any, index: number) => {
+      if (temp !== 0 && index % temp !== 0 && listDay.length > 10) { 
+        return null; 
+      } else {
+        run++;
+        return (
+          <g 
+            key={run}
+            className="date-element"
+            transform={'translate(' + ((run - 1) * singleTimeLength + 39) + ',146)'}
+          >
+            <rect className="date-element-bkg" width={singleTimeLength}/>
+            <text
+              className="date-element-text"
+              x={singleTimeLength / 2 - 29}
+              y="14"
+            >
+              {formatDate(day)}
+            </text>
+          </g> 
+        ); 
+      }
+    });
+  }
+
+  renderHbA1c(patient: any) {
+    let dataLength = patient.hemoA1c.length;
+    let dayBetweens = getDatesBetween(new Date(patient.hemoA1c[0].time), 
+                                      new Date(patient.hemoA1c[dataLength - 1].time));
+    let listTimeBar = this.timeBar(dayBetweens);
+
+    return (
+      <g>
+        <Track 
+          type={'line-chart'} 
+          name={'hb-patient-' + patient.id} 
+          title={'HbA1c'} 
+          value={patient.hemoA1c}
+          range={[0, 20]}
+          unit={'%'}
+          color={'rgba(255, 0, 0, 0.7)'}
+          position={-5}
+        />
+        {listTimeBar}
+      </g>
+    );
+  }
+
+  renderGlucose(patient: any) {
+    let dataLength = patient.glucoseBlood.length;
+    let dayBetweens = getDatesBetween(new Date(patient.glucoseBlood[0].time), 
+                                      new Date(patient.glucoseBlood[dataLength - 1].time));
+    let listTimeBar = this.timeBar(dayBetweens);
+
+    return (
+      <g>
+        <Track 
+          type={'line-chart'} 
+          name={'glu-patient-' + patient.id} 
+          title={'Glucose'} 
+          value={patient.glucoseBlood}
+          range={[0, 1200]}
+          unit={'mg/dl'}
+          color={'rgba(255, 0, 0, 0.7)'}
+          position={-5}
+        />
+        {listTimeBar}
+      </g>
+    );
+  }
+
+  renderNBP(patient: any) {
+    let dataLength = patient.systolic.length;
+    let dayBetweens = getDatesBetween(new Date(patient.systolic[0].time), 
+                                      new Date(patient.systolic[dataLength - 1].time));
+    let listTimeBar = this.timeBar(dayBetweens);
+
+    return (
+      <g>
+        <Track 
+          type={'line-chart'} 
+          name={'bp-patient-' + patient.id} 
+          title={'NBP Systolic'} 
+          title2={'NBP Diastolic'} 
+          value={patient.systolic}
+          value2={patient.diastolic}
+          range={[0, 300]}
+          unit={'mmHg'}
+          color={'rgba(0, 0, 255, 0.7)'}
+          color2={'rgba(255, 0, 0, 0.7)'}
+          position={-5}
+        />
+        {listTimeBar}
+      </g>
+    );
+  }
+
+  renderCreatine(patient: any) {
+    let dataLength = patient.creatinine.length;
+    let dayBetweens = getDatesBetween(new Date(patient.creatinine[0].time), 
+                                      new Date(patient.creatinine[dataLength - 1].time));
+    let listTimeBar = this.timeBar(dayBetweens);
+
+    return (
+      <g>
+        <Track 
+          type={'line-chart'} 
+          name={'cr-patient-' + patient.id} 
+          title={'Creatinine'} 
+          value={patient.creatinine}
+          range={[0, 10]}
+          unit={'mg/dl'}
+          color={'rgba(255, 0, 0, 0.7)'}
+          position={-5}
+        />
+        {listTimeBar}
+      </g>
+    );
+  }
+
+  renderFat(patient: any) {
+    let dataLength = patient.choles.length;
+    let listTimeBar;
+    if (dataLength === 0) {
+      listTimeBar = null;
+    } else {
+      let dayBetweens = getDatesBetween(new Date(patient.choles[0].time), 
+                                        new Date(patient.choles[dataLength - 1].time));
+      listTimeBar = this.timeBar(dayBetweens);
+    }
+
+    return (
+      <g>
+        <Track 
+          type={'line-chart'} 
+          name={'fat-patient-' + patient.id} 
+          title={'Cholesterol'} 
+          title2={'Triglycerides'} 
+          value={patient.choles}
+          value2={patient.trigly}
+          range={[0, 900]}
+          unit={'mg/dl'}
+          color={'rgba(0, 0, 255, 0.7)'}
+          color2={'rgba(255, 0, 0, 0.7)'}
+          position={-5}
+        />
+        {listTimeBar}
+      </g>
+    );
+  }
+
+  renderAlbumin(patient: any) {
+    let dataLength = patient.albumin.length;
+    let listTimeBar;
+    if (dataLength === 0) {
+      listTimeBar = null;
+    } else {
+      let dayBetweens = getDatesBetween(new Date(patient.albumin[0].time), 
+                                        new Date(patient.albumin[dataLength - 1].time));
+      listTimeBar = this.timeBar(dayBetweens);
+    }
+    
+    return (
+      <g>
+        <Track 
+          type={'line-chart'} 
+          name={'alb-patient-' + patient.id} 
+          title={'Albumin'} 
+          value={patient.albumin}
+          range={[0, 5]}
+          unit={'mg/dl'}
+          color={'rgba(255, 0, 0, 0.7)'}
+          position={-5}
+        />
+        {listTimeBar}
+      </g>
+    );
+  }
+
   singlePatient(index: number, patient: any) {
     // d3.select('#' + 'patient-' + patient.id).selectAll('*').remove();
 
     var chart = null;
     switch (this.state.selectedFeature) {
       case 'Hb':
-        chart = (
-          <Track 
-            type={'line-chart'} 
-            name={'hb-patient-' + patient.id} 
-            title={'HbA1c'} 
-            value={patient.hemoA1c}
-            range={[0, 20]}
-            unit={'%'}
-            color={'rgba(255, 0, 0, 0.7)'}
-            position={-5}
-          />
-        );
+        chart = this.renderHbA1c(patient);
         break;
       case 'Glu':
-        chart = (
-          <Track 
-            type={'line-chart'} 
-            name={'glu-patient-' + patient.id} 
-            title={'Glucose'} 
-            value={patient.glucoseBlood}
-            range={[0, 1200]}
-            unit={'mg/dl'}
-            color={'rgba(255, 0, 0, 0.7)'}
-            position={-5}
-          />
-        );
+        chart = this.renderGlucose(patient);
         break;
       case 'BP':
-        chart = (
-          <Track 
-            type={'line-chart'} 
-            name={'bp-patient-' + patient.id} 
-            title={'NBP Systolic'} 
-            title2={'NBP Diastolic'} 
-            value={patient.systolic}
-            value2={patient.diastolic}
-            range={[0, 300]}
-            unit={'mmHg'}
-            color={'rgba(0, 0, 255, 0.7)'}
-            color2={'rgba(255, 0, 0, 0.7)'}
-            position={-5}
-          />
-        );
+        chart = this.renderNBP(patient);
         break;
       case 'Fat':
-        chart = (
-          <Track 
-            type={'line-chart'} 
-            name={'fat-patient-' + patient.id} 
-            title={'Cholesterol'} 
-            title2={'Triglycerides'} 
-            value={patient.choles}
-            value2={patient.trigly}
-            range={[0, 900]}
-            unit={'mg/dl'}
-            color={'rgba(0, 0, 255, 0.7)'}
-            color2={'rgba(255, 0, 0, 0.7)'}
-            position={-5}
-          />
-        );
+        chart = this.renderFat(patient);
         break;
       case 'Cr':
-        chart = (
-          <Track 
-            type={'line-chart'} 
-            name={'cr-patient-' + patient.id} 
-            title={'Creatinine'} 
-            value={patient.creatinine}
-            range={[0, 10]}
-            unit={'mg/dl'}
-            color={'rgba(255, 0, 0, 0.7)'}
-            position={-5}
-          />
-        );
+        chart = this.renderCreatine(patient);
         break;
       case 'Alb':
-        chart = (
-          <Track 
-            type={'line-chart'} 
-            name={'alb-patient-' + patient.id} 
-            title={'Albumin'} 
-            value={patient.albumin}
-            range={[0, 5]}
-            unit={'mg/dl'}
-            color={'rgba(255, 0, 0, 0.7)'}
-            position={-5}
-          />
-        );
+        chart = this.renderAlbumin(patient);
         break;
       default: break;
     }
@@ -173,9 +285,67 @@ class ListPatient extends React.Component<Props, States> {
           </div>
         </div>
         <div className="patient-chart-container">
-          <svg id={'patient-' + patient.id} className="svg-container" style={{height: '130px'}}>
+          <svg id={'patient-' + patient.id} className="svg-container" style={{height: '170px'}}>
             {chart}
           </svg>
+          
+        </div>
+      </div>
+    );
+  }
+
+  // <div class="title-area">PIN FEATURE</div>
+
+  renderFeatureSelection() {
+    return (
+      <div className="select-feature-bar">
+        <div className="title-area">PIN FEATURE</div>
+        <div className="search-area">
+          <input 
+            type="text"
+          />
+        </div>
+        <div 
+          className={(this.state.selectedFeature === 'Hb') ? 'selected-feature' : 'select-feature'}
+          onClick={() => { this.setState({selectedFeature: 'Hb'}); }} 
+          title="Hemoglobin A1c"
+        >
+          Hb
+        </div>
+        <div 
+          className={(this.state.selectedFeature === 'Glu') ? 'selected-feature' : 'select-feature'}
+          onClick={() => { this.setState({selectedFeature: 'Glu'}); }} 
+          title="Glucose"
+        >
+          Glu
+        </div>
+        <div 
+          className={(this.state.selectedFeature === 'BP') ? 'selected-feature' : 'select-feature'}
+          onClick={() => { this.setState({selectedFeature: 'BP'}); }} 
+          title="Blood pressure"
+        >
+          BP
+        </div>
+        <div 
+          className={(this.state.selectedFeature === 'Fat') ? 'selected-feature' : 'select-feature'}
+          onClick={() => { this.setState({selectedFeature: 'Fat'}); }} 
+          title="Fat"
+        >
+          Fat
+        </div>
+        <div 
+          className={(this.state.selectedFeature === 'Cr') ? 'selected-feature' : 'select-feature'}
+          onClick={() => { this.setState({selectedFeature: 'Cr'}); }} 
+          title="Creatine"
+        >
+          Cr
+        </div>
+        <div 
+          className={(this.state.selectedFeature === 'Alb') ? 'selected-feature' : 'select-feature'}
+          onClick={() => { this.setState({selectedFeature: 'Alb'}); }} 
+          title="Albumin"
+        >
+          Alb
         </div>
       </div>
     );
@@ -195,50 +365,7 @@ class ListPatient extends React.Component<Props, States> {
         <div className="patient-chart-body slimScroll">
           {listPatient}
         </div>
-        <div className="select-feature-bar">
-          <div 
-            className={(this.state.selectedFeature === 'Hb') ? 'selected-feature' : 'select-feature'}
-            onClick={() => { this.setState({selectedFeature: 'Hb'}); }} 
-            title="Hemoglobin A1c"
-          >
-            Hb
-          </div>
-          <div 
-            className={(this.state.selectedFeature === 'Glu') ? 'selected-feature' : 'select-feature'}
-            onClick={() => { this.setState({selectedFeature: 'Glu'}); }} 
-            title="Glucose"
-          >
-            Glu
-          </div>
-          <div 
-            className={(this.state.selectedFeature === 'BP') ? 'selected-feature' : 'select-feature'}
-            onClick={() => { this.setState({selectedFeature: 'BP'}); }} 
-            title="Blood pressure"
-          >
-            BP
-          </div>
-          <div 
-            className={(this.state.selectedFeature === 'Fat') ? 'selected-feature' : 'select-feature'}
-            onClick={() => { this.setState({selectedFeature: 'Fat'}); }} 
-            title="Fat"
-          >
-            Fat
-          </div>
-          <div 
-            className={(this.state.selectedFeature === 'Cr') ? 'selected-feature' : 'select-feature'}
-            onClick={() => { this.setState({selectedFeature: 'Cr'}); }} 
-            title="Creatine"
-          >
-            Cr
-          </div>
-          <div 
-            className={(this.state.selectedFeature === 'Alb') ? 'selected-feature' : 'select-feature'}
-            onClick={() => { this.setState({selectedFeature: 'Alb'}); }} 
-            title="Albumin"
-          >
-            Alb
-          </div>
-        </div>
+        {this.renderFeatureSelection()}
       </div>
     );
   }

@@ -17,6 +17,7 @@ interface Props {
   unit: string;
   range: [number, number];
   predict?: boolean;
+  isGrid: boolean;
   color: string;
   color2: string;
   position: number;
@@ -46,7 +47,7 @@ class BarChart extends React.Component<any, States> {
 
   drawChart(data1: Object[], data2: Object[], range: [number, number], 
             timeRange: [number, number], color: string, color2: string, 
-            predict: Number[]|null = null, isPredict: any, name: string) {
+            predict: Number[]|null = null, isPredict: any, name: string, isGrid: boolean) {
     var self = this;
 
     // set the dimensions and margins of the graph
@@ -59,18 +60,28 @@ class BarChart extends React.Component<any, States> {
               .range([0, width]);
     var y = d3.scaleLinear()
               .range([height, 0]);
+    x.domain([timeRange[0], timeRange[1]]);
+    y.domain(range);
               
     var svg = d3.select('#' + name).append('svg')
         .attr('class', 'bar-chart')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom);
-        
-    var chart = svg.append('g')
-            .attr('clip-path', 'url(#clipPath-' + name + ')')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    x.domain([timeRange[0], timeRange[1]]);
-    y.domain(range);
+    if (isGrid) {
+        svg.append('g')
+            .attr('class', 'y-grid')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            .call(d3.axisLeft(y).ticks(5, 's').tickSize(-width).tickFormat(null));
+    } else {
+        svg.append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            .call(d3.axisLeft(y).ticks(5, 's').tickSizeOuter(0));
+    }
+
+    var chart = svg.append('g')
+    .attr('clip-path', 'url(#clipPath-' + name + ')')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     chart.selectAll('.bar')
         .data(data1)
@@ -127,16 +138,6 @@ class BarChart extends React.Component<any, States> {
             .attr('height', '100px')
             .attr('transform', 'translate(-10,0)');
     }
-
-    // add the x Axis
-    // svg.append('g')
-    //     .attr('transform', 'translate(0,' + height + ')')
-    //     .call(d3.axisBottom(x));
-
-    // add the y Axis
-    svg.append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-        .call(d3.axisLeft(y).ticks(5, 's'));
     
     svg.append('rect')
     .attr('class', 'overlay')
@@ -261,7 +262,8 @@ class BarChart extends React.Component<any, States> {
           start + (end - start) * zoom[1]] as [number, number];
       let predict = (this.props.patient) ? this.props.patient.predict : null;
 
-      this.drawChart(value, value2, range, timeRange, color, color2, predict, this.props.predict, this.props.name);
+      this.drawChart(value, value2, range, timeRange, color, color2, predict, 
+                     this.props.predict, this.props.name, this.props.isGrid);
     }
   }
 
@@ -297,7 +299,7 @@ class BarChart extends React.Component<any, States> {
               start + (end - start) * zoom[1]] as [number, number];
       
         this.drawChart(value, value2, range, timeRange, color, color2, 
-                       (props.patient as any).predict, props.predict, name);
+                       (props.patient as any).predict, props.predict, name, props.isGrid);
         // this.drawFigureBox(color, color2 , unit);
     }
   }

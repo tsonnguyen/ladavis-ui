@@ -110,7 +110,7 @@
 .patient-chart-header {
   height: 160px !important;
   margin-top: 10px;
-  margin-left: 20px;
+  margin-left: 25px;
   margin-right: 20px;
 }
 
@@ -121,8 +121,7 @@
 .patient .patient-chart-body {
   width: 805px;
   height: 394px;
-  margin-left: 20px;
-
+  margin-left: 25px;
   overflow: auto;
 }
 
@@ -131,11 +130,11 @@
 }
 
 .patient-chart-body .svg-container {
-  width: 100%;
+  width: 791px;
 }
 
 .patient-chart-footer {
-  width: 750px;
+  width: 740px;
   height: 61px;
   margin-top: 13px;
   margin-left: 20px;

@@ -50,7 +50,8 @@ export default class SwitchButton extends React.Component<Props, States> {
     this.setState({ 
       isChecked: newState
     });
-    this.props.callback(newState);
+    let self = this;
+    setTimeout(function() { self.props.callback(newState); }, 300);
   }
   
 }

@@ -10,22 +10,22 @@
 
 .list-patient {
   height: 660px;
-
 }
 
 .list-patient .patient-chart-body {
-  width: 95%;
-  height: 100%;
+  width: 1030px;
+  height: calc(100% - 15px);
   margin-right: 20px;
+  padding-top: 10px;
   overflow: auto;
   border-right: 1px solid black;
 }
 
-.patient-chart-body .svg-container {
-  width: 100%;
+.list-patient .patient-chart-body .svg-container {
+
 }
 
-.patient-basic-info-container {
+.list-patient .patient-basic-info-container {
   position: relative;
   cursor: pointer;
   display: inline-block;
@@ -33,15 +33,14 @@
   width: calc(19% - 27px);
 }
 
-.patient-basic-info-subcontainer {
+.list-patient .patient-basic-info-subcontainer {
   position: absolute;
   border: 1px solid black;
-  border-radius: 10px;
   width: 180px;
-  height: 85px;
+  height: 145px;
   padding-top: 10px;
   padding-bottom: 5px;
-  margin-top: 15px;
+  margin-top: 6px;
   margin-left: 25px;
   padding-left: 10px; 
   padding-right: 2px;
@@ -49,21 +48,21 @@
   font-size: 16px;
 }
 
-.patient-basic-info-subcontainer p{
+.list-patient .patient-basic-info-subcontainer p{
   font-size: 16px;
 }
 
-.patient-basic-info-subcontainer:hover {
+.list-patient .patient-basic-info-subcontainer:hover {
   background: lightcoral;
   border: 1px solid red;
   color: white
 }
 
-.patient-chart-container {
+.list-patient .patient-chart-container {
   display: inline-block; 
   vertical-align: top; 
-  width: 81%;
-  /* margin-left: 260px; */
+  height: 161px;
+  margin-left: 50px;
 }
 
 .slimScroll::-webkit-scrollbar {
@@ -88,18 +87,15 @@ background-color: rgba(0, 0, 0, 0.09);
   position: fixed;
   right: 0;
   top: 40px;
-  width: 62px;
+  width: 248px;
   padding-top: 10px;
 }
 
 .select-feature-bar .select-feature {
-  border: 1px solid black;
-  border-radius: 5px;
-  width: 40px;
+  border-bottom: 1px solid black;
+  width: 248px;
   height: 40px;
   line-height: 40px;
-  margin-left: 10px;
-  margin-bottom: 10px;
   font-size: 20px;
   text-align: center;
   font-weight: bold;
@@ -108,14 +104,11 @@ background-color: rgba(0, 0, 0, 0.09);
 
 .select-feature-bar .selected-feature {
   background: lightcoral;
-  border: 1px solid red;
+  border-bottom: 1px solid red;
   color: white;
-  border-radius: 5px;
-  width: 40px;
+  width: 248px;
   height: 40px;
   line-height: 40px;
-  margin-left: 10px;
-  margin-bottom: 10px;
   font-size: 20px;
   text-align: center;
   font-weight: bold;
@@ -125,4 +118,24 @@ background-color: rgba(0, 0, 0, 0.09);
 .select-feature-bar .select-feature:hover {
   background: lightgreen;
   border: 1px solid green;
+}
+
+.select-feature-bar .title-area {
+  display: table-cell;
+  width: 237px;
+  height: 40px;
+  border-bottom: 1px solid black;
+  vertical-align: middle;
+  padding-left: 10px;
+}
+
+.select-feature-bar .search-area input {
+  width: 205px;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  border: 1px solid black;
+  padding: 10px;;
+  border-radius: 20px;
+  outline: none;
 }

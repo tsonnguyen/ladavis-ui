@@ -51,8 +51,6 @@ const mapDispatchToProps = (dispatch: any) => ({
   },
 });
 
-
-
 class SinglePatient extends React.Component<Props, States> {
   skinThickness = Math.floor((Math.random() * 50) + 7);
   pregnancy = 0;
@@ -175,25 +173,55 @@ class SinglePatient extends React.Component<Props, States> {
 
     let selectFeature = (isCheck: boolean, name: string) => {
       let callback = (newState: boolean) => {
+        let listPosition = this.state.listPosition;
+        let listFeatures = Object.keys(listPosition);
+        let selectedFeature = '';
         if (name === 'Albumin') {
           this.setState({ isAlbumin: newState });
+          selectedFeature = 'albumin';
         } else if (name === 'Blood pressure') {
           this.setState({ isNBP: newState });
+          selectedFeature = 'bp';
         } else if (name === 'BMI') {
           this.setState({ isBMI: newState });
+          selectedFeature = 'bmi';
         } else if (name === 'Creatine') {
           this.setState({ isCreatine: newState });
+          selectedFeature = 'creatine';
         } else if (name === 'Fat') {
           this.setState({ isFat: newState });
+          selectedFeature = 'fat';
         } else if (name === 'Glucose') {
           this.setState({ isGlucose: newState });
+          selectedFeature = 'glucose';
         } else if (name === 'HbA1c') {
           // this.setState({ isH: newState});
         } else if (name === 'Note') {
           this.setState({ isNote: newState });
+          selectedFeature = 'note';
         } else if (name === 'Prescription') {
           this.setState({ isDrug: newState });
+          selectedFeature = 'drug';
         }
+
+        if (newState === true) {
+          var maxPosition = -150;
+          for (let i in listFeatures) {
+            if (listPosition[listFeatures[i]] > maxPosition) {
+              maxPosition = listPosition[listFeatures[i]];
+            }
+          }
+          listPosition[selectedFeature] = maxPosition + 140;
+        } else {
+          let oldPosition = listPosition[selectedFeature];
+          listPosition[selectedFeature] = -150;
+          for (let i in listFeatures) {
+            if (listPosition[listFeatures[i]] > oldPosition) {
+              listPosition[listFeatures[i]] = listPosition[listFeatures[i]] - 140;
+            }
+          }
+        }
+        this.setState({ listPosition: listPosition });
       };
 
       return (isChoose(name)) ? (
@@ -233,7 +261,7 @@ class SinglePatient extends React.Component<Props, States> {
             />
           </div>
           <div className="list-feature slimScroll">
-            {selectFeature(this.state.isAlbumin, 'Albmin')} 
+            {selectFeature(this.state.isAlbumin, 'Albumin')} 
             {selectFeature(this.state.isNBP, 'Blood pressure')}
             {selectFeature(this.state.isBMI, 'BMI')}
             {selectFeature(this.state.isCreatine, 'Creatine')}
@@ -247,6 +275,58 @@ class SinglePatient extends React.Component<Props, States> {
     );
   }
 
+  moveTrackCallback = (name: string, action: string) => {
+    let selectedFeature = '';
+    if (name.includes('Albumin')) {
+      selectedFeature = 'albumin';
+    } else if (name.includes('NBP')) {
+      selectedFeature = 'bp';
+    } else if (name.includes('BMI')) {
+      selectedFeature = 'bmi';
+    } else if (name.includes('Creatine')) {
+      selectedFeature = 'creatine';
+    } else if (name.includes('Fat')) {
+      selectedFeature = 'fat';
+    } else if (name.includes('Glucose')) {
+      selectedFeature = 'glucose';
+    } else if (name.includes('Note')) {
+      selectedFeature = 'note';
+    } else if (name.includes('Pres')) {
+      selectedFeature = 'drug';
+    }
+
+    let listPosition = this.state.listPosition;
+    let listFeatures = Object.keys(listPosition);
+    // tslint:disable-next-line:forin
+    for (let i in listFeatures) {
+      let check = false;
+
+      if (action === 'up') {
+        if (listPosition[listFeatures[i]] === listPosition[selectedFeature] - 140
+            && listPosition[listFeatures[i]] !== -150) {
+          check = true;
+        }
+      } else {
+        if (listPosition[listFeatures[i]] === listPosition[selectedFeature] + 140) {
+          check = true; 
+        }
+      }
+
+      if (check) {
+        var temp = listPosition[listFeatures[i]];
+        listPosition[listFeatures[i]] = listPosition[selectedFeature];
+        listPosition[selectedFeature] = temp;
+        break;
+      }
+
+      this.setState({
+        listPosition: listPosition
+      });
+      // listPosition[listFeatures[i]]
+      // listPosition[selectedFeature]
+    }
+  }
+
   renderAlbumin(position: number, color: string, isTop: boolean = false) {
     return (
       <Track 
@@ -258,6 +338,7 @@ class SinglePatient extends React.Component<Props, States> {
         unit={'mg/dl'}
         color={color}
         position={position}
+        moveTrackCallback={this.moveTrackCallback}
       />
     );
   }
@@ -277,6 +358,7 @@ class SinglePatient extends React.Component<Props, States> {
         color2={color2}
         predict={isPredict}
         position={position}
+        moveTrackCallback={this.moveTrackCallback}
       />
     );
   }
@@ -293,6 +375,7 @@ class SinglePatient extends React.Component<Props, States> {
         color={color}
         predict={isPredict}
         position={position}
+        moveTrackCallback={this.moveTrackCallback}
       />
     );
   }
@@ -308,6 +391,7 @@ class SinglePatient extends React.Component<Props, States> {
         unit={'mg/dl'}
         color={color}
         position={position}
+        moveTrackCallback={this.moveTrackCallback}
       />
     );
   }
@@ -326,6 +410,7 @@ class SinglePatient extends React.Component<Props, States> {
         color={color1}
         color2={color2}
         position={position}
+        moveTrackCallback={this.moveTrackCallback}
       />
     );
   }
@@ -342,6 +427,7 @@ class SinglePatient extends React.Component<Props, States> {
         color={color}
         predict={isPredict}
         position={position}
+        moveTrackCallback={this.moveTrackCallback}
       />
     );
   }
@@ -357,6 +443,7 @@ class SinglePatient extends React.Component<Props, States> {
         unit={'%'}
         color={color}
         position={position}
+        moveTrackCallback={this.moveTrackCallback}
       />
     );
   }
@@ -369,6 +456,7 @@ class SinglePatient extends React.Component<Props, States> {
         title={'Note'} 
         value={this.props.patient.notes}
         position={position}
+        moveTrackCallback={this.moveTrackCallback}
       />
     );
   }
@@ -383,6 +471,7 @@ class SinglePatient extends React.Component<Props, States> {
         value={this.props.patient.simva}
         value2={this.props.patient.lisin}
         position={position}
+        moveTrackCallback={this.moveTrackCallback}
       />
     );
   }
@@ -413,6 +502,16 @@ class SinglePatient extends React.Component<Props, States> {
       }
     };
 
+    let heightBody = 0;
+    let listPosition = this.state.listPosition;
+    let listFeatures = Object.keys(listPosition);
+    for (let i in listFeatures) {
+      if (listPosition[listFeatures[i]] > heightBody) {
+        heightBody = listPosition[listFeatures[i]];
+      }
+    }
+    heightBody += 148;
+
     return (
       <div className="patient">
         {this.renderNotePatient()}
@@ -424,21 +523,36 @@ class SinglePatient extends React.Component<Props, States> {
                 {topChart()}
               </svg>
             </div>
-            <hr style={{width: '788px', margin: 0, marginLeft: '20px'}}/>
+            <hr style={{width: '777px', margin: 0, marginLeft: '20px'}}/>
             <div className="patient-chart-body">
-              <svg className="svg-container" style={{height: 1118}}>
+              <svg className="svg-container" style={{height: heightBody}}>
                 {(this.state.isBMI) ? 
-                  this.renderBMI(this.state.listPosition.bmi, 'rgba(0, 0, 255, 0.7)', isPredict) : null}
-                {this.renderGlucose(this.state.listPosition.glucose, 'rgba(255, 0, 0, 0.7)', isPredict)}
-                {this.renderBP(this.state.listPosition.bp, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)', isPredict)}
-                {this.renderFat(this.state.listPosition.fat, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)')}
-                {this.renderCreatine(this.state.listPosition.creatine, 'rgba(0, 0, 255, 0.7)')}
-                {this.renderAlbumin(this.state.listPosition.albumin, 'rgba(255, 0, 0, 0.7)')}
-                {this.renderPrescription(this.state.listPosition.drug)}
-                {this.renderNote(this.state.listPosition.note)}
+                  this.renderBMI(this.state.listPosition.bmi, 'rgba(0, 0, 255, 0.7)', isPredict) 
+                  : null}
+                {(this.state.isGlucose) ? 
+                  this.renderGlucose(this.state.listPosition.glucose, 'rgba(255, 0, 0, 0.7)', isPredict) 
+                  : null}
+                {(this.state.isNBP) ? 
+                  this.renderBP(this.state.listPosition.bp, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)', isPredict) 
+                  : null}
+                {(this.state.isFat) ? 
+                  this.renderFat(this.state.listPosition.fat, 'rgba(0, 0, 255, 0.7)', 'rgba(255, 0, 0, 0.7)') 
+                  : null}
+                {(this.state.isCreatine) ? 
+                  this.renderCreatine(this.state.listPosition.creatine, 'rgba(0, 0, 255, 0.7)') 
+                  : null}
+                {(this.state.isAlbumin) ? 
+                  this.renderAlbumin(this.state.listPosition.albumin, 'rgba(255, 0, 0, 0.7)') 
+                  : null}
+                {(this.state.isDrug) ? 
+                  this.renderPrescription(this.state.listPosition.drug)
+                  : null}
+                {(this.state.isNote) ? 
+                  this.renderNote(this.state.listPosition.note)
+                  : null}
               </svg>
             </div>
-            <hr style={{width: '788px', margin: 0, marginLeft: '20px'}}/>
+            <hr style={{width: '777px', margin: 0, marginLeft: '20px'}}/>
             <div className="patient-chart-footer">
               <div className="patient-predict-diabete">
               <TimeBar

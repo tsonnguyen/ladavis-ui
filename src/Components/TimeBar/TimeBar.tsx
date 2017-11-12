@@ -38,17 +38,17 @@ const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) 
 class TimeBar extends React.Component<any, States> {
   arrayPosition: number[] = [];
   leftEndPoint: number = 0;
-  rightEndPoint: number = 750;
+  rightEndPoint: number = 740;
   isZoom: boolean = true;
   action: string = '';
   zoomLevel: number = 1;
-  originalElementLength: number = 75;
+  originalElementLength: number = 74;
 
   constructor() {
     super();
     this.state = {
       adjustPos: 0,
-      adjustLength: 750
+      adjustLength: 740
     };
   }
 
@@ -65,7 +65,7 @@ class TimeBar extends React.Component<any, States> {
     groupDate.append('text')
             .attr('class', 'date-element-text')
             .text(date)
-            .attr('x', width / 2 - 25)
+            .attr('x', width / 2 - 29)
             .attr('y', 14);          
   }
 
@@ -103,7 +103,7 @@ class TimeBar extends React.Component<any, States> {
           let start = (self.state.adjustPos + d3.event.dx < this.leftEndPoint) ? 
               this.leftEndPoint : self.state.adjustPos + d3.event.dx;
           let end = start + self.state.adjustLength;
-          this.props.updateZoomRange([start / 750, end / 750]);
+          this.props.updateZoomRange([start / 740, end / 740]);
         }));
 
     svg.append('rect')
@@ -126,7 +126,7 @@ class TimeBar extends React.Component<any, States> {
           let start = (self.state.adjustPos + d3.event.dx < this.leftEndPoint) ? 
               this.leftEndPoint : self.state.adjustPos + d3.event.dx;
           let end = start + self.state.adjustLength - d3.event.dx;
-          this.props.updateZoomRange([start / 750, end / 750]);
+          this.props.updateZoomRange([start / 740, end / 740]);
         }));
 
     svg.append('rect')
@@ -149,7 +149,7 @@ class TimeBar extends React.Component<any, States> {
           let length = (self.state.adjustLength + d3.event.dx > this.rightEndPoint) ? 
               this.rightEndPoint : self.state.adjustLength + d3.event.dx;
           let end = start + length;
-          this.props.updateZoomRange([start / 750, end / 750]);
+          this.props.updateZoomRange([start / 740, end / 740]);
         }));
   }
 
@@ -256,7 +256,7 @@ class TimeBar extends React.Component<any, States> {
               * self.rightEndPoint) + ', 0)';
         });
       listDateElement.select('.date-element-bkg').attr('width', newWidth);
-      listDateElement.select('.date-element-text').attr('x', newWidth / 2 - 25);
+      listDateElement.select('.date-element-text').attr('x', newWidth / 2 - 29);
       
       let listTimeElement = d3.select('#time-bar').selectAll('.time-element');
       let x = d3.scaleLinear().range([0, newWidth]).domain([0, 24]);
