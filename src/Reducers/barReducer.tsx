@@ -12,6 +12,16 @@ export default function reducer(
       newState.push(action.payload);
       return newState;
     }
+    case 'ADD_PATIENT_COMAPRE': {
+      let newState = state.slice();
+      for (let i = 0; i < newState.length; i++) {
+        if (newState[i] === action.payload) {
+          return newState;
+        }
+      }
+      newState.push(action.payload);
+      return newState;
+    }
     case 'DELETE_PATIENT': {
       let newState = state.slice();
       for (let i = 0; i < newState.length; i++) {

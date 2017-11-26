@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import Login from '../Login/Login';
 import SinglePatient from '../SinglePatient/SinglePatient';
+import ComparePatient from '../ComparePatient/ComparePatient';
 import ListPatient from '../ListPatient/ListPatient';
 
 import './App.css';
@@ -21,6 +22,7 @@ class App extends React.Component<{}, {}> {
             <Route exact={true} path="/"component={Login} />
             <Route exact={true} path="/single-patient"component={SinglePatient} />
             <Route exact={true} path="/list-patient"component={ListPatient} />
+            <Route exact={true} path="/compare-patient"component={ComparePatient} />
           </div>  
         </div>
       </Router>

@@ -26,6 +26,10 @@
   vertical-align: middle;
 }
 
+.patient-button-compare {
+  width: 240px;
+}
+
 .patient-button-text {
   display: table-cell;
   text-align: center;

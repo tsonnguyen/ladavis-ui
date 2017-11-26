@@ -25,6 +25,12 @@ interface Props {
   color2?: string;
   position: number;
   moveTrackCallback?: Function;
+  color3?: string;
+  color4?: string;
+  value3?: POINT[] | EVENT[] | NOTE[];
+  value4?: POINT[] | EVENT[] | NOTE[];
+  secondTimeRange?: any;
+  id2?: any;
 }
 
 interface States {
@@ -46,7 +52,9 @@ class Track extends React.Component<Props, States> {
   }
 
   calculatePostionUnit(textLength: number) {
-    if (textLength >= 10) {
+    if (textLength >= 11) {
+      return 175;
+    } else if (textLength >= 10) {
       return 145;
     } else if (textLength >= 8) {
       return 140;
@@ -78,6 +86,11 @@ class Track extends React.Component<Props, States> {
         normalRange1={this.props.normalRange1}
         normalRange2={this.props.normalRange2}
         position={50}
+        value3={this.props.value3 as POINT[]}
+        value4={this.props.value4 as POINT[]}
+        color3={this.props.color3 as string}
+        color4={this.props.color4 as string}
+        secondTimeRange={this.props.secondTimeRange}
       />
     ) ;
   }
@@ -101,6 +114,9 @@ class Track extends React.Component<Props, States> {
         normalRange1={this.props.normalRange1}
         normalRange2={this.props.normalRange2}
         position={350}
+        value3={this.props.value3 as POINT[]}
+        value4={this.props.value4 as POINT[]}
+        secondTimeRange={this.props.secondTimeRange}
       />
     );
   }
@@ -114,6 +130,9 @@ class Track extends React.Component<Props, States> {
         value={this.props.value as EVENT[]}
         value2={this.props.value2 as EVENT[]}
         position={650}
+        value3={this.props.value3 as EVENT[]}
+        value4={this.props.value4 as EVENT[]}
+        secondTimeRange={this.props.secondTimeRange}
       />
     );
   }
@@ -125,6 +144,9 @@ class Track extends React.Component<Props, States> {
         title={this.props.title} 
         value={this.props.value as EVENT[]}
         position={650}
+        value2={this.props.value2 as EVENT[]}
+        secondTimeRange={this.props.secondTimeRange}
+        id2={this.props.id2}
       />
     );
   }
@@ -145,13 +167,31 @@ class Track extends React.Component<Props, States> {
           x="-1"  
           y={this.props.position + 10} 
         />
-        <rect 
-          width="15"
-          height="15"
-          x="20"  
-          y={this.props.position + 22} 
-          fill={this.props.color}
-        />
+        {(!this.props.color3) ? 
+          <rect 
+            width="15"
+            height="15"
+            x="20"  
+            y={this.props.position + 22} 
+            fill={this.props.color}
+          /> : 
+          <g>
+            <rect 
+              width="7.5"
+              height="15"
+              x="20"  
+              y={this.props.position + 22} 
+              fill={this.props.color}
+            />
+            <rect 
+              width="7.5"
+              height="15"
+              x="27.5"  
+              y={this.props.position + 22} 
+              fill={this.props.color3}
+            />
+          </g>
+        }
         <text className="track-name" fontWeight="bold" x="40" y={this.props.position + 35} >
           {this.props.title.toLocaleUpperCase()}
         </text>

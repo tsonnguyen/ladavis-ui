@@ -29,34 +29,65 @@ class Header extends React.Component<Props, States> {
 
   listPatient() {
     var listPatient = this.props.bar;
-    var selectedPatientId = -1;
+    var selectedPatientId: any = -1;
     if (window.location.href.includes('?patient=')) {
       selectedPatientId = Number(window.location.href.split('?')[1].replace('patient=', ''));
+    } else if (window.location.href.includes('compare-patient')) {
+      selectedPatientId = window.location.href.split('?')[1];
     }
 
-    return listPatient.map((patient: number, index: number) => {
-      return (
-        <div 
-          key={index} 
-          className="patient-button" 
-          style={{background: (selectedPatientId === patient) ? '#515357' : '#3b3b3d'}}
-        >
-          <div style={{display: 'table', width: '100%', height: '100%'}}>
-            <div 
-              className="patient-button-text"
-              onClick={() => window.location.href = '/single-patient?patient=' + patient}
-            >
-              {'Patient ' + patient}
+    return listPatient.map((patient: any, index: number) => {
+      if (typeof patient === 'number') {
+        return (
+          <div 
+            key={index} 
+            className="patient-button" 
+            style={{background: (selectedPatientId === patient) ? '#515357' : '#3b3b3d'}}
+          >
+            <div style={{display: 'table', width: '100%', height: '100%'}}>
+              <div 
+                className="patient-button-text"
+                onClick={() => window.location.href = '/single-patient?patient=' + patient}
+              >
+                {'Patient ' + patient}
+              </div>
+              <div 
+                className="x-button"
+                onClick={() => { this.props.deletePatient(patient); }}
+              >
+                X
+              </div>
             </div>
-            <div 
-              className="x-button"
-              onClick={() => { this.props.deletePatient(patient); }}
-            >
-              X
+          </div> 
+        );
+      } else {
+        return (
+          <div 
+            key={index} 
+            className="patient-button patient-button-compare" 
+            style={{
+              background: (selectedPatientId === 'patient1=' + patient.patientId1 + '&patient2=' + patient.patientId2) 
+                        ? '#515357' : '#3b3b3d'
+            }}
+          >
+            <div style={{display: 'table', width: '100%', height: '100%'}}>
+              <div 
+                className="patient-button-text"
+                onClick={() => window.location.href = '/compare-patient?patient1=' 
+                                  +  patient.patientId1 + '&patient2=' + patient.patientId2}
+              >
+                {'Compare ' + patient.patientId1 + ' and ' + patient.patientId2}
+              </div>
+              <div 
+                className="x-button"
+                onClick={() => { this.props.deletePatient(patient); }}
+              >
+                X
+              </div>
             </div>
-          </div>
-        </div> 
-      );
+          </div> 
+        );
+      }
     });
   }
 

@@ -51,7 +51,7 @@ export default class Header extends React.Component<Props, States> {
             <div className="login-field-picture login-pic-key"><img src={require('./img/key.png')}/></div>
             <div className="login-field-value">
               <input 
-                placeholder="Username"
+                placeholder="Password"
                 type="password"
                 value={this.state.password}
                 onChange={(e) => this.setState({password: e.target.value})}

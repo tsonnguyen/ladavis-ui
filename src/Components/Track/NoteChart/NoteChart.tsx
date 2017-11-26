@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 
 import ROOTSTATE, { PATIENT, EVENT } from '../../../Interfaces';
-import { convertedTime, formatDate } from  '../../../api';
+import { convertedTime, formatDate, unifyTwoPeriod, transformYear } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
 import './NoteChart.css';
@@ -15,6 +15,9 @@ interface Props {
   position: number;
   patient?: PATIENT;
   zoom?: [number, number];
+  value2?: EVENT[];
+  secondTimeRange?: any;
+  id2?: any;
 }
 
 interface States {
@@ -33,11 +36,17 @@ const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) 
 });
 
 class NoteChart extends React.Component<any, States> {
+  start: any = null;
+  end: any = null;
+  isGetTime: boolean = false;
+  value: any;
+  value2: any;
+
   constructor() {
     super();
   }
 
-  drawChart(data: Object[], timeRange: [number, number], name: string) {
+  drawChart(data: Object[], timeRange: [number, number], name: string, data2: Object[]) {
     var self = this;
 
     // var data = [
@@ -79,14 +88,14 @@ class NoteChart extends React.Component<any, States> {
         .attr('src', require('./note.png'))
         .attr('width', 4)
         .attr('height', 4);
-
+        
     svg.selectAll('.note-bar')
         .data(data)
         .enter().append('image')
           .attr('class', 'note-bar')
           .attr('xlink:href', require('./note.png'))
           .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
-          .attr('y', function(d: any) { return y(1.7); })
+          .attr('y', function(d: any) { return (data2) ? y(2.4) : y(1.7); })
           .attr('width', '20px') 
           .attr('height', '20px')
           .attr('transform', 'translate(-5,0)')
@@ -121,6 +130,53 @@ class NoteChart extends React.Component<any, States> {
               notePatientHTML.style.display = 'block';
             }
           });
+
+    if (data2) {
+      var patientArray = window.location.href.split('?')[1].split('&');
+      var patientId2 = Number(patientArray[1].split('=')[1]);
+
+      svg.selectAll('.note-bar-2')
+        .data(data2)
+        .enter().append('image')
+          .attr('class', 'note-bar-2')
+          .attr('xlink:href', require('./note.png'))
+          .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
+          .attr('y', function(d: any) { return y(1.4); })
+          .attr('width', '20px') 
+          .attr('height', '20px')
+          .attr('transform', 'translate(-5,0)')
+          .on('mousedown', function(d: any) { 
+            var idHTML = document.getElementById('note-patient-id');
+            if (idHTML) {
+              idHTML.innerHTML = '<strong>PATIENT ID</strong>: ' + patientId2;
+            }
+
+            var desHTML = document.getElementById('note-patient-des');
+            if (desHTML) {
+              desHTML.innerHTML = '<strong>DESCRIPTION</strong>: ' + d.description;
+            }
+
+            var timeHTML = document.getElementById('note-patient-time');
+            if (timeHTML) {
+              timeHTML.innerHTML = '<strong>RECORDED TIME</strong>: ' + formatDate(d.time, false);
+            }
+
+            var catHTML = document.getElementById('note-patient-cat');
+            if (catHTML) {
+              catHTML.innerHTML = '<strong>CATEGORY</strong>: ' + d.category;
+            }
+
+            var textHTML = document.getElementById('note-patient-text');
+            if (textHTML) {
+              textHTML.innerHTML = d.text;
+            }
+
+            var notePatientHTML = document.getElementById('note-patient');
+            if (notePatientHTML) {
+              notePatientHTML.style.display = 'block';
+            }
+          });
+    }
   }
 
   drawFigureBox() {
@@ -150,10 +206,12 @@ class NoteChart extends React.Component<any, States> {
       let zoom = (this.props.zoom) ? this.props.zoom : [0, 1];
 
       let value = this.props.value;
+      let value2 = this.props.value2 as EVENT[];
+
       let timeRange = [start + (end - start) * zoom[0], 
           start + (end - start) * zoom[1]] as [number, number];
 
-      this.drawChart(value, timeRange, this.props.name);
+      this.drawChart(value, timeRange, this.props.name, value2);
     }
   }
 
@@ -169,16 +227,47 @@ class NoteChart extends React.Component<any, States> {
 
     if (props.value.length !== 0) {
       let value = props.value;
-      // let unit = props.unit;
+      let value2 = props.value2 as EVENT[];
 
-      let start = convertedTime((props.patient as any).info.admittime);
-      let end = convertedTime((props.patient as any).info.dischtime);
+      let start, end;
+      if (props.secondTimeRange) {
+        if (!this.isGetTime) {
+          let unifyTime = unifyTwoPeriod(
+            (props.patient as any).info.admittime,
+            (props.patient as any).info.dischtime,
+            props.secondTimeRange[0],
+            props.secondTimeRange[1]
+          );
+
+          start = convertedTime(unifyTime[0]);
+          end = convertedTime(unifyTime[1]);
+
+          value = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value);
+          if (value2) {
+            value2 = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value2);
+          }
+          
+          this.isGetTime = true;
+          this.start = start;
+          this.end = end;
+          this.value = value;
+          this.value2 = value2;
+        }
+      }  else {
+        start = convertedTime((props.patient as any).info.admittime);
+        end = convertedTime((props.patient as any).info.dischtime);
+
+        this.start = start;
+        this.end = end;
+        this.value = value;
+        this.value2 = value2;
+      }
 
       let zoom = (props.zoom) ? props.zoom : [0, 1];
-      let timeRange = [start + (end - start) * zoom[0], 
-            start + (end - start) * zoom[1]] as [number, number];
+      let timeRange = [this.start + (this.end - this.start) * zoom[0], 
+          this.start + (this.end - this.start) * zoom[1]] as [number, number];
     
-      this.drawChart(value, timeRange, name);
+      this.drawChart(this.value, timeRange, name, this.value2);
       // this.drawFigureBox(color, color2 , unit);
     } 
   }

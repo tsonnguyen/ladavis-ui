@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 
 import ROOTSTATE, { PATIENT, POINT } from '../../../Interfaces';
-import { convertedTime, calculateMiddlePoint } from  '../../../api';
+import { convertedTime, calculateMiddlePoint, unifyTwoPeriod, transformYear } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
 import './LineChart.css';
@@ -27,6 +27,11 @@ interface Props {
   position: number;
   patient?: PATIENT;
   zoom?: [number, number];
+  value3?: POINT[];
+  value4?: POINT[];
+  color3?: string;
+  color4?: string;
+  secondTimeRange?: any;
 }
 
 interface States {
@@ -46,6 +51,13 @@ const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) 
   
 class LineChart extends React.Component<any, States> {
   focus: any = null;
+  start: any = null;
+  end: any = null;
+  isGetTime: boolean = false;
+  value: any;
+  value2: any;
+  value3: any;
+  value4: any;
 
   constructor() {
     super();
@@ -123,7 +135,8 @@ class LineChart extends React.Component<any, States> {
     }
   }
 
-  drawSelector(chart: any, color: string, color2: string, data2: Object[]) {
+  drawSelector(chart: any, color: string, color2: string, data2: Object[], data3: Object[], data4: Object[],
+               color3: string, color4: string) {
     chart.append('text')
         .attr('class', 'text-selector')
         .attr('fill', color)
@@ -166,6 +179,50 @@ class LineChart extends React.Component<any, States> {
             .attr('transform', 'translate(-10,0)');
 
     }
+
+    if (data3) {
+      chart.append('text')
+          .attr('class', 'text-selector-3')
+          .attr('fill', color3)
+          .text('')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('font-size', 12)
+          .attr('transform', 'translate(-10,0)');
+
+      chart.append('rect')
+          .attr('class', 'selector-3')
+          .attr('fill', 'transparent')
+          .attr('rx', '100')
+          .attr('ry', '100')
+          .attr('x', '0px')
+          .attr('width', '10px')
+          .attr('y', 0)
+          .attr('height', '10px')
+          .attr('transform', 'translate(-10,0)');
+    }
+
+    if (data4) {
+      chart.append('text')
+          .attr('class', 'text-selector-4')
+          .attr('fill', color4)
+          .text('')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('font-size', 12)
+          .attr('transform', 'translate(-10,0)');
+
+      chart.append('rect')
+          .attr('class', 'selector-4')
+          .attr('fill', 'transparent')
+          .attr('rx', '100')
+          .attr('ry', '100')
+          .attr('x', '0px')
+          .attr('width', '10px')
+          .attr('y', 0)
+          .attr('height', '10px')
+          .attr('transform', 'translate(-10,0)');
+    }
   }
 
   drawPredict(chart: any, height: number, predict: Number[]|null = null, x: any) {
@@ -188,7 +245,8 @@ class LineChart extends React.Component<any, States> {
             timeRange: [number, number], color: string, color2: string, 
             predict: Number[]|null = null, isPredict: any, name: string, 
             isGrid: boolean, isNormal1: boolean, isNormal2: boolean,
-            normalRange1: [number, number],  normalRange2: [number, number]) {
+            normalRange1: [number, number],  normalRange2: [number, number],
+            data3: Object[], data4: Object[], color3: string, color4: string) {
     var self = this;
 
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -238,8 +296,28 @@ class LineChart extends React.Component<any, States> {
           .attr('fill', 'none');
     }
 
-    this.drawPoint(chart, data, data2, color, color2, x, y);
-    this.drawSelector(chart, color, color2, data2);
+    if (data3) {
+      chart.append('path')
+        .data([data3])
+        .attr('class', 'line')
+        .attr('d', valueline)
+        .attr('stroke', color3)
+        .attr('stroke-width', '3px')
+        .attr('fill', 'none');
+    }
+
+    if (data4) {
+      chart.append('path')
+        .data([data4])
+        .attr('class', 'line')
+        .attr('d', valueline)
+        .attr('stroke', color4)
+        .attr('stroke-width', '3px')
+        .attr('fill', 'none');
+    }
+
+    // this.drawPoint(chart, data, data2, color, color2, x, y);
+    this.drawSelector(chart, color, color2, data2, data3, data4, color3, color4);
     
     if (isPredict === true && predict) {
         this.drawPredict(chart, height, predict, x);
@@ -254,17 +332,24 @@ class LineChart extends React.Component<any, States> {
       .on('mousemove', function() {
         var selectDate = (timeRange[1] - timeRange[0]) * d3.mouse(this as any)[0] / width + timeRange[0];
         // tslint:disable-next-line:forin
-        for (var i in data) {
+        for (let i in data) {
             var dataTime = Math.round(convertedTime((data[i] as any).time));
             selectDate = Math.round(selectDate);
             if (dataTime > selectDate) {
                 var dataValue = (data[i] as any).value;
-                var beforeDataTime = Math.round(convertedTime((data[Number(i) - 1] as any).time));
-                var beforeDataValue = (data[Number(i) - 1] as any).value;
+                var displayValue;
 
-                var displayValue = calculateMiddlePoint(beforeDataTime, beforeDataValue, 
-                                                        dataTime, dataValue, selectDate);
-                displayValue = Number(displayValue.toFixed(2));
+                if (Number(i) !== 0) {
+                  var beforeDataTime = Math.round(convertedTime((data[Number(i) - 1] as any).time));
+                  var beforeDataValue = (data[Number(i) - 1] as any).value;
+
+                  displayValue = calculateMiddlePoint(beforeDataTime, beforeDataValue, 
+                                                      dataTime, dataValue, selectDate);
+                  displayValue = Number(displayValue.toFixed(2));
+                } else {
+                  displayValue = Number(dataValue);
+                  selectDate = convertedTime((data[i] as any).time);
+                }
 
                 let textMove = 0;
                 if (Number(i) === 0) {
@@ -286,12 +371,20 @@ class LineChart extends React.Component<any, States> {
 
                 if (data2 && data2.length !== 0) {
                     var dataValue2 = (data2[i] as any).value;
-                    var beforeDataValue2 = (data2[Number(i) - 1] as any).value;
+                    let displayValue2;
 
-                    let displayValue2 = calculateMiddlePoint(beforeDataTime, beforeDataValue2, 
-                                                             dataTime, dataValue2, selectDate);
-                    displayValue2 = Number(displayValue2.toFixed(2));
-                                    
+                    if (Number(i) !== 0) {
+                      var beforeDataValue2 = (data2[Number(i) - 1] as any).value;
+                      beforeDataTime = Math.round(convertedTime((data[Number(i) - 1] as any).time));
+
+                      displayValue2 = calculateMiddlePoint(beforeDataTime, beforeDataValue2, 
+                                                           dataTime, dataValue2, selectDate);
+                      displayValue2 = Number(displayValue2.toFixed(2));
+                    } else {
+                      displayValue2 = Number(dataValue2);
+                      selectDate = convertedTime((data2[i] as any).time);
+                    }
+                                                       
                     let selector2 = d3.select('#' + self.props.name).select('.selector-2');
                     selector2.attr('fill', color2)
                              .attr('x', x(selectDate) + 5)
@@ -299,13 +392,86 @@ class LineChart extends React.Component<any, States> {
 
                     let textSelector2 = d3.select('#' + self.props.name).select('.text-selector-2');
                     textSelector2.attr('fill', color2)
-                            .text(displayValue)
+                            .text(displayValue2)
                             .attr('x', x(selectDate) + textMove)
                             .attr('y', y(displayValue2) - 10);
                 } 
                 break;
             }
         }
+
+        selectDate = (timeRange[1] - timeRange[0]) * d3.mouse(this as any)[0] / width + timeRange[0];
+        if (data3 && data3.length !== 0) {
+          // tslint:disable-next-line:forin
+          for (let i in data3) {
+            dataTime = Math.round(convertedTime((data3[i] as any).time));
+            selectDate = Math.round(selectDate);
+
+            if (dataTime > selectDate) {
+              var dataValue3 = (data3[i] as any).value;
+              let displayValue3;
+
+              if (Number(i) !== 0) {
+                var beforeDataValue3 = (data3[Number(i) - 1] as any).value;
+                beforeDataTime = Math.round(convertedTime((data3[Number(i) - 1] as any).time));
+
+                displayValue3 = calculateMiddlePoint(beforeDataTime, beforeDataValue3, 
+                                                     dataTime, dataValue3, selectDate);
+                displayValue3 = Number(displayValue3.toFixed(2));
+              } else {
+                displayValue3 = Number(dataValue3);
+                selectDate = convertedTime((data3[i] as any).time);
+              }
+                              
+              let textMove = 0;
+              if (Number(i) === 0) {
+                  textMove = 10;
+              } else if (Number(i) === data.length - 1) {
+                  textMove = -10;
+              }
+
+              let selector3 = d3.select('#' + self.props.name).select('.selector-3');
+              selector3.attr('fill', color3)
+                      .attr('x', x(selectDate) + 5)
+                      .attr('y', y(displayValue3) - 5);
+
+              let textSelector3 = d3.select('#' + self.props.name).select('.text-selector-3');
+              textSelector3.attr('fill', color3)
+                      .text(displayValue3)
+                      .attr('x', x(selectDate) + textMove)
+                      .attr('y', y(displayValue3) - 10);
+
+              if (data4 && data4.length !== 0) {
+                var dataValue4 = (data4[i] as any).value;
+                let displayValue4;
+
+                if (Number(i) !== 0) {
+                  var beforeDataValue4 = (data4[Number(i) - 1] as any).value;
+                  beforeDataTime = Math.round(convertedTime((data4[Number(i) - 1] as any).time));
+
+                  displayValue4 = calculateMiddlePoint(beforeDataTime, beforeDataValue4, 
+                                                       dataTime, dataValue4, selectDate);
+                  displayValue4 = Number(displayValue4.toFixed(2));
+                } else {
+                  displayValue4 = Number(dataValue4);
+                  selectDate = convertedTime((data4[i] as any).time);
+                }
+                                                    
+                let selector4 = d3.select('#' + self.props.name).select('.selector-4');
+                selector4.attr('fill', color4)
+                          .attr('x', x(selectDate) + 5)
+                          .attr('y', y(displayValue4) - 5);
+
+                let textSelector4 = d3.select('#' + self.props.name).select('.text-selector-4');
+                textSelector4.attr('fill', color4)
+                        .text(displayValue4)
+                        .attr('x', x(selectDate) + textMove)
+                        .attr('y', y(displayValue4) - 10);
+              } 
+              break;
+            }
+          }
+        } 
       });
   }
 
@@ -396,28 +562,34 @@ class LineChart extends React.Component<any, States> {
 
   componentDidMount() {
     d3.select('#' + this.props.name).selectAll('.line-chart').remove();
-
+    console.log(this.props.name)
     let color = this.props.color;
     let color2 = this.props.color2 as string;
+    let color3 = this.props.color3 as string;
+    let color4 = this.props.color4 as string;
     // let unit = this.props.unit;
 
     if (this.props.value.length !== 0) {
-      let start;
-      let end;
-
-      if (this.props.patient.info.admittime) {
-          start = convertedTime(this.props.patient.info.admittime);
-          end = convertedTime(this.props.patient.info.dischtime);
-      } else {
-          start = convertedTime(this.props.value[0].time);
-          end = convertedTime(this.props.value[this.props.value.length - 1].time);
-      }
-      
       let zoom = (this.props.zoom) ? this.props.zoom : [0, 1];
 
       let value = this.props.value;
       let value2 = this.props.value2 as POINT[];
+      let value3 = this.props.value3 as POINT[];
+      let value4 = this.props.value4 as POINT[];
+
       let range = this.props.range;
+
+      let start;
+      let end;
+      
+      if (this.props.patient.info.admittime) {
+        start = convertedTime(this.props.patient.info.admittime);
+        end = convertedTime(this.props.patient.info.dischtime);
+      } else {
+        start = convertedTime(this.props.value[0].time);
+        end = convertedTime(this.props.value[this.props.value.length - 1].time);
+      }
+
       let timeRange = [start + (end - start) * zoom[0], 
           start + (end - start) * zoom[1]] as [number, number];
       let predict = (this.props.patient) ? this.props.patient.predict : null;
@@ -425,7 +597,8 @@ class LineChart extends React.Component<any, States> {
       this.drawChart(value, value2, range, timeRange, color, color2, predict, 
                      this.props.predict, this.props.name, this.props.isGrid,
                      this.props.isNormal1, this.props.isNormal2,
-                     this.props.normalRange1, this.props.normalRange2);
+                     this.props.normalRange1, this.props.normalRange2,
+                     value3, value4, color3, color4);
     }
 
     // if (!this.props.title2) {
@@ -440,9 +613,13 @@ class LineChart extends React.Component<any, States> {
 
     let color = props.color;
     let color2 = props.color2 as string;
+    let color3 = props.color3 as string;
+    let color4 = props.color4 as string;
     let name;
-    if (props.name.includes('top')) {
+    if (props.name.includes('Top')) {
         name = props.name;
+        
+        this.isGetTime = false;
     } else {
         name = this.props.name;
     }
@@ -451,24 +628,75 @@ class LineChart extends React.Component<any, States> {
     if (props.value.length !== 0) {
       let value = props.value;
       let value2 = props.value2 as POINT[];
+      let value3 = props.value3 as POINT[];
+      let value4 = props.value4 as POINT[];
       let range = props.range;
 
-      let start = convertedTime((props.patient as any).info.admittime);
-      let end = convertedTime((props.patient as any).info.dischtime);
+      let start, end;
 
-      if (isNaN(start)) {
-        start = convertedTime(props.value[0].time);
-        end = convertedTime(props.value[props.value.length - 1].time);
+      if (props.secondTimeRange) {
+        if (!this.isGetTime) {
+          let unifyTime = unifyTwoPeriod(
+            (props.patient as any).info.admittime,
+            (props.patient as any).info.dischtime,
+            props.secondTimeRange[0],
+            props.secondTimeRange[1]
+          );
+
+          start = convertedTime(unifyTime[0]);
+          end = convertedTime(unifyTime[1]);
+
+          value = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value);
+          if (value2) {
+            value2 = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value2);
+          }
+
+          if (value3) {
+            value3 = transformYear(new Date(props.secondTimeRange[1]).getFullYear(), value3);
+          }
+          if (value4) {
+            value4 = transformYear(new Date(props.secondTimeRange[1]).getFullYear(), value4);
+          }
+          
+          this.isGetTime = true;
+          this.start = start;
+          this.end = end;
+          this.value = value;
+          this.value2 = value2;
+          this.value3 = value3;
+          this.value4 = value4;
+        }
+      }  else {
+        start = convertedTime((props.patient as any).info.admittime);
+        end = convertedTime((props.patient as any).info.dischtime);
+  
+        if (isNaN(start)) {
+          start = convertedTime(props.value[0].time);
+          end = convertedTime(props.value[props.value.length - 1].time);
+        }
+
+        this.start = start;
+        this.end = end;
+        this.value = value;
+        this.value2 = value2;
+        this.value3 = value3;
+        this.value4 = value4;
       }
 
       let zoom = (props.zoom) ? props.zoom : [0, 1];
-      let timeRange = [start + (end - start) * zoom[0], 
-            start + (end - start) * zoom[1]] as [number, number];
-    
-      this.drawChart(value, value2, range, timeRange, color, color2, 
+      let timeRange = [this.start + (this.end - this.start) * zoom[0], 
+          this.start + (this.end - this.start) * zoom[1]] as [number, number];
+      
+      // if (name.includes('Top')) {
+      //   console.log(name)
+      //   console.log(this.value)
+      // }
+      d3.select('#' + this.props.name).attr('id', name);  
+      this.drawChart(this.value, this.value2, range, timeRange, color, color2, 
                      (props.patient as any).predict, props.predict, name, 
                      props.isGrid, props.isNormal1, props.isNormal2,
-                     props.normalRange1 as [number, number], props.normalRange2 as [number, number]);
+                     props.normalRange1 as [number, number], props.normalRange2 as [number, number],
+                     this.value3, this.value4, color3, color4);
     }
     
     // if (!props.title2) {

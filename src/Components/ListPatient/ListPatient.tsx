@@ -4,23 +4,28 @@ import { connect } from 'react-redux';
 import Track from '../Track/Track';
 import Header from '../Header/Header';
 import ROOTSTATE from '../../Interfaces';
+var Dropdown = require('react-dropdown').default;
 
 import { getPatientById } from '../../Actions/patientActions';
-import { addPatient } from '../../Actions/barActions';
+import { addPatient, addPatientCompare } from '../../Actions/barActions';
 import { getAllPatient, getDatesBetween, formatDate } from '../../api';
 
 import './ListPatient.css';
+import '../SinglePatient/Dropdown.css';
 
 interface Props { 
   patient: any;
   getPatientById: (userId: number) => void;
   addPatient: (userId: number) => void;
+  addPatientCompare: (userId1: number, userId2: number) => void;
 }
 
 interface States {
   listPatient: any;
   selectedFeature: string;
   searchFeature: string;
+  compare: string;
+  sort: string;
 }
 
 const mapStateToProps = (state: ROOTSTATE) => ({
@@ -32,6 +37,9 @@ const mapDispatchToProps = (dispatch: any) => ({
   },
   addPatient: (userId: number) => {
     dispatch(addPatient(userId));
+  },
+  addPatientCompare: (userId1: number, userId2: number) => {
+    dispatch(addPatientCompare(userId1, userId2));
   }
 });
 
@@ -40,13 +48,21 @@ class ListPatient extends React.Component<Props, States> {
   pregnancy = 0;
   insulin = Math.floor((Math.random() * 500) + 90);
   diabetesPedigreeFunction = ((Math.random() * 1.6) + 0.085).toFixed(2);
+  featureOptions = [
+    { value: 'Patient ID', label: 'Patient ID' },
+    { value: 'Gender', label: 'Gender' },
+    { value: 'Admission time', label: 'Admission time' },
+    { value: 'Hospitalizing time', label: 'Hospitalizing time' }
+  ];
 
   constructor() {
     super();
     this.state = {
       listPatient: [],
       selectedFeature: 'Hb',
-      searchFeature: ''
+      searchFeature: '',
+      compare: '', 
+      sort: 'Patient ID'
     };
   }
 
@@ -281,18 +297,46 @@ class ListPatient extends React.Component<Props, States> {
     }
     return(
       <div key={index}>
-        <div 
-          className="patient-basic-info-container"
-          onClick={() => { 
-            this.props.addPatient(patient.id); 
-            window.location.href = '/single-patient?patient=' + patient.id;
-          }}
-        >
+        <div className="patient-basic-info-container">
           <div className="patient-basic-info-subcontainer">
             <p className="patient-basic-info-text">PATIENT ID: {patient.id}</p>
             <p className="patient-basic-info-text">Age: {patient.dob}</p>
             <p className="patient-basic-info-text">Gender: {patient.gender}</p>
             <p className="patient-basic-info-text">Diagnosis: DIABETES</p>
+          </div>
+          <div className="patient-basic-button">
+            <div 
+              className="patient-basic-detail"
+              onClick={() => { 
+                this.props.addPatient(patient.id); 
+                window.location.href = '/single-patient?patient=' + patient.id;
+              }}
+            >
+              Details
+            </div>
+            <div 
+              className="patient-basic-compare"
+              onClick={() => { 
+                if (patient.id !== this.state.compare) {
+                  if (this.state.compare === '') {
+                    this.setState({
+                      compare: patient.id
+                    });
+                  } else {
+                    this.props.addPatientCompare(patient.id, Number(this.state.compare)); 
+                    window.location.href = '/compare-patient?patient1=' + patient.id 
+                                          + '&patient2=' + this.state.compare;
+                  }
+                  
+                } else {
+                  this.setState({
+                    compare: ''
+                  });
+                }
+              }}
+            >
+              Compare
+            </div>
           </div>
         </div>
         <div className="patient-chart-container">
@@ -333,6 +377,19 @@ class ListPatient extends React.Component<Props, States> {
 
     return (
       <div className="select-feature-bar">
+        <div className="title-area">SORT</div>
+        <div className="select-area" style={{padding: '13px'}}>
+          <Dropdown 
+            options={this.featureOptions} 
+            value={this.state.sort}
+            placeholder="Select a feature"
+            onChange={(e: any) => {
+              this.setState({
+                sort: e.value
+              });
+            }}
+          />
+        </div>
         <div className="title-area">PIN FEATURE</div>
         <div className="search-area">
           <input 
@@ -347,6 +404,12 @@ class ListPatient extends React.Component<Props, States> {
         {singleChoice('Fat', 'Fat')}
         {singleChoice('Cr', 'Creatine')}
         {singleChoice('Alb', 'Albumin')}
+        <div className="comparing">
+          {(this.state.compare !== '') ?
+            'COMPARE WITH ' + this.state.compare : 
+            'NO COMPARISION'
+          }
+        </div>
       </div>
     );
   }

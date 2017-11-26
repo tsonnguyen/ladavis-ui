@@ -28,18 +28,16 @@
 
 .list-patient .patient-basic-info-container {
   position: relative;
-  cursor: pointer;
   display: inline-block;
   vertical-align: top;
   width: calc(19% - 27px);
 }
 
 .list-patient .patient-basic-info-subcontainer {
-  position: absolute;
   border: 1px solid black;
   width: 180px;
-  height: 121px;
-  padding-top: 35px;
+  height: 100px;
+  padding-top: 25px;
   padding-bottom: 5px;
   margin-top: 4px;
   margin-left: 25px;
@@ -56,17 +54,45 @@
   
 }
 
-.list-patient .patient-basic-info-subcontainer:hover {
+/* .list-patient .patient-basic-info-subcontainer:hover {
   color: rgb(34, 37, 42);
   background: #4ed8da;
   font-weight: bold;
-}
+} */
 
 .list-patient .patient-chart-container {
   display: inline-block; 
   vertical-align: top; 
   height: 161px;
   margin-left: 50px;
+}
+
+.patient-basic-button {
+  position: absolute;
+  display: table;
+  margin-left: 26px;
+  width: 193px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.patient-basic-detail {
+  display: table-cell;
+  width: 50%;
+  text-align: center;
+  vertical-align: middle;
+  background: #12bebd;
+  color: #3c3f3c;
+  border-right: 1px solid black;
+}
+
+.patient-basic-compare {
+  display: table-cell;
+  width: 50%;
+  text-align: center;
+  vertical-align: middle;
+  background: red;
+  color: white;
 }
 
 .slimScroll::-webkit-scrollbar {
@@ -76,7 +102,7 @@
   border-radius: 100px;
 }
 .slimScroll::-webkit-scrollbar:hover {
-background-color: rgba(0, 0, 0, 0.09);
+  background-color: rgba(0, 0, 0, 0.09);
 }
 .slimScroll::-webkit-scrollbar-thumb {
   background: rgba(0,0,0,0.5);
@@ -139,4 +165,16 @@ background-color: rgba(0, 0, 0, 0.09);
   padding: 10px;;
   border-radius: 8px;
   outline: none;
+}
+
+.comparing {
+  position: absolute;
+  padding-left: 20px;
+  bottom: -1px;
+  width: 228px;
+  height: 45px;
+  line-height: 45px;
+  color: #cfd1d2;
+  background: #393e44;
+  font-weight: bold;
 }

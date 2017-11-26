@@ -11,3 +11,13 @@ export function deletePatient(patientId: number) {
     payload: patientId
   };
 }
+
+export function addPatientCompare(patientId1: number, patientId2: number) {
+  return {
+    type: 'ADD_PATIENT_COMAPRE',
+    payload: {
+      patientId1: patientId1, 
+      patientId2: patientId2
+    }
+  };
+}

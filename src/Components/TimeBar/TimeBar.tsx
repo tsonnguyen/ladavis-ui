@@ -62,10 +62,15 @@ class TimeBar extends React.Component<any, States> {
             .attr('class', 'date-element-bkg')
             .attr('width', width);
     
+    let textPosition = width / 2 - 29;
+    if (Number(date.split('/')[2]) < 10) {
+      textPosition += 10;
+    }
+
     groupDate.append('text')
             .attr('class', 'date-element-text')
             .text(date)
-            .attr('x', width / 2 - 29)
+            .attr('x', textPosition)
             .attr('y', 14);          
   }
 
@@ -256,7 +261,11 @@ class TimeBar extends React.Component<any, States> {
               * self.rightEndPoint) + ', 0)';
         });
       listDateElement.select('.date-element-bkg').attr('width', newWidth);
-      listDateElement.select('.date-element-text').attr('x', newWidth / 2 - 29);
+      let textPosition = newWidth / 2 - 29;
+      if (Number(listDateElement.select('.date-element-text').text().split('/')[2]) < 10) {
+        textPosition += 10;
+      }
+      listDateElement.select('.date-element-text').attr('x', textPosition);
       
       let listTimeElement = d3.select('#time-bar').selectAll('.time-element');
       let x = d3.scaleLinear().range([0, newWidth]).domain([0, 24]);
@@ -270,28 +279,35 @@ class TimeBar extends React.Component<any, States> {
   }
 
   componentWillReceiveProps(props: Props) { 
-    if (!this.props.startTime) {
-      let dayBetweens = getDatesBetween(new Date(props.startTime), new Date(props.endTime));
+    d3.select('#date-bar').selectAll('*').remove();
+    d3.select('#time-bar').selectAll('*').remove();
+    d3.select('#adjust-bar').selectAll('*').remove();
 
-      let temp = Math.floor(dayBetweens.length / 10 / this.zoomLevel) + 2;
-      let run = 0;
-      for (var i = 0; i < dayBetweens.length; i++) {
-        if (i % temp !== 0) { 
-          continue;
-        }
-        this.arrayPosition.push(run * this.originalElementLength);
-        this.drawDate(formatDate(dayBetweens[i]), run * this.originalElementLength, this.originalElementLength);
-        // this.drawTimeBar(run * elementLength, elementLength);
-        run++;
+    let dayBetweens = getDatesBetween(new Date(props.startTime), new Date(props.endTime));
+    
+    let temp = Math.floor(dayBetweens.length / 10 / this.zoomLevel) + 2;
+    let run = 0;
+    for (var i = 0; i < dayBetweens.length; i++) {
+      if (i % temp !== 0) { 
+        continue;
+      }
+      this.arrayPosition.push(run * this.originalElementLength);
+
+      if (dayBetweens[i].getFullYear() === 2001) {
+        dayBetweens[i].setFullYear(dayBetweens[i].getFullYear() - 2000);
       }
 
-      let nextDate = addDays(dayBetweens[i - 1], temp - 1);
-      this.arrayPosition.push(run * this.originalElementLength);
-      this.drawDate(formatDate(nextDate.toString()), run * this.originalElementLength, this.originalElementLength);
+      this.drawDate(formatDate(dayBetweens[i]), run * this.originalElementLength, this.originalElementLength);
       // this.drawTimeBar(run * elementLength, elementLength);
-      
-      this.drawAdjustBar();
+      run++;
     }
+
+    let nextDate = addDays(dayBetweens[i - 1], temp - 1);
+    this.arrayPosition.push(run * this.originalElementLength);
+    this.drawDate(formatDate(nextDate.toString()), run * this.originalElementLength, this.originalElementLength);
+    // this.drawTimeBar(run * elementLength, elementLength);
+    
+    this.drawAdjustBar();
   }
 
   componentWillUpdate() {

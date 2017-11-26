@@ -34,7 +34,7 @@ export function formatDate (dateString: string, isGetTime: boolean = false) {
   let data = new Date(dateString);
   let day = pad(data.getDate());
   let month = pad(data.getMonth() + 1);
-  let year = data.getFullYear() - shiftYear;
+  let year = (data.getFullYear() > 10) ? data.getFullYear() - shiftYear : data.getFullYear();
   let hour = pad(data.getHours());
   let minute = pad(data.getMinutes());
   let second = pad(data.getSeconds());
@@ -66,4 +66,49 @@ export function calculateMiddlePoint(x1: number, y1: number, x2: number, y2: num
   let a = (y2 - y1) / (x2 - x1);
   let b = y1 - a * x1;
   return a * x + b;
+}
+
+export function unifyTwoPeriod(start1: any, end1: any, start2: any, end2: any) {
+  start1 = new Date(start1);
+  end1 = new Date(end1);
+  let range1 = end1.getFullYear() - start1.getFullYear();
+  start2 = new Date(start2);
+  end2 = new Date(end2);
+  let range2 = end2.getFullYear() - start2.getFullYear();
+  start1.setFullYear(1);
+  end1.setFullYear(1 + range1);
+  start2.setFullYear(1);
+  end2.setFullYear(1 + range2);
+  
+  let start = (start1 < start2) ? start1 : start2;
+  let end = (end1 > end2) ? end1 : end2;
+
+  return [start, end];
+}
+
+export function transformYear(endYear: number, data: any) {
+  // let year = new Date(data[0].time).getFullYear();
+  // tslint:disable-next-line:forin
+  for (let i = 0; i < data.length; i++) {
+    let date;
+    if (data[i].startdate) {
+      date = (new Date(data[i].startdate));
+    } else {
+      date = (new Date(data[i].time));
+    }
+    
+    let newYear = endYear - date.getFullYear() + 1;
+    if (newYear < 0 || date.getFullYear() - 2000 < 10) {
+      newYear = 1;
+    }
+    date.setFullYear(newYear);
+
+    if (data[i].startdate) {
+      data[i].startdate = date.toString();
+    } else {
+      data[i].time = date.toString();
+    }
+  }
+
+  return data;
 }

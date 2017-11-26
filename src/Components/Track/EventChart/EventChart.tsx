@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 
 import ROOTSTATE, { PATIENT, EVENT } from '../../../Interfaces';
-import { convertedTime } from  '../../../api';
+import { convertedTime, unifyTwoPeriod, transformYear } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
 import './EventChart.css';
@@ -17,6 +17,9 @@ interface Props {
   position: number;
   patient?: PATIENT;
   zoom?: [number, number];
+  value3?: EVENT[];
+  value4?: EVENT[];
+  secondTimeRange?: any;
 }
 
 interface States {
@@ -35,11 +38,20 @@ const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) 
 });
 
 class EventChart extends React.Component<any, States> {
+  start: any = null;
+  end: any = null;
+  isGetTime: boolean = false;
+  value: any;
+  value2: any;
+  value3: any;
+  value4: any;
+
   constructor() {
     super();
   }
 
-  drawChart(data1: Object[], data2: Object[], timeRange: [number, number], name: string) {
+  drawChart(data1: Object[], data2: Object[], timeRange: [number, number], name: string,
+            data3: Object[], data4: Object[]) {
     // var data = [
     //   [1, 1, 80], 
     //   [3, 0, 20],
@@ -93,6 +105,30 @@ class EventChart extends React.Component<any, States> {
           .attr('width', '10px')
           .attr('height', '10px')
           .attr('transform', 'translate(-5,0)');
+    
+    if (data3) {
+      svg.selectAll('.bar3')
+        .data(data3)
+        .enter().append('rect')
+          .attr('class', 'bar3')
+          .attr('x', function(d: any) { return x(Number(convertedTime(d.startdate))); })
+          .attr('y', function(d: any) { return y(1.7); })
+          .attr('width', '10px')
+          .attr('height', '10px')
+          .attr('transform', 'translate(-5,0)');
+    }
+
+    if (data4) {
+      svg.selectAll('.bar4')
+        .data(data4)
+        .enter().append('rect')
+          .attr('class', 'bar4')
+          .attr('x', function(d: any) { return x(Number(convertedTime(d.startdate))); })
+          .attr('y', function(d: any) { return y(1.7); })
+          .attr('width', '10px')
+          .attr('height', '10px')
+          .attr('transform', 'translate(-5,0)');
+    }
 
     // add the x Axis
     // svg.append('g')
@@ -175,10 +211,13 @@ class EventChart extends React.Component<any, States> {
 
       let value = this.props.value;
       let value2 = this.props.value2 as any;
+      let value3 = this.props.value3 as any;
+      let value4 = this.props.value4 as any;
+
       let timeRange = [start + (end - start) * zoom[0], 
           start + (end - start) * zoom[1]] as [number, number];
 
-      this.drawChart(value, value2, timeRange, this.props.name);
+      this.drawChart(value, value2, timeRange, this.props.name, value3, value4);
     }
   }
 
@@ -194,17 +233,61 @@ class EventChart extends React.Component<any, States> {
 
     if (props.value.length !== 0) {
       let value = props.value;
-      let value2 = props.value2 as any;
-      // let unit = props.unit;
+      let value2 = props.value2 as EVENT[];
+      let value3 = props.value3 as EVENT[];
+      let value4 = props.value4 as EVENT[];
 
-      let start = convertedTime((props.patient as any).info.admittime);
-      let end = convertedTime((props.patient as any).info.dischtime);
+      let start, end;
+
+      if (props.secondTimeRange) {
+        if (!this.isGetTime) {
+          let unifyTime = unifyTwoPeriod(
+            (props.patient as any).info.admittime,
+            (props.patient as any).info.dischtime,
+            props.secondTimeRange[0],
+            props.secondTimeRange[1]
+          );
+
+          start = convertedTime(unifyTime[0]);
+          end = convertedTime(unifyTime[1]);
+
+          value = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value);
+          if (value2) {
+            value2 = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value2);
+          }
+
+          if (value3) {
+            value3 = transformYear(new Date(props.secondTimeRange[1]).getFullYear(), value3);
+          }
+          if (value4) {
+            value4 = transformYear(new Date(props.secondTimeRange[1]).getFullYear(), value4);
+          }
+          
+          this.isGetTime = true;
+          this.start = start;
+          this.end = end;
+          this.value = value;
+          this.value2 = value2;
+          this.value3 = value3;
+          this.value4 = value4;
+        }
+      }  else {
+        start = convertedTime((props.patient as any).info.admittime);
+        end = convertedTime((props.patient as any).info.dischtime);
+
+        this.start = start;
+        this.end = end;
+        this.value = value;
+        this.value2 = value2;
+        this.value3 = value3;
+        this.value4 = value4;
+      }
 
       let zoom = (props.zoom) ? props.zoom : [0, 1];
-      let timeRange = [start + (end - start) * zoom[0], 
-            start + (end - start) * zoom[1]] as [number, number];
+      let timeRange = [this.start + (this.end - this.start) * zoom[0], 
+          this.start + (this.end - this.start) * zoom[1]] as [number, number];
     
-      this.drawChart(value, value2, timeRange, name);
+      this.drawChart(this.value, this.value2, timeRange, name, this.value3, this.value4);
       // this.drawFigureBox(color, color2 , unit);
     } 
   }

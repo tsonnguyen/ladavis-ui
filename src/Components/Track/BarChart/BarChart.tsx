@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 
 import ROOTSTATE, { PATIENT, POINT } from '../../../Interfaces';
-import { convertedTime } from  '../../../api';
+import { convertedTime, unifyTwoPeriod, transformYear } from  '../../../api';
 import * as SizeTrack from '../SizeTrack';
 
 import './BarChart.css';
@@ -27,6 +27,9 @@ interface Props {
   position: number;
   patient?: PATIENT;
   zoom?: [number, number];
+  value3?: POINT[];
+  value4?: POINT[];
+  secondTimeRange?: any;
 }
 
 interface States {
@@ -45,6 +48,14 @@ const mergeProps = (stateProps: ROOTSTATE, dispatchProps: any, ownProps: Props) 
 });
 
 class BarChart extends React.Component<any, States> {
+  start: any = null;
+  end: any = null;
+  isGetTime: boolean = false;
+  value: any;
+  value2: any;
+  value3: any;
+  value4: any;
+
   constructor() {
     super();
   }
@@ -95,7 +106,8 @@ class BarChart extends React.Component<any, States> {
             timeRange: [number, number], color: string, color2: string, 
             predict: Number[]|null = null, isPredict: any, name: string, isGrid: boolean,
             isNormal1: boolean, isNormal2: boolean,
-            normalRange1: [number, number],  normalRange2: [number, number]) {
+            normalRange1: [number, number],  normalRange2: [number, number],
+            data3: Object[], data4: Object[]) {
     var self = this;
 
     // set the dimensions and margins of the graph
@@ -162,6 +174,50 @@ class BarChart extends React.Component<any, States> {
         .attr('y', 0)
         .attr('height', '0px')
         .attr('transform', 'translate(0,0)');
+    
+    if (data3) {
+      chart.selectAll('.bar3')
+        .data(data3)
+        .enter().append('rect')
+          .attr('class', 'bar3')
+          .attr('fill', color2)
+          .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
+          .attr('width', '10px')
+          .attr('y', function(d: any) { return y(Number(d.value)); })
+          .attr('height', function(d: any) { return height - y(Number(d.value)); })
+          .attr('transform', 'translate(0,0)');
+
+      chart.append('rect')
+          .attr('class', 'selector-3')
+          .attr('fill', color)
+          .attr('x', '0px')
+          .attr('width', '10px')
+          .attr('y', 0)
+          .attr('height', '0px')
+          .attr('transform', 'translate(0,0)');
+    }
+
+    if (data4) {
+      chart.selectAll('.bar4')
+        .data(data4)
+        .enter().append('rect')
+          .attr('class', 'bar4')
+          .attr('fill', color2)
+          .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
+          .attr('width', '10px')
+          .attr('y', function(d: any) { return y(Number(d.value)); })
+          .attr('height', function(d: any) { return height - y(Number(d.value)); })
+          .attr('transform', 'translate(0,0)');
+
+      chart.append('rect')
+          .attr('class', 'selector-4')
+          .attr('fill', color2)
+          .attr('x', '0px')
+          .attr('width', '10px')
+          .attr('y', 0)
+          .attr('height', '0px')
+          .attr('transform', 'translate(0,0)');
+    }
 
     if (isPredict === true && predict) {
         var predictY = d3.scaleLinear().range([height, 0]);
@@ -297,7 +353,11 @@ class BarChart extends React.Component<any, States> {
 
       let value = this.props.value;
       let value2 = this.props.value2 as POINT[];
+      let value3 = this.props.value3 as POINT[];
+      let value4 = this.props.value4 as POINT[];
+
       let range = this.props.range;
+
       let timeRange = [start + (end - start) * zoom[0], 
           start + (end - start) * zoom[1]] as [number, number];
       let predict = (this.props.patient) ? this.props.patient.predict : null;
@@ -305,7 +365,8 @@ class BarChart extends React.Component<any, States> {
       this.drawChart(value, value2, range, timeRange, color, color2, predict, 
                      this.props.predict, this.props.name, this.props.isGrid,
                      this.props.isNormal1, this.props.isNormal2,
-                     this.props.normalRange1, this.props.normalRange2);
+                     this.props.normalRange1, this.props.normalRange2,
+                     value3, value4);
     }
   }
 
@@ -325,25 +386,70 @@ class BarChart extends React.Component<any, States> {
     if (props.value.length !== 0) {
         let value = props.value;
         let value2 = props.value2 as POINT[];
+        let value3 = props.value3 as POINT[];
+        let value4 = props.value4 as POINT[];
         let range = props.range;
-        // let unit = props.unit;
-
-        let start = convertedTime((props.patient as any).info.admittime);
-        let end = convertedTime((props.patient as any).info.dischtime);
   
-        if (isNaN(start)) {
-          start = convertedTime(props.value[0].time);
-          end = convertedTime(props.value[props.value.length - 1].time);
+        let start, end;
+  
+        if (props.secondTimeRange) {
+          if (!this.isGetTime) {
+            let unifyTime = unifyTwoPeriod(
+              (props.patient as any).info.admittime,
+              (props.patient as any).info.dischtime,
+              props.secondTimeRange[0],
+              props.secondTimeRange[1]
+            );
+  
+            start = convertedTime(unifyTime[0]);
+            end = convertedTime(unifyTime[1]);
+  
+            value = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value);
+            if (value2) {
+              value2 = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value2);
+            }
+  
+            if (value3) {
+              value3 = transformYear(new Date(props.secondTimeRange[1]).getFullYear(), value3);
+            }
+            if (value4) {
+              value4 = transformYear(new Date(props.secondTimeRange[1]).getFullYear(), value4);
+            }
+            
+            this.isGetTime = true;
+            this.start = start;
+            this.end = end;
+            this.value = value;
+            this.value2 = value2;
+            this.value3 = value3;
+            this.value4 = value4;
+          }
+        }  else {
+          start = convertedTime((props.patient as any).info.admittime);
+          end = convertedTime((props.patient as any).info.dischtime);
+    
+          if (isNaN(start)) {
+            start = convertedTime(props.value[0].time);
+            end = convertedTime(props.value[props.value.length - 1].time);
+          }
+  
+          this.start = start;
+          this.end = end;
+          this.value = value;
+          this.value2 = value2;
+          this.value3 = value3;
+          this.value4 = value4;
         }
   
         let zoom = (props.zoom) ? props.zoom : [0, 1];
-        let timeRange = [start + (end - start) * zoom[0], 
-              start + (end - start) * zoom[1]] as [number, number];
+        let timeRange = [this.start + (this.end - this.start) * zoom[0], 
+            this.start + (this.end - this.start) * zoom[1]] as [number, number];
       
-        this.drawChart(value, value2, range, timeRange, color, color2, 
+        this.drawChart(this.value, this.value2, range, timeRange, color, color2, 
                        (props.patient as any).predict, props.predict, name, props.isGrid,
                        props.isNormal1, props.isNormal2,
-                       props.normalRange1 as [number, number], props.normalRange2 as [number, number]);
+                       props.normalRange1 as [number, number], props.normalRange2 as [number, number],
+                       this.value3, this.value4);
         // this.drawFigureBox(color, color2 , unit);
     }
   }
