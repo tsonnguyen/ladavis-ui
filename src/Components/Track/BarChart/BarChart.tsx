@@ -18,6 +18,10 @@ interface Props {
   range: [number, number];
   predict?: boolean;
   isGrid: boolean;
+  isNormal1: boolean;
+  isNormal2: boolean;
+  normalRange1?: [number, number];
+  normalRange2?: [number, number];
   color: string;
   color2: string;
   position: number;
@@ -45,9 +49,53 @@ class BarChart extends React.Component<any, States> {
     super();
   }
 
+  drawNormalRange(chart: any, isNormal1: boolean, isNormal2: boolean, 
+                  normalRange1: [number, number], normalRange2: [number, number],
+                  color: string, color2: string, y: any) {
+    if (isNormal1) {
+      chart.append('rect')
+        .attr('class', 'normal-range')
+        .attr('fill', color)
+        .attr('opacity', 0.3)
+        .attr('x', 0)
+        .attr('width', '750px')
+        .attr('y', y(Number(normalRange1[1])))
+        .attr('height',  -y(Number(normalRange1[1])) + y(Number(normalRange1[0])))
+        .attr('transform', 'translate(-10,0)');
+    }
+
+    if (isNormal2) {
+      chart.append('rect')
+        .attr('class', 'normal-range')
+        .attr('fill', color2)
+        .attr('opacity', 0.3)
+        .attr('x', 0)
+        .attr('width', '750px')
+        .attr('y', y(Number(normalRange2[1])))
+        .attr('height',  -y(Number(normalRange2[1])) + y(Number(normalRange2[0])))
+        .attr('transform', 'translate(-10,0)');
+    }
+  }
+
+  drawGrid(svg: any, margin: any, width: number, y: any, isGrid: boolean) {
+    if (isGrid) {
+        svg.append('g')
+            .attr('class', 'y-grid')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            .call(d3.axisLeft(y).ticks(5, 's').tickSize(-width).tickFormat(null));
+    } else {
+         svg.append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+            .call(d3.axisLeft(y).ticks(5, 's').tickSizeOuter(0));
+    }
+     
+  }
+
   drawChart(data1: Object[], data2: Object[], range: [number, number], 
             timeRange: [number, number], color: string, color2: string, 
-            predict: Number[]|null = null, isPredict: any, name: string, isGrid: boolean) {
+            predict: Number[]|null = null, isPredict: any, name: string, isGrid: boolean,
+            isNormal1: boolean, isNormal2: boolean,
+            normalRange1: [number, number],  normalRange2: [number, number]) {
     var self = this;
 
     // set the dimensions and margins of the graph
@@ -68,20 +116,12 @@ class BarChart extends React.Component<any, States> {
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom);
 
-    if (isGrid) {
-        svg.append('g')
-            .attr('class', 'y-grid')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-            .call(d3.axisLeft(y).ticks(5, 's').tickSize(-width).tickFormat(null));
-    } else {
-        svg.append('g')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-            .call(d3.axisLeft(y).ticks(5, 's').tickSizeOuter(0));
-    }
-
     var chart = svg.append('g')
-    .attr('clip-path', 'url(#clipPath-' + name + ')')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+                .attr('clip-path', 'url(#clipPath-' + name + ')')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    this.drawNormalRange(chart, isNormal1, isNormal2, normalRange1, normalRange2, color, color2, y);
+    this.drawGrid(svg, margin, width, y, isGrid);
 
     chart.selectAll('.bar')
         .data(data1)
@@ -263,7 +303,9 @@ class BarChart extends React.Component<any, States> {
       let predict = (this.props.patient) ? this.props.patient.predict : null;
 
       this.drawChart(value, value2, range, timeRange, color, color2, predict, 
-                     this.props.predict, this.props.name, this.props.isGrid);
+                     this.props.predict, this.props.name, this.props.isGrid,
+                     this.props.isNormal1, this.props.isNormal2,
+                     this.props.normalRange1, this.props.normalRange2);
     }
   }
 
@@ -299,7 +341,9 @@ class BarChart extends React.Component<any, States> {
               start + (end - start) * zoom[1]] as [number, number];
       
         this.drawChart(value, value2, range, timeRange, color, color2, 
-                       (props.patient as any).predict, props.predict, name, props.isGrid);
+                       (props.patient as any).predict, props.predict, name, props.isGrid,
+                       props.isNormal1, props.isNormal2,
+                       props.normalRange1 as [number, number], props.normalRange2 as [number, number]);
         // this.drawFigureBox(color, color2 , unit);
     }
   }

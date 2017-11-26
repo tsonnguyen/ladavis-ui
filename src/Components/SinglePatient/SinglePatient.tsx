@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import Header from '../Header/Header';
 import Track from '../Track/Track';
 import TimeBar from '../TimeBar/TimeBar';
 import SwitchButton from '../SwitchButton/SwitchButton';
@@ -353,7 +354,8 @@ class SinglePatient extends React.Component<Props, States> {
         name={(isTop) ? 'Albumin-Top' : 'Albumin'} 
         title={'Albumin'} 
         value={this.props.patient.albumin}
-        range={[0, 5]}
+        range={[0, 10]}
+        normalRange1={[3.5, 5.5]}
         unit={'mg/dl'}
         color={color}
         position={position}
@@ -372,6 +374,8 @@ class SinglePatient extends React.Component<Props, States> {
         value={this.props.patient.systolic}
         value2={this.props.patient.diastolic}
         range={[0, 200]}
+        normalRange1={[90, 120]}
+        normalRange2={[60, 80]}
         unit={'mmHg'}
         color={color1}
         color2={color2}
@@ -390,6 +394,7 @@ class SinglePatient extends React.Component<Props, States> {
         title={'BMI'} 
         value={this.props.patient.bmi}
         range={[10, 40]}
+        normalRange1={[18.5, 25]}
         unit={'kg/m2'}
         color={color}
         predict={isPredict}
@@ -407,6 +412,7 @@ class SinglePatient extends React.Component<Props, States> {
         title={'Creatinine'} 
         value={this.props.patient.creatinine}
         range={[0, 3]}
+        normalRange1={[0.5, 1.2]}
         unit={'mg/dl'}
         color={color}
         position={position}
@@ -425,6 +431,8 @@ class SinglePatient extends React.Component<Props, States> {
         value={this.props.patient.choles}
         value2={this.props.patient.trigly}
         range={[0, 1000]}
+        normalRange1={[0, 200]}
+        normalRange2={[0, 150]}
         unit={'mg/dl'}
         color={color1}
         color2={color2}
@@ -442,6 +450,7 @@ class SinglePatient extends React.Component<Props, States> {
         title={'Glucose'} 
         value={this.props.patient.glucoseBlood}
         range={[0, 350]}
+        normalRange1={[70, 99]}
         unit={'mg/dl'}
         color={color}
         predict={isPredict}
@@ -459,6 +468,7 @@ class SinglePatient extends React.Component<Props, States> {
         title={'HbA1c'} 
         value={this.props.patient.hemoA1c}
         range={[0, 20]}
+        normalRange1={[0, 6]}
         unit={'%'}
         color={color}
         position={position}
@@ -532,67 +542,70 @@ class SinglePatient extends React.Component<Props, States> {
     heightBody += 148;
 
     return (
-      <div className="patient">
-        {this.renderNotePatient()}
-        {this.renderPatientInfo()}
-        <div className="patient-chart">
-          <div className="patient-chart-figure" style={{marginTop: '-10px'}}>
-            <div className="patient-chart-header">
-              <svg className="svg-container" style={{height: 155}}>
-                {topChart()}
-              </svg>
-            </div>
-            {/* <hr 
-              style={{
-                width: '777px', 
-                margin: 0, 
-                marginLeft: '25px', 
-                marginTop: '-5px',
-                marginBottom: '5px'
-              }}
-            />
-            <hr style={{width: '777px', margin: 0, marginLeft: '25px'}}/> */}
-            <div className="patient-chart-body">
-              <svg className="svg-container" style={{height: heightBody}}>
-                {(this.state.isBMI) ? 
-                  this.renderBMI(this.state.listPosition.bmi, '#4ed8da', isPredict) 
-                  : null}
-                {(this.state.isGlucose) ? 
-                  this.renderGlucose(this.state.listPosition.glucose, '#c14dd9', isPredict) 
-                  : null}
-                {(this.state.isNBP) ? 
-                  this.renderBP(this.state.listPosition.bp, '#4ed8da', '#c14dd9', isPredict) 
-                  : null}
-                {(this.state.isFat) ? 
-                  this.renderFat(this.state.listPosition.fat, '#4ed8da', '#c14dd9') 
-                  : null}
-                {(this.state.isCreatine) ? 
-                  this.renderCreatine(this.state.listPosition.creatine, '#4ed8da') 
-                  : null}
-                {(this.state.isAlbumin) ? 
-                  this.renderAlbumin(this.state.listPosition.albumin, '#c14dd9') 
-                  : null}
-                {(this.state.isDrug) ? 
-                  this.renderPrescription(this.state.listPosition.drug)
-                  : null}
-                {(this.state.isNote) ? 
-                  this.renderNote(this.state.listPosition.note)
-                  : null}
-              </svg>
-            </div>
-            {/* <hr style={{width: '777px', margin: 0, marginTop: '-2px', marginLeft: '25px'}}/> */}
-            <div className="patient-chart-footer">
-              <div className="patient-chart-footer-header"/>
-              <div className="patient-predict-diabete">
-                <TimeBar
-                  startTime={this.props.patient.info.admittime}
-                  endTime={this.props.patient.info.dischtime}
-                /> 
+      <div>
+        <Header />
+        <div className="patient">
+          {this.renderNotePatient()}
+          {this.renderPatientInfo()}
+          <div className="patient-chart">
+            <div className="patient-chart-figure" style={{marginTop: '-10px'}}>
+              <div className="patient-chart-header">
+                <svg className="svg-container" style={{height: 155}}>
+                  {topChart()}
+                </svg>
+              </div>
+              {/* <hr 
+                style={{
+                  width: '777px', 
+                  margin: 0, 
+                  marginLeft: '25px', 
+                  marginTop: '-5px',
+                  marginBottom: '5px'
+                }}
+              />
+              <hr style={{width: '777px', margin: 0, marginLeft: '25px'}}/> */}
+              <div className="patient-chart-body">
+                <svg className="svg-container" style={{height: heightBody}}>
+                  {(this.state.isBMI) ? 
+                    this.renderBMI(this.state.listPosition.bmi, '#4ed8da', isPredict) 
+                    : null}
+                  {(this.state.isGlucose) ? 
+                    this.renderGlucose(this.state.listPosition.glucose, '#c14dd9', isPredict) 
+                    : null}
+                  {(this.state.isNBP) ? 
+                    this.renderBP(this.state.listPosition.bp, '#4ed8da', '#c14dd9', isPredict) 
+                    : null}
+                  {(this.state.isFat) ? 
+                    this.renderFat(this.state.listPosition.fat, '#4ed8da', '#c14dd9') 
+                    : null}
+                  {(this.state.isCreatine) ? 
+                    this.renderCreatine(this.state.listPosition.creatine, '#4ed8da') 
+                    : null}
+                  {(this.state.isAlbumin) ? 
+                    this.renderAlbumin(this.state.listPosition.albumin, '#c14dd9') 
+                    : null}
+                  {(this.state.isDrug) ? 
+                    this.renderPrescription(this.state.listPosition.drug)
+                    : null}
+                  {(this.state.isNote) ? 
+                    this.renderNote(this.state.listPosition.note)
+                    : null}
+                </svg>
+              </div>
+              {/* <hr style={{width: '777px', margin: 0, marginTop: '-2px', marginLeft: '25px'}}/> */}
+              <div className="patient-chart-footer">
+                <div className="patient-chart-footer-header"/>
+                <div className="patient-predict-diabete">
+                  <TimeBar
+                    startTime={this.props.patient.info.admittime}
+                    endTime={this.props.patient.info.dischtime}
+                  /> 
+                </div>
               </div>
             </div>
           </div>
+          {this.renderFeatureSelection()}
         </div>
-        {this.renderFeatureSelection()}
       </div>
     );
   }

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import Track from '../Track/Track';
+import Header from '../Header/Header';
 import ROOTSTATE from '../../Interfaces';
 
 import { getPatientById } from '../../Actions/patientActions';
@@ -105,6 +106,7 @@ class ListPatient extends React.Component<Props, States> {
           title={'HbA1c'} 
           value={patient.hemoA1c}
           range={[0, 20]}
+          normalRange1={[0, 6]}
           unit={'%'}
           color={'#c14dd9'}
           position={-5}
@@ -128,6 +130,7 @@ class ListPatient extends React.Component<Props, States> {
           title={'Glucose'} 
           value={patient.glucoseBlood}
           range={[0, 1200]}
+          normalRange1={[70, 99]}
           unit={'mg/dl'}
           color={'#c14dd9'}
           position={-5}
@@ -153,6 +156,8 @@ class ListPatient extends React.Component<Props, States> {
           value={patient.systolic}
           value2={patient.diastolic}
           range={[0, 300]}
+          normalRange1={[90, 120]}
+          normalRange2={[60, 80]}
           unit={'mmHg'}
           color={'#4ed8da'}
           color2={'#c14dd9'}
@@ -177,6 +182,7 @@ class ListPatient extends React.Component<Props, States> {
           title={'Creatinine'} 
           value={patient.creatinine}
           range={[0, 10]}
+          normalRange1={[0.5, 1.2]}
           unit={'mg/dl'}
           color={'#c14dd9'}
           position={-5}
@@ -207,6 +213,8 @@ class ListPatient extends React.Component<Props, States> {
           value={patient.choles}
           value2={patient.trigly}
           range={[0, 900]}
+          normalRange1={[0, 200]}
+          normalRange2={[0, 150]}
           unit={'mg/dl'}
           color={'#4ed8da'}
           color2={'#c14dd9'}
@@ -236,6 +244,7 @@ class ListPatient extends React.Component<Props, States> {
           title={'Albumin'} 
           value={patient.albumin}
           range={[0, 5]}
+          normalRange1={[3.5, 5.5]}
           unit={'mg/dl'}
           color={'#c14dd9'}
           position={-5}
@@ -352,11 +361,14 @@ class ListPatient extends React.Component<Props, States> {
     });
 
     return (
-      <div className="list-patient">
-        <div className="patient-chart-body slimScroll">
-          {listPatient}
+      <div>
+        <Header />
+        <div className="list-patient">
+          <div className="patient-chart-body slimScroll">
+            {listPatient}
+          </div>
+          {this.renderFeatureSelection()}
         </div>
-        {this.renderFeatureSelection()}
       </div>
     );
   }

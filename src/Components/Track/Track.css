@@ -99,6 +99,10 @@
   cursor: pointer;
 }
 
+.list-patient .move-track-icon {
+  display: none;
+}
+
 .move-track-icon {
   cursor: pointer;
 }
@@ -112,6 +116,6 @@
 }
 
 .y-grid .tick line{
-  stroke: rgb(172, 172, 172);
+  stroke: rgb(102, 101, 101);
   stroke-width: 1px
 }

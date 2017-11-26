@@ -61,3 +61,9 @@ export function getDatesBetween(startDate: Date, stopDate: Date) {
   }
   return dateArray;
 }
+
+export function calculateMiddlePoint(x1: number, y1: number, x2: number, y2: number, x: number) {
+  let a = (y2 - y1) / (x2 - x1);
+  let b = y1 - a * x1;
+  return a * x + b;
+}
