@@ -60,7 +60,7 @@ class EventChart extends React.Component<any, States> {
     //   [5, 1, 10],
     //   [7, 1, 80]
     // ];
-
+    var self = this;
     // set the dimensions and margins of the graph
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
         width = SizeTrack.TRACK_WIDTH - margin.left - margin.right,
@@ -86,7 +86,7 @@ class EventChart extends React.Component<any, States> {
     // Scale the range of the data in the domains
     x.domain([timeRange[0], timeRange[1]]);
     y.domain([0, 3]);
-
+    console.log(data1)
     // append the rectangles for the bar chart
     svg.selectAll('.bar')
         .data(data1)
@@ -97,7 +97,21 @@ class EventChart extends React.Component<any, States> {
           .attr('y', function(d: any) { return y(2.8); })
           .attr('width', '10px') 
           .attr('height', '10px')
-          .attr('transform', 'translate(-5,0)');
+          .attr('transform', 'translate(-5,0)')
+          .on('mousemove', function(d: any) {
+            let text = d3.select('#' + self.props.name).select('.event-text');
+            text.attr('fill', 'white')
+                    // tslint:disable-next-line:no-string-literal
+                    .text(d['prod_strength'])
+                    .attr('x', x(Number(convertedTime(d.startdate))) + 11)
+                    .attr('y', y(2.3));
+
+            let bg = d3.select('#' + self.props.name).select('.event-bg');
+            bg.attr('fill', color)
+                    .attr('width', (text as any).node().getComputedTextLength() + 10)
+                    .attr('x', x(Number(convertedTime(d.startdate))) + 8)
+                    .attr('y', y(2.8));
+          });
 
     svg.selectAll('.bar2')
         .data(data2)
@@ -108,7 +122,21 @@ class EventChart extends React.Component<any, States> {
           .attr('y', function(d: any) { return y(1.7); })
           .attr('width', '10px')
           .attr('height', '10px')
-          .attr('transform', 'translate(-5,0)');
+          .attr('transform', 'translate(-5,0)')
+          .on('mousemove', function(d: any) {
+            let text = d3.select('#' + self.props.name).select('.event-text');
+            text.attr('fill', 'white')
+                    // tslint:disable-next-line:no-string-literal
+                    .text(d['prod_strength'])
+                    .attr('x', x(Number(convertedTime(d.startdate))) + 11)
+                    .attr('y', y(1.2));
+
+            let bg = d3.select('#' + self.props.name).select('.event-bg');
+            bg.attr('fill', color2)
+                    .attr('width', (text as any).node().getComputedTextLength() + 10)
+                    .attr('x', x(Number(convertedTime(d.startdate))) + 8)
+                    .attr('y', y(1.7));
+          });
     
     if (data3) {
       svg.selectAll('.bar3')
@@ -134,14 +162,17 @@ class EventChart extends React.Component<any, States> {
           .attr('transform', 'translate(-5,0)');
     }
 
-    // add the x Axis
-    // svg.append('g')
-    //     .attr('transform', 'translate(0,' + height + ')')
-    //     .call(d3.axisBottom(x));
+    svg.append('rect')
+        .attr('fill', 'white')   
+        .attr('class', 'event-bg')
+        .attr('height', '25px')
+        .attr('transform', 'translate(-5,0)');
 
-    // add the y Axis
-    // svg.append('g')
-    //     .call(d3.axisLeft(y));
+    svg.append('text')
+        .attr('fill', 'white')   
+        .attr('class', 'event-text')
+        .attr('font-size', 12)
+        .attr('transform', 'translate(-5,0)');
   }
 
   drawFigureBox() {

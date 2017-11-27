@@ -449,13 +449,13 @@ class LineChart extends React.Component<any, States> {
                         .attr('y', y(displayValue) - 5);
     
                 let textSelector = d3.select('#' + self.props.name).select('.text-selector');
-                textSelector.attr('fill', color)
+                textSelector.attr('fill', 'white')
                         .text(displayValue)
                         .attr('x', x(selectDate) + textMove)
                         .attr('y', y(displayValue) - 15);
 
                 let bgSelector = d3.select('#' + self.props.name).select('.selector-bg');
-                bgSelector.attr('fill', 'white')
+                bgSelector.attr('fill', color)
                         .attr('width', (textSelector as any).node().getComputedTextLength() + 12)
                         .attr('x', x(selectDate) + textMove - 5)
                         .attr('y', y(displayValue) - 30);
@@ -482,13 +482,13 @@ class LineChart extends React.Component<any, States> {
                              .attr('y', y(displayValue2) - 5);
 
                     let textSelector2 = d3.select('#' + self.props.name).select('.text-selector-2');
-                    textSelector2.attr('fill', color2)
+                    textSelector2.attr('fill', 'white')
                             .text(displayValue2)
                             .attr('x', x(selectDate) + textMove)
                             .attr('y', y(displayValue2) - 10);
 
                     let bgSelector2 = d3.select('#' + self.props.name).select('.selector-bg-2');
-                    bgSelector2.attr('fill', 'white')
+                    bgSelector2.attr('fill', color2)
                             .attr('width', (textSelector2 as any).node().getComputedTextLength() + 12)
                             .attr('x', x(selectDate) + textMove - 5)
                             .attr('y', y(displayValue2) - 25);
@@ -533,13 +533,13 @@ class LineChart extends React.Component<any, States> {
                       .attr('y', y(displayValue3) - 5);
 
               let textSelector3 = d3.select('#' + self.props.name).select('.text-selector-3');
-              textSelector3.attr('fill', color3)
+              textSelector3.attr('fill', 'white')
                       .text(displayValue3)
                       .attr('x', x(selectDate) + textMove)
                       .attr('y', y(displayValue3) - 10); // + 25
 
               let bgSelector3 = d3.select('#' + self.props.name).select('.selector-bg-3');
-              bgSelector3.attr('fill', 'black')
+              bgSelector3.attr('fill', color3)
                       .attr('width', (textSelector3 as any).node().getComputedTextLength() + 12)
                       .attr('x', x(selectDate) + textMove - 5)
                       .attr('y', y(displayValue3) - 25); // + 10
@@ -566,10 +566,16 @@ class LineChart extends React.Component<any, States> {
                           .attr('y', y(displayValue4) - 5);
 
                 let textSelector4 = d3.select('#' + self.props.name).select('.text-selector-4');
-                textSelector4.attr('fill', color4)
+                textSelector4.attr('fill', 'white')
                         .text(displayValue4)
                         .attr('x', x(selectDate) + textMove)
                         .attr('y', y(displayValue4) - 10);
+
+                let bgSelector4 = d3.select('#' + self.props.name).select('.selector-bg-4');
+                bgSelector4.attr('fill', color4)
+                        .attr('width', (textSelector4 as any).node().getComputedTextLength() + 12)
+                        .attr('x', x(selectDate) + textMove - 5)
+                        .attr('y', y(displayValue4) - 25); // + 10
               } 
               break;
             }
