@@ -490,7 +490,7 @@ class SinglePatient extends React.Component<Props, States> {
     );
   }
 
-  renderPrescription(position: number, isTop: boolean = false) {
+  renderPrescription(position: number, color1: string, color2: string, isTop: boolean = false) {
     return (
       <Track 
         type={'event-chart'} 
@@ -499,6 +499,8 @@ class SinglePatient extends React.Component<Props, States> {
         title2={'Lisin'}
         value={this.props.patient.simva}
         value2={this.props.patient.lisin}
+        color={color1}
+        color2={color2}
         position={position}
         moveTrackCallback={this.moveTrackCallback}
       />
@@ -525,7 +527,7 @@ class SinglePatient extends React.Component<Props, States> {
       } else if (this.state.topFeature === 'Note') {
         return this.renderNote(0, true);
       } else if (this.state.topFeature === 'Prescription') {
-        return this.renderPrescription(0, true);
+        return this.renderPrescription(0, '#4ed8da', '#c14dd9', true);
       } else {
         return null;
       }
@@ -585,7 +587,7 @@ class SinglePatient extends React.Component<Props, States> {
                     this.renderAlbumin(this.state.listPosition.albumin, '#c14dd9') 
                     : null}
                   {(this.state.isDrug) ? 
-                    this.renderPrescription(this.state.listPosition.drug)
+                    this.renderPrescription(this.state.listPosition.drug, '#4ed8da', '#c14dd9')
                     : null}
                   {(this.state.isNote) ? 
                     this.renderNote(this.state.listPosition.note)

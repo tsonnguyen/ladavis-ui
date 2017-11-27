@@ -1,4 +1,5 @@
 import * as React from 'react';
+// import * as d3 from 'd3';
 
 import LineChart from './LineChart/LineChart';
 import BarChart from './BarChart/BarChart';
@@ -34,9 +35,12 @@ interface Props {
 }
 
 interface States {
+  isSetting: boolean;
   isGrid: boolean;
   isNormal1: boolean;
   isNormal2: boolean;
+  isShade1: boolean;
+  isShade2: boolean;
 }
 
 class Track extends React.Component<Props, States> {
@@ -45,10 +49,29 @@ class Track extends React.Component<Props, States> {
     super();
 
     this.state = {
+      isSetting: false,
       isGrid: false,
       isNormal1: false,
-      isNormal2: false
+      isNormal2: false,
+      isShade1: false,
+      isShade2: false
     };
+  }
+
+  componentDidMount() {
+    var self = this;
+    window.addEventListener('click', (e) => { 
+      if (e.toElement.id !== 'setting-icon-' + self.props.name) {
+        self.setState({isSetting: false}); 
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    var self = this;
+    window.removeEventListener('click', (e) => { 
+      self.setState({isSetting: false}); 
+    });
   }
 
   calculatePostionUnit(textLength: number) {
@@ -83,6 +106,8 @@ class Track extends React.Component<Props, States> {
         isGrid={this.state.isGrid}
         isNormal1={this.state.isNormal1}
         isNormal2={this.state.isNormal2}
+        isShade1={this.state.isShade1}
+        isShade2={this.state.isShade2}
         normalRange1={this.props.normalRange1}
         normalRange2={this.props.normalRange2}
         position={50}
@@ -129,6 +154,8 @@ class Track extends React.Component<Props, States> {
         title2={this.props.title2 as string} 
         value={this.props.value as EVENT[]}
         value2={this.props.value2 as EVENT[]}
+        color={this.props.color as string}
+        color2={this.props.color2 as string}
         position={650}
         value3={this.props.value3 as EVENT[]}
         value4={this.props.value4 as EVENT[]}
@@ -223,77 +250,6 @@ class Track extends React.Component<Props, States> {
     );
   }
 
-  renderNormalIcon() {
-    return (
-      <g>
-        <rect 
-          className="grid-icon"
-          fill={this.props.color}
-          rx="2" 
-          ry="2"
-          width="50"
-          height="25"
-          x="625"
-          y={this.props.position + 18}
-          onMouseDown={() => {
-            this.setState({
-              isNormal1: !this.state.isNormal1,
-              isNormal2: false,
-            });
-          }}
-        />
-        <text 
-          className="grid-icon grid-icon-text" 
-          x="637" 
-          y={this.props.position + 35} 
-          fill="white"
-          onMouseDown={() => {
-            this.setState({
-              isNormal1: !this.state.isNormal1,
-              isNormal2: false,
-            });
-          }}
-        >
-          NOR
-        </text>
-        { (this.props.value2) ?
-          <g>
-            <rect 
-              className="grid-icon"
-              fill={this.props.color2}
-              rx="2" 
-              ry="2"
-              width="50"
-              height="25"
-              x="565"
-              y={this.props.position + 18}
-              onMouseDown={() => {
-                this.setState({
-                  isNormal2: !this.state.isNormal2,
-                  isNormal1: false,
-                });
-              }}
-            />
-            <text 
-              className="grid-icon grid-icon-text" 
-              x="577" 
-              y={this.props.position + 35} 
-              fill="white"
-              onMouseDown={() => {
-                this.setState({
-                  isNormal2: !this.state.isNormal2,
-                  isNormal1: false,
-                });
-              }}
-            >
-              NOR
-            </text>
-          </g> : null
-        }
-      </g>
-    );
-  }
-
   renderGridIcon() {
     return (
       <g>
@@ -312,7 +268,7 @@ class Track extends React.Component<Props, States> {
           ry="2"
           width="55"
           height="25"
-          x="685"
+          x="645"
           y={this.props.position + 18}
           onMouseDown={() => {
             this.setState({isGrid: !this.state.isGrid});
@@ -320,7 +276,7 @@ class Track extends React.Component<Props, States> {
         />
         <text 
           className="grid-icon grid-icon-text" 
-          x="697" 
+          x="657" 
           y={this.props.position + 35} 
           fill="white"
           onMouseDown={() => {
@@ -329,6 +285,104 @@ class Track extends React.Component<Props, States> {
         >
           GRID
         </text>
+      </g>
+    );
+  }
+
+  renderSettingIcon() {
+    let startPosition = 525;
+    let tableWidth = 220;
+
+    let renderItem = (title: string, color: string, textPosition: number, iconPosition: number, callback: any) => {
+      return (
+        <g>
+          <text 
+            className="setting-text" 
+            x={startPosition + 15}
+            y={this.props.position + textPosition} 
+          >
+            {title}
+          </text>
+          <rect 
+            fill={color}
+            width="10"
+            height="30"
+            x={startPosition}
+            y={this.props.position + iconPosition}
+          />
+          <rect 
+            className="setting-choice"
+            rx="5" 
+            ry="2"
+            width={tableWidth}
+            x={startPosition}
+            y={this.props.position + iconPosition}
+            onMouseDown={callback}
+          />
+        </g>
+      );
+    };
+
+    return (
+      <g>
+        <image 
+          className="setting-icon"
+          id={'setting-icon-' + this.props.name}
+          width="55"
+          height="25"
+          xlinkHref={require('./img/menu.png')}
+          x="705"
+          y={this.props.position + 18}
+          onClick={() => {
+            this.setState({isSetting: true});
+          }}
+        />
+
+        {(this.state.isSetting) ? <g>
+          <rect 
+            className="setting-table"
+            id={'setting-table-' + this.props.name}
+            rx="5" 
+            ry="2"
+            width={tableWidth}
+            height={(this.props.title2) ? '120' : '60'}
+            x={startPosition}
+            y={this.props.position + 18}
+          />
+          {renderItem(this.props.title + ' normal range', this.props.color as string, 38, 17, () => {
+            this.setState({
+              isNormal1: !this.state.isNormal1,
+              isNormal2: false,
+            });
+          })}
+          {(this.props.title2) ? <g>
+            {renderItem(this.props.title2 + ' normal range', this.props.color2 as string, 68, 47, () => {
+              this.setState({
+                isNormal2: !this.state.isNormal2,
+                isNormal1: false,
+              });
+            })}
+            {renderItem(this.props.title + ' shading', this.props.color as string, 97, 76, () => {
+              this.setState({
+                isShade1: !this.state.isShade1,
+                isShade2: false,
+              });
+            })}
+            {renderItem(this.props.title2 + ' shading', this.props.color2 as string, 127, 106, () => {
+              this.setState({
+                isShade2: !this.state.isShade2,
+                isShade1: false,
+              });
+            })}
+          </g> : <g>
+            {renderItem(this.props.title + ' shading', this.props.color as string, 68, 47, () => {
+              this.setState({
+                isShade1: !this.state.isShade1,
+                isShade2: false,
+              });
+            })}
+          </g>}
+        </g> : null}
       </g>
     );
   }
@@ -454,8 +508,7 @@ class Track extends React.Component<Props, States> {
       <g className="track-group" >
         {this.renderTrackClipPath()}
         {this.renderHeader()}
-        {(isGridAndRange) ? this.renderNormalIcon() : null}
-        {(isGridAndRange) ? this.renderGridIcon() : null}
+        
         {this.renderMoveTrackIcon()}
         {this.renderTrackBackground()}
         <svg className="track" x="-11" y={this.props.position + 30}>
@@ -463,6 +516,11 @@ class Track extends React.Component<Props, States> {
           {this.renderTrackDrag()}
           {renderComponent}  
         </svg>
+        {(isGridAndRange) ? this.renderGridIcon() : null}}
+        {(isGridAndRange) ? this.renderSettingIcon() : null}
+        {/* {(isGridAndRange) ? this.renderNormalIcon() : null}
+        {(isGridAndRange) ? this.renderGridIcon() : null} */}
+        
       </g>
     );
   }

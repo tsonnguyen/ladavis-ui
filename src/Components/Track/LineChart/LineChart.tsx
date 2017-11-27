@@ -21,6 +21,8 @@ interface Props {
   isNormal2: boolean;
   normalRange1?: [number, number];
   normalRange2?: [number, number];
+  isShade1: boolean;
+  isShade2: boolean;
   unit: string;
   color: string;
   color2?: string;
@@ -137,9 +139,17 @@ class LineChart extends React.Component<any, States> {
 
   drawSelector(chart: any, color: string, color2: string, data2: Object[], data3: Object[], data4: Object[],
                color3: string, color4: string) {
+    chart.append('rect')
+        .attr('class', 'selector-bg')
+        .attr('fill', 'transparent')
+        .attr('rx', '5')
+        .attr('ry', '5')
+        .attr('height', '20px')
+        .attr('transform', 'translate(-10,0)');
+
     chart.append('text')
         .attr('class', 'text-selector')
-        .attr('fill', color)
+        .attr('fill', 'black')
         .text('')
         .attr('x', 0)
         .attr('y', 0)
@@ -148,7 +158,7 @@ class LineChart extends React.Component<any, States> {
 
     chart.append('rect')
         .attr('class', 'selector')
-        .attr('fill', 'transparent')
+        .attr('fill', 'white')
         .attr('rx', '100')
         .attr('ry', '100')
         .attr('x', '0px')
@@ -158,29 +168,45 @@ class LineChart extends React.Component<any, States> {
         .attr('transform', 'translate(-10,0)');
 
     if (data2) {
-        chart.append('text')
-            .attr('class', 'text-selector-2')
-            .attr('fill', color)
-            .text('')
-            .attr('x', 0)
-            .attr('y', 0)
-            .attr('font-size', 12)
-            .attr('transform', 'translate(-10,0)');
+      chart.append('rect')
+        .attr('class', 'selector-bg-2')
+        .attr('fill', 'transparent')
+        .attr('rx', '5')
+        .attr('ry', '5')
+        .attr('height', '20px')
+        .attr('transform', 'translate(-10,0)');
 
-        chart.append('rect')
-            .attr('class', 'selector-2')
-            .attr('fill', 'transparent')
-            .attr('rx', '100')
-            .attr('ry', '100')
-            .attr('x', '0px')
-            .attr('width', '10px')
-            .attr('y', 0)
-            .attr('height', '10px')
-            .attr('transform', 'translate(-10,0)');
+      chart.append('text')
+          .attr('class', 'text-selector-2')
+          .attr('fill', color)
+          .text('')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('font-size', 12)
+          .attr('transform', 'translate(-10,0)');
+
+      chart.append('rect')
+          .attr('class', 'selector-2')
+          .attr('fill', 'transparent')
+          .attr('rx', '100')
+          .attr('ry', '100')
+          .attr('x', '0px')
+          .attr('width', '10px')
+          .attr('y', 0)
+          .attr('height', '10px')
+          .attr('transform', 'translate(-10,0)');
 
     }
 
     if (data3) {
+      chart.append('rect')
+          .attr('class', 'selector-bg-3')
+          .attr('fill', 'transparent')
+          .attr('rx', '5')
+          .attr('ry', '5')
+          .attr('height', '20px')
+          .attr('transform', 'translate(-10,0)');
+
       chart.append('text')
           .attr('class', 'text-selector-3')
           .attr('fill', color3)
@@ -203,6 +229,14 @@ class LineChart extends React.Component<any, States> {
     }
 
     if (data4) {
+      chart.append('rect')
+      .attr('class', 'selector-bg-4')
+          .attr('fill', 'transparent')
+          .attr('rx', '5')
+          .attr('ry', '5')
+          .attr('height', '20px')
+          .attr('transform', 'translate(-10,0)');
+
       chart.append('text')
           .attr('class', 'text-selector-4')
           .attr('fill', color4)
@@ -241,12 +275,54 @@ class LineChart extends React.Component<any, States> {
         .attr('transform', 'translate(-10,0)');
   }
 
+  drawShade(svg: any, chart: any, data: any, normalRange: any, x: any, y: any, height: any, name: string) {
+    var defs = svg.append('defs');
+    var linearGradient = defs.append('linearGradient')
+      .attr('id', 'animate-gradient-' + name)
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0')
+      .attr('spreadMethod', 'reflect');
+      
+    var colours: any = [];
+    for (let i in data) {
+      if (Number((data[i] as any).value) > normalRange[1]) {
+        colours.push('#fd0b00');
+      } else {
+        colours.push('#fded00');
+      }
+    }
+    
+    linearGradient.selectAll('.stop')
+      .data(colours)
+      .enter().append('stop')
+      .attr('offset', function(d: any, i: any) { 
+        // console.log(x(Number(convertedTime((data[i] as any).time))) / 740)
+        // console.log(i/(colours.length-1))
+        return x(Number(convertedTime((data[i] as any).time))) / 740; 
+      })   
+      .attr('stop-color', function(d: any) { return d; });
+
+    var area = d3.area()
+        .x(function(d: any) { return x(Number(convertedTime(d.time))); })
+        .y0(height)
+        .y1(function(d: any) {  return y(Number(d.value)); });
+
+    chart.append('path')
+        .data([data])
+        .attr('class', 'area')
+        .attr('d', area)
+        .style('fill', 'url(#animate-gradient-' + name + ')');
+  }
+
   drawChart(data: Object[], data2: Object[], range: [number, number], 
             timeRange: [number, number], color: string, color2: string, 
             predict: Number[]|null = null, isPredict: any, name: string, 
             isGrid: boolean, isNormal1: boolean, isNormal2: boolean,
             normalRange1: [number, number],  normalRange2: [number, number],
-            data3: Object[], data4: Object[], color3: string, color4: string) {
+            data3: Object[], data4: Object[], color3: string, color4: string,
+            isShade1: boolean, isShade2: boolean) {
     var self = this;
 
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -265,19 +341,20 @@ class LineChart extends React.Component<any, States> {
     var valueline = d3.line()
         .x(function(d: any) { return x(Number(convertedTime(d.time))); })
         .y(function(d: any) { return y(Number(d.value)); });
-    
+                  
     var svg = d3.select('#' + name).append('svg')
         .attr('class', 'line-chart')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom);
+        
+    this.drawGrid(svg, margin, width, y, isGrid);  
 
     var chart = svg.append('g')
             .attr('clip-path', 'url(#clipPath-' + self.props.name + ')')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    this.drawNormalRange(chart, isNormal1, isNormal2, normalRange1, normalRange2, color, color2, y);
-    this.drawGrid(svg, margin, width, y, isGrid);
-
+    this.drawNormalRange(chart, isNormal1, isNormal2, normalRange1, normalRange2, color, color2, y);   
+    
     chart.append('path')
         .data([data])
         .attr('class', 'line')
@@ -286,14 +363,22 @@ class LineChart extends React.Component<any, States> {
         .attr('stroke-width', '3px')
         .attr('fill', 'none');
 
+    if (isShade1) {
+      this.drawShade(svg, chart, data, normalRange1, x, y, height, name);
+    }
+    
     if (data2) {
-        chart.append('path')
-          .data([data2])
-          .attr('class', 'line')
-          .attr('d', valueline)
-          .attr('stroke', color2)
-          .attr('stroke-width', '3px')
-          .attr('fill', 'none');
+      chart.append('path')
+        .data([data2])
+        .attr('class', 'line')
+        .attr('d', valueline)
+        .attr('stroke', color2)
+        .attr('stroke-width', '3px')
+        .attr('fill', 'none');
+      
+      if (isShade2) {
+        this.drawShade(svg, chart, data2, normalRange2, x, y, height, name);
+      }
     }
 
     if (data3) {
@@ -367,7 +452,13 @@ class LineChart extends React.Component<any, States> {
                 textSelector.attr('fill', color)
                         .text(displayValue)
                         .attr('x', x(selectDate) + textMove)
-                        .attr('y', y(displayValue) - 10);
+                        .attr('y', y(displayValue) - 15);
+
+                let bgSelector = d3.select('#' + self.props.name).select('.selector-bg');
+                bgSelector.attr('fill', 'white')
+                        .attr('width', (textSelector as any).node().getComputedTextLength() + 12)
+                        .attr('x', x(selectDate) + textMove - 5)
+                        .attr('y', y(displayValue) - 30);
 
                 if (data2 && data2.length !== 0) {
                     var dataValue2 = (data2[i] as any).value;
@@ -395,6 +486,12 @@ class LineChart extends React.Component<any, States> {
                             .text(displayValue2)
                             .attr('x', x(selectDate) + textMove)
                             .attr('y', y(displayValue2) - 10);
+
+                    let bgSelector2 = d3.select('#' + self.props.name).select('.selector-bg-2');
+                    bgSelector2.attr('fill', 'white')
+                            .attr('width', (textSelector2 as any).node().getComputedTextLength() + 12)
+                            .attr('x', x(selectDate) + textMove - 5)
+                            .attr('y', y(displayValue2) - 25);
                 } 
                 break;
             }
@@ -439,7 +536,13 @@ class LineChart extends React.Component<any, States> {
               textSelector3.attr('fill', color3)
                       .text(displayValue3)
                       .attr('x', x(selectDate) + textMove)
-                      .attr('y', y(displayValue3) - 10);
+                      .attr('y', y(displayValue3) - 10); // + 25
+
+              let bgSelector3 = d3.select('#' + self.props.name).select('.selector-bg-3');
+              bgSelector3.attr('fill', 'black')
+                      .attr('width', (textSelector3 as any).node().getComputedTextLength() + 12)
+                      .attr('x', x(selectDate) + textMove - 5)
+                      .attr('y', y(displayValue3) - 25); // + 10
 
               if (data4 && data4.length !== 0) {
                 var dataValue4 = (data4[i] as any).value;
@@ -562,7 +665,6 @@ class LineChart extends React.Component<any, States> {
 
   componentDidMount() {
     d3.select('#' + this.props.name).selectAll('.line-chart').remove();
-    console.log(this.props.name)
     let color = this.props.color;
     let color2 = this.props.color2 as string;
     let color3 = this.props.color3 as string;
@@ -592,13 +694,15 @@ class LineChart extends React.Component<any, States> {
 
       let timeRange = [start + (end - start) * zoom[0], 
           start + (end - start) * zoom[1]] as [number, number];
+
       let predict = (this.props.patient) ? this.props.patient.predict : null;
 
       this.drawChart(value, value2, range, timeRange, color, color2, predict, 
                      this.props.predict, this.props.name, this.props.isGrid,
                      this.props.isNormal1, this.props.isNormal2,
                      this.props.normalRange1, this.props.normalRange2,
-                     value3, value4, color3, color4);
+                     value3, value4, color3, color4,
+                     this.props.isShade1, this.props.isShade2);
     }
 
     // if (!this.props.title2) {
@@ -696,7 +800,8 @@ class LineChart extends React.Component<any, States> {
                      (props.patient as any).predict, props.predict, name, 
                      props.isGrid, props.isNormal1, props.isNormal2,
                      props.normalRange1 as [number, number], props.normalRange2 as [number, number],
-                     this.value3, this.value4, color3, color4);
+                     this.value3, this.value4, color3, color4,
+                     props.isShade1, props.isShade2);
     }
     
     // if (!props.title2) {

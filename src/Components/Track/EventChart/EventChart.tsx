@@ -14,6 +14,8 @@ interface Props {
   title2: string;
   value: EVENT[];
   value2: EVENT[];
+  color: string;
+  color2?: string;
   position: number;
   patient?: PATIENT;
   zoom?: [number, number];
@@ -51,7 +53,7 @@ class EventChart extends React.Component<any, States> {
   }
 
   drawChart(data1: Object[], data2: Object[], timeRange: [number, number], name: string,
-            data3: Object[], data4: Object[]) {
+            data3: Object[], data4: Object[], color: string, color2: string) {
     // var data = [
     //   [1, 1, 80], 
     //   [3, 0, 20],
@@ -89,6 +91,7 @@ class EventChart extends React.Component<any, States> {
     svg.selectAll('.bar')
         .data(data1)
         .enter().append('rect')
+          .attr('fill', color)   
           .attr('class', 'bar')
           .attr('x', function(d: any) { return x(Number(convertedTime(d.startdate))); })
           .attr('y', function(d: any) { return y(2.8); })
@@ -99,6 +102,7 @@ class EventChart extends React.Component<any, States> {
     svg.selectAll('.bar2')
         .data(data2)
         .enter().append('rect')
+          .attr('fill', color2)   
           .attr('class', 'bar2')
           .attr('x', function(d: any) { return x(Number(convertedTime(d.startdate))); })
           .attr('y', function(d: any) { return y(1.7); })
@@ -202,6 +206,8 @@ class EventChart extends React.Component<any, States> {
 
   componentDidMount() {
     d3.select('#' + this.props.name).selectAll('.event-chart').remove();
+    let color = this.props.color as string;
+    let color2 = this.props.color2 as string;
 
     if (this.props.value.length !== 0) {
       let start = convertedTime((this.props.patient as any).info.admittime);
@@ -217,12 +223,14 @@ class EventChart extends React.Component<any, States> {
       let timeRange = [start + (end - start) * zoom[0], 
           start + (end - start) * zoom[1]] as [number, number];
 
-      this.drawChart(value, value2, timeRange, this.props.name, value3, value4);
+      this.drawChart(value, value2, timeRange, this.props.name, value3, value4, color, color2);
     }
   }
 
   componentWillReceiveProps(props: Props) {
     d3.select('#' + this.props.name).selectAll('.event-chart').remove();
+    let color = props.color as string;
+    let color2 = props.color2 as string;
 
     let name;
     if (props.name.includes('top')) {
@@ -287,7 +295,7 @@ class EventChart extends React.Component<any, States> {
       let timeRange = [this.start + (this.end - this.start) * zoom[0], 
           this.start + (this.end - this.start) * zoom[1]] as [number, number];
     
-      this.drawChart(this.value, this.value2, timeRange, name, this.value3, this.value4);
+      this.drawChart(this.value, this.value2, timeRange, name, this.value3, this.value4, color, color2);
       // this.drawFigureBox(color, color2 , unit);
     } 
   }

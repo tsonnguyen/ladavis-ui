@@ -49,7 +49,7 @@
   margin-bottom: 3px;
 }
 
-.patient-health-info {
+.compare-patient .patient-health-info {
   height: 282px;
   background: white;
   overflow-y: scroll;

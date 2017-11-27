@@ -119,3 +119,27 @@
   stroke: rgb(102, 101, 101);
   stroke-width: 1px
 }
+
+.setting-icon {
+  cursor: pointer;
+}
+
+.setting-table {
+  fill: white;
+}
+
+.setting-text {
+  fill: grey;
+}
+
+.setting-choice {
+  fill: transparent;
+  cursor: pointer;
+  height: 29px;
+  stroke: lightgrey
+}
+
+.setting-choice:hover {
+  fill: #393e44;
+  opacity: 0.5;
+}

@@ -298,12 +298,6 @@ class ListPatient extends React.Component<Props, States> {
     return(
       <div key={index}>
         <div className="patient-basic-info-container">
-          <div className="patient-basic-info-subcontainer">
-            <p className="patient-basic-info-text">PATIENT ID: {patient.id}</p>
-            <p className="patient-basic-info-text">Age: {patient.dob}</p>
-            <p className="patient-basic-info-text">Gender: {patient.gender}</p>
-            <p className="patient-basic-info-text">Diagnosis: DIABETES</p>
-          </div>
           <div className="patient-basic-button">
             <div 
               className="patient-basic-detail"
@@ -337,6 +331,12 @@ class ListPatient extends React.Component<Props, States> {
             >
               Compare
             </div>
+          </div>
+          <div className="patient-basic-info-subcontainer">
+            <p className="patient-basic-info-text">PATIENT ID: {patient.id}</p>
+            <p className="patient-basic-info-text">Age: {patient.dob}</p>
+            <p className="patient-basic-info-text">Gender: {patient.gender}</p>
+            <p className="patient-basic-info-text">Diagnosis: DIABETES</p>
           </div>
         </div>
         <div className="patient-chart-container">
