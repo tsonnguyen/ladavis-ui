@@ -1,16 +1,18 @@
+.list-patient {
+  height: 660px;
+  background: #22252a;
+  margin-top: -4px;
+}
+
 .list-patient .patient-chart {
   display: table-cell;
   width: 1070px;
   vertical-align: top;
+ 
 }
 
 .list-patient .patient-chart-header .svg-container {
   width: 100%;
-}
-
-.list-patient {
-  height: 660px;
-  background: #22252a;
 }
 
 .list-patient .patient-chart-body {

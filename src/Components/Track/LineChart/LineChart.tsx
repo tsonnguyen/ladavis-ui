@@ -65,6 +65,42 @@ class LineChart extends React.Component<any, States> {
     super();
   }
 
+  drawMark(chart: any, x: any, y: any, selectDate: any, displayValue: any, textMove: any, color: any) {
+    var markGroup = chart.append('g').attr('class', 'mark-group');
+
+    var markBg = markGroup.append('rect')
+        .attr('class', 'mark-bg')
+        .attr('fill', color)
+        .attr('height', '20px')
+        .attr('x', x(selectDate) + textMove - 5)
+        .attr('y', y(displayValue) - 30)
+        .attr('rx', '5')
+        .attr('ry', '5')
+        .attr('transform', 'translate(-10,0)');
+
+    var markText = markGroup.append('text')
+        .attr('class', 'text-mark')
+        .attr('fill', 'white')
+        .text(displayValue)
+        .attr('x', x(selectDate) + textMove)
+        .attr('y', y(displayValue) - 15)
+        .attr('font-size', 12)
+        .attr('transform', 'translate(-10,0)');
+
+    markBg.attr('width', (markText as any).node().getComputedTextLength() + 12);
+
+    markGroup.append('rect')
+        .attr('class', 'mark')
+        .attr('fill', color)
+        .attr('x', x(selectDate) + 5)
+        .attr('y', y(displayValue) - 5)
+        .attr('rx', '100')
+        .attr('ry', '100')
+        .attr('width', '10px')
+        .attr('height', '10px')
+        .attr('transform', 'translate(-10,0)');
+  }
+
   drawNormalRange(chart: any, isNormal1: boolean, isNormal2: boolean, 
                   normalRange1: [number, number], normalRange2: [number, number],
                   color: string, color2: string, y: any) {
@@ -284,7 +320,7 @@ class LineChart extends React.Component<any, States> {
       .attr('x2', '100%')
       .attr('y2', '0')
       .attr('spreadMethod', 'reflect');
-      
+    
     var colours: any = [];
     for (let i in data) {
       if (Number((data[i] as any).value) > normalRange[1]) {
@@ -581,6 +617,128 @@ class LineChart extends React.Component<any, States> {
             }
           }
         } 
+      })
+      .on('mousedown', function() {
+        if (d3.event.ctrlKey) {
+          var selectDate = (timeRange[1] - timeRange[0]) * d3.mouse(this as any)[0] / width + timeRange[0];
+          let isDelete = false;
+          d3.selectAll('.mark-group').each(function(d: any, i: any) {
+            let rect = d3.select(this).select('.mark');
+            let tempx = (rect.nodes()[0] as any).x.baseVal.value;
+            if (Math.abs(x(selectDate) - tempx) < 10) {
+              d3.select(this).remove();
+              isDelete = true;
+            }
+          });
+
+          if (isDelete) { return; }
+
+          // tslint:disable-next-line:forin
+          for (let i in data) {
+              var dataTime = Math.round(convertedTime((data[i] as any).time));
+              selectDate = Math.round(selectDate);
+              if (dataTime > selectDate) {
+                  var dataValue = (data[i] as any).value;
+                  var displayValue;
+  
+                  if (Number(i) !== 0) {
+                    var beforeDataTime = Math.round(convertedTime((data[Number(i) - 1] as any).time));
+                    var beforeDataValue = (data[Number(i) - 1] as any).value;
+  
+                    displayValue = calculateMiddlePoint(beforeDataTime, beforeDataValue, 
+                                                        dataTime, dataValue, selectDate);
+                    displayValue = Number(displayValue.toFixed(2));
+                  } else {
+                    displayValue = Number(dataValue);
+                    selectDate = convertedTime((data[i] as any).time);
+                  }
+  
+                  let textMove = 0;
+                  if (Number(i) === 0) {
+                      textMove = 10;
+                  } else if (Number(i) === data.length - 1) {
+                      textMove = -10;
+                  }
+
+                  self.drawMark(chart, x, y, selectDate, displayValue, textMove, color);
+    
+                  if (data2 && data2.length !== 0) {
+                      var dataValue2 = (data2[i] as any).value;
+                      let displayValue2;
+  
+                      if (Number(i) !== 0) {
+                        var beforeDataValue2 = (data2[Number(i) - 1] as any).value;
+                        beforeDataTime = Math.round(convertedTime((data[Number(i) - 1] as any).time));
+  
+                        displayValue2 = calculateMiddlePoint(beforeDataTime, beforeDataValue2, 
+                                                             dataTime, dataValue2, selectDate);
+                        displayValue2 = Number(displayValue2.toFixed(2));
+                      } else {
+                        displayValue2 = Number(dataValue2);
+                        selectDate = convertedTime((data2[i] as any).time);
+                      }
+                               
+                      self.drawMark(chart, x, y, selectDate, displayValue2, textMove, color2);
+                  } 
+                  break;
+              }
+          }
+  
+          selectDate = (timeRange[1] - timeRange[0]) * d3.mouse(this as any)[0] / width + timeRange[0];
+          if (data3 && data3.length !== 0) {
+            // tslint:disable-next-line:forin
+            for (let i in data3) {
+              dataTime = Math.round(convertedTime((data3[i] as any).time));
+              selectDate = Math.round(selectDate);
+  
+              if (dataTime > selectDate) {
+                var dataValue3 = (data3[i] as any).value;
+                let displayValue3;
+  
+                if (Number(i) !== 0) {
+                  var beforeDataValue3 = (data3[Number(i) - 1] as any).value;
+                  beforeDataTime = Math.round(convertedTime((data3[Number(i) - 1] as any).time));
+  
+                  displayValue3 = calculateMiddlePoint(beforeDataTime, beforeDataValue3, 
+                                                       dataTime, dataValue3, selectDate);
+                  displayValue3 = Number(displayValue3.toFixed(2));
+                } else {
+                  displayValue3 = Number(dataValue3);
+                  selectDate = convertedTime((data3[i] as any).time);
+                }
+                                
+                let textMove = 0;
+                if (Number(i) === 0) {
+                    textMove = 10;
+                } else if (Number(i) === data.length - 1) {
+                    textMove = -10;
+                }
+                
+                self.drawMark(chart, x, y, selectDate, displayValue3, textMove, color3);
+  
+                if (data4 && data4.length !== 0) {
+                  var dataValue4 = (data4[i] as any).value;
+                  let displayValue4;
+  
+                  if (Number(i) !== 0) {
+                    var beforeDataValue4 = (data4[Number(i) - 1] as any).value;
+                    beforeDataTime = Math.round(convertedTime((data4[Number(i) - 1] as any).time));
+  
+                    displayValue4 = calculateMiddlePoint(beforeDataTime, beforeDataValue4, 
+                                                         dataTime, dataValue4, selectDate);
+                    displayValue4 = Number(displayValue4.toFixed(2));
+                  } else {
+                    displayValue4 = Number(dataValue4);
+                    selectDate = convertedTime((data4[i] as any).time);
+                  }
+                             
+                  self.drawMark(chart, x, y, selectDate, displayValue4, textMove, color4);
+                } 
+                break;
+              }
+            }
+          } 
+        }
       });
   }
 

@@ -1,6 +1,7 @@
 .login-background {
 	height: 100%;
-	background-position: bottom !important;
+	background-position: center !important;
+	background-size: cover !important;
 	background: url('./img/bg.jpg')
 }
 

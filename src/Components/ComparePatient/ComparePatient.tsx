@@ -111,6 +111,33 @@ class SinglePatient extends React.Component<Props, States> {
     this.props.getPatientById(patientId1);
     getPatientInfoById(patientId2).then((res) => {
       let data = res.data.data;
+      let year = new Date(data.info.admittime).getFullYear();
+      let simva = [
+        {
+          startdate: year + '-04-30T17:00:00.000Z',
+          enddate: year + '-04-30T17:00:00.000Z',
+          drug: 'Simvastatin',
+          drug_name_generic: 'Simvastatin',
+          prod_strength: '10mg Tablet',
+          dose_val_rx: '10',
+          dose_unit_rx: 'mg',
+          form_val_disp: '1',
+          form_unit_disp: 'TAB'
+        }
+      ];
+      let lisin = [
+        {
+          startdate: year + '-06-19T17:00:00.000Z',
+          enddate: year + '-06-19T17:00:00.000Z',
+          drug: 'Lisinopril',
+          drug_name_generic: 'Lisinopril',
+          prod_strength: '5mg Tablet',
+          dose_val_rx: '5',
+          dose_unit_rx: 'mg',
+          form_val_disp: '1',
+          form_unit_disp: 'TAB'
+        }
+      ];
       this.setState ({
         patient2: {
           info: data.info,
@@ -131,7 +158,9 @@ class SinglePatient extends React.Component<Props, States> {
           DPP4: data.DPP4,
           SH: data.SH,
           notes: data.notes,
-          predict: data.predict
+          predict: data.predict,
+          simva: (data.simva.length !== 0) ? data.simva : simva,
+          lisin: (data.lisin.length !== 0) ? data.lisin : lisin
         }
       });
     });
@@ -596,13 +625,15 @@ class SinglePatient extends React.Component<Props, States> {
     );
   }
 
-  renderPrescription(position: number, isTop: boolean = false) {
+  renderPrescription(position: number, color1: string, color2: string, isTop: boolean = false) {
     return (
       <Track 
         type={'event-chart'} 
         name={(isTop) ? 'Pres-Top' : 'Pres'} 
         title={'Simva'} 
         title2={'Lisin'}
+        color={color1}
+        color2={color2}
         value={this.props.patient.simva}
         value2={this.props.patient.lisin}
         position={position}
@@ -655,7 +686,7 @@ class SinglePatient extends React.Component<Props, States> {
       } else if (this.state.topFeature === 'Note') {
         return this.renderNote(0, true);
       } else if (this.state.topFeature === 'Prescription') {
-        return this.renderPrescription(0, true);
+        return this.renderPrescription(0, '#4ed8da', '#c14dd9', true);
       } else {
         return null;
       }
@@ -718,7 +749,7 @@ class SinglePatient extends React.Component<Props, States> {
                     this.renderAlbumin(this.state.listPosition.albumin, '#c14dd9', '#fac100') 
                     : null}
                   {(this.state.isDrug) ? 
-                    this.renderPrescription(this.state.listPosition.drug)
+                    this.renderPrescription(this.state.listPosition.drug, '#4ed8da', '#c14dd9')
                     : null}
                   {(this.state.isNote) ? 
                     this.renderNote(this.state.listPosition.note)

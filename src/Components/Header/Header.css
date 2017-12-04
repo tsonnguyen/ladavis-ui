@@ -1,7 +1,8 @@
 .header {
   display: inline-block;
-  background: lightgrey;
-  height: 35px;
+  background: #393e44;
+  width: 100%;
+  height: 39px;
 }
 
 .list-patient-button {
@@ -54,4 +55,50 @@
 
 .x-button:hover {
   background: red;
+}
+
+.option-button {
+  background: url('./img/more.png');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  width: 20px;
+  height: 20px;
+  display: table-cell;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  line-height: 40px; 
+}
+
+.option-table {
+  background: #393e44;
+  color: white;
+  width: 150px;
+  height: auto;
+  display: table-cell;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  position: absolute;
+  right: 1px;
+  top: 40px;
+  z-index: 1;
+}
+
+.option-choice {
+  text-align: left;
+  padding: 10px;
+}
+
+.option-choice:hover {
+  background: #cfd1d2;
+  color: #393e44;
+}
+
+@media print {
+  .header { display: none; }
 }

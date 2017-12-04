@@ -86,7 +86,7 @@ class EventChart extends React.Component<any, States> {
     // Scale the range of the data in the domains
     x.domain([timeRange[0], timeRange[1]]);
     y.domain([0, 3]);
-    console.log(data1)
+
     // append the rectangles for the bar chart
     svg.selectAll('.bar')
         .data(data1)

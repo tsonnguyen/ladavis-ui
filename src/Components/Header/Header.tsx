@@ -10,7 +10,7 @@ interface Props {
 }
 
 interface States {
-
+  isSetting: boolean;
 }
 
 const mapStateToProps = (state: ROOTSTATE) => ({
@@ -25,6 +25,27 @@ const mapDispatchToProps = (dispatch: any) => ({
 class Header extends React.Component<Props, States> {
   constructor() {
     super();
+
+    this.state = {
+      isSetting: false
+    };
+  }
+
+  componentDidMount() {
+    var self = this;
+    window.addEventListener('click', (e) => { 
+      if (e.toElement.className !== 'option-choice' && e.toElement.className !== 'option-table' 
+          && e.toElement.className !== 'option-button') {
+        self.setState({isSetting: false}); 
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    var self = this;
+    window.removeEventListener('click', (e) => { 
+      self.setState({isSetting: false}); 
+    });
   }
 
   listPatient() {
@@ -108,6 +129,32 @@ class Header extends React.Component<Props, States> {
           List of patients
         </div>
         {this.listPatient()}
+        <div 
+          className="option-button"
+          onClick={() => this.setState({ isSetting: true })}
+        />
+        {(this.state.isSetting) ?
+          <div className="option-table">
+            <div 
+              className="option-choice"
+              onClick={() => {
+                window.print();
+                this.setState({ isSetting: false });
+              }}
+            >
+              Print
+            </div>
+            <div 
+              className="option-choice"
+              onClick={() => {
+                window.location.href = '/';
+                this.setState({ isSetting: false });
+              }}
+            >
+              Log out
+            </div>
+          </div>
+        : null}
       </div>
     );
   }

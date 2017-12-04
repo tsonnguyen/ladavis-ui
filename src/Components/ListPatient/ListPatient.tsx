@@ -50,9 +50,10 @@ class ListPatient extends React.Component<Props, States> {
   diabetesPedigreeFunction = ((Math.random() * 1.6) + 0.085).toFixed(2);
   featureOptions = [
     { value: 'Patient ID', label: 'Patient ID' },
+    { value: 'Age', label: 'Age' },
     { value: 'Gender', label: 'Gender' },
     { value: 'Admission time', label: 'Admission time' },
-    { value: 'Hospitalizing time', label: 'Hospitalizing time' }
+    { value: 'Discharge time', label: 'Discharge time' }
   ];
 
   constructor() {
@@ -334,7 +335,7 @@ class ListPatient extends React.Component<Props, States> {
           </div>
           <div className="patient-basic-info-subcontainer">
             <p className="patient-basic-info-text">PATIENT ID: {patient.id}</p>
-            <p className="patient-basic-info-text">Age: {patient.dob}</p>
+            <p className="patient-basic-info-text">Age: {patient.age}</p>
             <p className="patient-basic-info-text">Gender: {patient.gender}</p>
             <p className="patient-basic-info-text">Diagnosis: DIABETES</p>
           </div>
@@ -351,7 +352,7 @@ class ListPatient extends React.Component<Props, States> {
 
   // <div class="title-area">PIN FEATURE</div>
 
-  renderFeatureSelection() {
+  renderFeatureSelection() { 
     let isChoose = (value: string) => {
       let searchValue = this.state.searchFeature.toLocaleLowerCase();
       let considerValue = value.toLocaleLowerCase();
@@ -415,7 +416,24 @@ class ListPatient extends React.Component<Props, States> {
   }
 
   render() {
-    let listPatient = this.state.listPatient.map((patient: any, index: number) => {
+    let listPatientInfo = this.state.listPatient.slice(0);
+    if (this.state.sort === 'Patient ID') {
+      listPatientInfo.sort(function(a: any, b: any)  {return a.id - b.id; });
+    } else if (this.state.sort === 'Age') {
+      listPatientInfo.sort(function(a: any, b: any)  {return a.age - b.age; });
+    } else if (this.state.sort === 'Gender') {
+      listPatientInfo.sort(function(a: any, b: any)  {return a.gender.charCodeAt(0) - b.gender.charCodeAt(0); });
+    } else if (this.state.sort === 'Admission time') {
+      listPatientInfo.sort(function(a: any, b: any)  {
+        return new Date(a.admittime).getTime() - new Date(b.admittime).getTime(); 
+      });
+    } else if (this.state.sort === 'Discharge time') {
+      listPatientInfo.sort(function(a: any, b: any)  {
+        return new Date(a.dischtime).getTime() - new Date( b.dischtime).getTime(); 
+      });
+    }
+
+    let listPatient = listPatientInfo.map((patient: any, index: number) => {
       if (patient.hemoA1c && patient.hemoA1c.length > 2) {
         return this.singlePatient(index, patient);
       } else {

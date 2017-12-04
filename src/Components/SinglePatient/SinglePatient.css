@@ -1,10 +1,11 @@
 .patient {
   display: table;
   position: relative;
-  width: 100%;
+  width: calc(100% + 0px);
   height: 650px;
   background: #22252a;
   padding-top: 10px;
+  margin-top: -5px;
 }
 
 .patient-info {
@@ -318,4 +319,13 @@
   margin-top: 10px;
   padding: 10px;
   overflow: scroll;
+}
+
+@media print {
+  body {
+    width: 1045px;
+    height: 654px;
+  }
+  .patient-feature-selection { display: none; }
+  .patient { width: 1045px; padding-bottom: 20px; padding-left: 15px;}
 }
