@@ -16,6 +16,7 @@
 }
 
 .list-patient .patient-chart-body {
+  position: relative;
   width: 1030px;
   height: calc(100% - 9px);
   margin-right: 20px;

@@ -511,7 +511,23 @@ class LineChart extends React.Component<any, States> {
                       displayValue2 = Number(dataValue2);
                       selectDate = convertedTime((data2[i] as any).time);
                     }
-                                                       
+
+                    let position2 = y(displayValue2);  
+                    if (Math.abs(position2 - y(displayValue)) < 15) {
+
+                      if (position2 > displayValue) {
+                        position2 = position2 + 20;
+                      } else {
+                        position2 = position2 - 20;
+                      }
+                    } else if (Math.abs(position2 - y(displayValue)) < 25) {
+                      if (position2 > displayValue) {
+                        position2 = position2 + 10;
+                      } else {
+                        position2 = position2 - 10;
+                      }
+                    }     
+
                     let selector2 = d3.select('#' + self.props.name).select('.selector-2');
                     selector2.attr('fill', color2)
                              .attr('x', x(selectDate) + 5)
@@ -521,13 +537,13 @@ class LineChart extends React.Component<any, States> {
                     textSelector2.attr('fill', 'white')
                             .text(displayValue2)
                             .attr('x', x(selectDate) + textMove)
-                            .attr('y', y(displayValue2) - 10);
+                            .attr('y', position2 - 10);
 
                     let bgSelector2 = d3.select('#' + self.props.name).select('.selector-bg-2');
                     bgSelector2.attr('fill', color2)
                             .attr('width', (textSelector2 as any).node().getComputedTextLength() + 12)
                             .attr('x', x(selectDate) + textMove - 5)
-                            .attr('y', y(displayValue2) - 25);
+                            .attr('y', position2 - 25);
                 } 
                 break;
             }
@@ -562,7 +578,27 @@ class LineChart extends React.Component<any, States> {
               } else if (Number(i) === data.length - 1) {
                   textMove = -10;
               }
-
+              
+              let position3 = y(displayValue3);  
+              if (Math.abs(position3 - y(displayValue as any)) < 7) {
+                if (position3 > (displayValue as any)) {
+                  position3 = position3 + 40;
+                } else {
+                  position3 = position3 - 40;
+                }
+              } else if (Math.abs(position3 - y(displayValue as any)) < 15) {
+                if (position3 > (displayValue as any)) {
+                  position3 = position3 + 20;
+                } else {
+                  position3 = position3 - 20;
+                }
+              } else if (Math.abs(position3 - y(displayValue as any)) < 25) {
+                if (position3 > (displayValue as any)) {
+                  position3 = position3 + 10;
+                } else {
+                  position3 = position3 - 10;
+                }
+              } 
               let selector3 = d3.select('#' + self.props.name).select('.selector-3');
               selector3.attr('fill', color3)
                       .attr('x', x(selectDate) + 5)
@@ -572,13 +608,13 @@ class LineChart extends React.Component<any, States> {
               textSelector3.attr('fill', 'white')
                       .text(displayValue3)
                       .attr('x', x(selectDate) + textMove)
-                      .attr('y', y(displayValue3) - 10); // + 25
+                      .attr('y', position3 - 10); // + 25
 
               let bgSelector3 = d3.select('#' + self.props.name).select('.selector-bg-3');
               bgSelector3.attr('fill', color3)
                       .attr('width', (textSelector3 as any).node().getComputedTextLength() + 12)
                       .attr('x', x(selectDate) + textMove - 5)
-                      .attr('y', y(displayValue3) - 25); // + 10
+                      .attr('y', position3 - 25); // + 10
 
               if (data4 && data4.length !== 0) {
                 var dataValue4 = (data4[i] as any).value;

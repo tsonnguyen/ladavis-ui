@@ -5,6 +5,7 @@ import Track from '../Track/Track';
 import Header from '../Header/Header';
 import ROOTSTATE from '../../Interfaces';
 var Dropdown = require('react-dropdown').default;
+var Loading = require('react-spinners').BarLoader;
 
 import { getPatientById } from '../../Actions/patientActions';
 import { addPatient, addPatientCompare } from '../../Actions/barActions';
@@ -21,6 +22,7 @@ interface Props {
 }
 
 interface States {
+  isLoad: boolean;
   listPatient: any;
   selectedFeature: string;
   searchFeature: string;
@@ -59,6 +61,7 @@ class ListPatient extends React.Component<Props, States> {
   constructor() {
     super();
     this.state = {
+      isLoad: true,
       listPatient: [],
       selectedFeature: 'Hb',
       searchFeature: '',
@@ -71,6 +74,7 @@ class ListPatient extends React.Component<Props, States> {
     // 10425, 13778
     getAllPatient().then((res) => {
       this.setState({
+        isLoad: false,
         listPatient: res.data.data
       });
     });
@@ -311,6 +315,7 @@ class ListPatient extends React.Component<Props, States> {
             </div>
             <div 
               className="patient-basic-compare"
+              style={{background: (patient.id === this.state.compare) ? '#f44336' : '#de8400'}}
               onClick={() => { 
                 if (patient.id !== this.state.compare) {
                   if (this.state.compare === '') {
@@ -444,9 +449,11 @@ class ListPatient extends React.Component<Props, States> {
     return (
       <div>
         <Header />
+
         <div className="list-patient">
           <div className="patient-chart-body slimScroll">
-            {listPatient}
+            <div className="loading-icon"><Loading color={'#4ed8da'} loading={this.state.isLoad} /></div>
+            {(!this.state.isLoad) ? listPatient : null}
           </div>
           {this.renderFeatureSelection()}
         </div>
