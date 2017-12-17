@@ -60,6 +60,31 @@ class BarChart extends React.Component<any, States> {
     super();
   }
 
+  drawMark(chart: any, x: any, y: any, selectDate: any, displayValue: any, textMove: any, color: any) {
+    var markGroup = chart.append('g').attr('class', 'mark-group');
+
+    var markBg = markGroup.append('rect')
+        .attr('class', 'mark-bg')
+        .attr('fill', color)
+        .attr('height', '20px')
+        .attr('x', x(selectDate) + textMove - 5)
+        .attr('y', y(displayValue) - 30)
+        .attr('rx', '5')
+        .attr('ry', '5')
+        .attr('transform', 'translate(-10,0)');
+
+    var markText = markGroup.append('text')
+        .attr('class', 'text-mark')
+        .attr('fill', 'white')
+        .text(displayValue)
+        .attr('x', x(selectDate) + textMove)
+        .attr('y', y(displayValue) - 15)
+        .attr('font-size', 12)
+        .attr('transform', 'translate(-10,0)');
+
+    markBg.attr('width', (markText as any).node().getComputedTextLength() + 12);
+  }
+
   drawNormalRange(chart: any, isNormal1: boolean, isNormal2: boolean, 
                   normalRange1: [number, number], normalRange2: [number, number],
                   color: string, color2: string, y: any) {
@@ -102,6 +127,83 @@ class BarChart extends React.Component<any, States> {
      
   }
 
+  drawSelector(chart: any, color: string, color2: string, data2: Object[], data3: Object[], data4: Object[],
+               color3: string, color4: string) {
+    chart.append('rect')
+      .attr('class', 'selector-bg')
+      .attr('fill', 'transparent')
+      .attr('rx', '5')
+      .attr('ry', '5')
+      .attr('height', '20px')
+      .attr('transform', 'translate(-10,0)');
+
+    chart.append('text')
+      .attr('class', 'text-selector')
+      .attr('fill', 'black')
+      .text('')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('font-size', 12)
+      .attr('transform', 'translate(-10,0)');
+
+    if (data2) {
+      chart.append('rect')
+        .attr('class', 'selector-bg-2')
+        .attr('fill', 'transparent')
+        .attr('rx', '5')
+        .attr('ry', '5')
+        .attr('height', '20px')
+        .attr('transform', 'translate(-10,0)');
+
+      chart.append('text')
+        .attr('class', 'text-selector-2')
+        .attr('fill', color)
+        .text('')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('font-size', 12)
+        .attr('transform', 'translate(-10,0)');
+    }
+
+    if (data3) {
+      chart.append('rect')
+        .attr('class', 'selector-bg-3')
+        .attr('fill', 'transparent')
+        .attr('rx', '5')
+        .attr('ry', '5')
+        .attr('height', '20px')
+        .attr('transform', 'translate(-10,0)');
+
+      chart.append('text')
+        .attr('class', 'text-selector-3')
+        .attr('fill', color3)
+        .text('')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('font-size', 12)
+        .attr('transform', 'translate(-10,0)');
+    }
+
+    if (data4) {
+      chart.append('rect')
+        .attr('class', 'selector-bg-4')
+        .attr('fill', 'transparent')
+        .attr('rx', '5')
+        .attr('ry', '5')
+        .attr('height', '20px')
+        .attr('transform', 'translate(-10,0)');
+
+      chart.append('text')
+        .attr('class', 'text-selector-4')
+        .attr('fill', color4)
+        .text('')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('font-size', 12)
+        .attr('transform', 'translate(-10,0)');
+    }
+  }
+
   drawChart(data1: Object[], data2: Object[], range: [number, number], 
             timeRange: [number, number], color: string, color2: string, 
             predict: Number[]|null = null, isPredict: any, name: string, isGrid: boolean,
@@ -128,96 +230,252 @@ class BarChart extends React.Component<any, States> {
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom);
 
+    this.drawGrid(svg, margin, width, y, isGrid);
+
     var chart = svg.append('g')
                 .attr('clip-path', 'url(#clipPath-' + name + ')')
                 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     this.drawNormalRange(chart, isNormal1, isNormal2, normalRange1, normalRange2, color, color2, y);
-    this.drawGrid(svg, margin, width, y, isGrid);
-
+    
     chart.selectAll('.bar')
         .data(data1)
         .enter().append('rect')
-          .attr('class', 'bar')
+          .attr('class', 'bar bar-of-chart')
           .attr('fill', color)
           .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('width', '10px')
           .attr('y', function(d: any) { return y(Number(d.value)); })
           .attr('height', function(d: any) { return height - y(Number(d.value)); })
-          .attr('transform', 'translate(-10,0)');
+          .attr('transform', function(d: any, i: any) { 
+            if (i === 0) {
+              return 'translate(0,0)'; 
+            } else {
+              return 'translate(-10,0)'; 
+            } 
+          })
+          .on('mousemove', function(d: any, i: any) {
+            var selectDate = Math.round(convertedTime(d.time));
+            let displayValue = Math.round(d.value);
 
-    chart.append('rect')
-        .attr('class', 'selector')
-        .attr('fill', color)
-        .attr('x', '0px')
-        .attr('width', '10px')
-        .attr('y', 0)
-        .attr('height', '0px')
-        .attr('transform', 'translate(-10,0)');
+            let textSelector = d3.select('#' + self.props.name).select('.text-selector');
+            textSelector.attr('fill', 'white')
+                    .text(displayValue)
+                    .attr('x', x(selectDate) + 1)
+                    .attr('y', y(displayValue) - 15)
+                    .attr('transform', (i === 0) ? 'translate(0,0)' : 'translate(-10,0)');
+
+            let bgSelector = d3.select('#' + self.props.name).select('.selector-bg');
+            bgSelector.attr('fill', color)
+                    .attr('width', (textSelector as any).node().getComputedTextLength() + 12)
+                    .attr('x', x(selectDate) - 5)
+                    .attr('y', y(displayValue) - 30)
+                    .attr('transform', (i === 0) ? 'translate(0,0)' : 'translate(-10,0)');
+          })
+          .on('mouseout', function() {
+            let textSelector = d3.select('#' + self.props.name).select('.text-selector');
+            textSelector.attr('x', -100).attr('y', -100);
+            let bgSelector = d3.select('#' + self.props.name).select('.selector-bg');
+            bgSelector.attr('x', -100).attr('y', -100);
+          })
+          .on('mousedown', function(d: any, i: any) {
+            if (d3.event.ctrlKey) {
+              let selectDate = Math.round(convertedTime(d.time));
+              let displayValue = Math.round(d.value);
+
+              let isDelete = false;
+              d3.selectAll('.mark-group').each(function() {
+                let rect = d3.select(this).select('.mark-bg');
+                let tempx = (rect.nodes()[0] as any).x.baseVal.value;
+                if (Math.abs(x(selectDate) - tempx) < 10) {
+                  d3.select(this).remove();
+                  isDelete = true;
+                }
+              });
     
-    chart.selectAll('.bar2')
-        .data(data2)
-        .enter().append('rect')
-          .attr('class', 'bar2')
-          .attr('fill', color2)
-          .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
-          .attr('width', '10px')
-          .attr('y', function(d: any) { return y(Number(d.value)); })
-          .attr('height', function(d: any) { return height - y(Number(d.value)); })
-          .attr('transform', 'translate(0,0)');
+              if (isDelete) { return; }
+              
+              self.drawMark(chart, x, y, selectDate, displayValue, 0, color);
+            }
+          });
 
-    chart.append('rect')
-        .attr('class', 'selector-2')
-        .attr('fill', color2)
-        .attr('x', '0px')
-        .attr('width', '10px')
-        .attr('y', 0)
-        .attr('height', '0px')
-        .attr('transform', 'translate(0,0)');
+    if (data2) {
+        chart.selectAll('.bar2')
+            .data(data2)
+            .enter().append('rect')
+                .attr('class', 'bar2 bar-of-chart')
+                .attr('fill', color2)
+                .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
+                .attr('width', '10px')
+                .attr('y', function(d: any) { return y(Number(d.value)); })
+                .attr('height', function(d: any) { return height - y(Number(d.value)); })
+                .attr('transform', function(d: any, i: any) { 
+                  if (i === 0) {
+                    return 'translate(10,0)'; 
+                  } else {
+                    return 'translate(0,0)'; 
+                  } 
+                }).on('mousemove', function(d: any, i: any) {
+                  var selectDate = Math.round(convertedTime(d.time));
+                  let displayValue = Math.round(d.value);
+      
+                  let textSelector = d3.select('#' + self.props.name).select('.text-selector-2');
+                  textSelector.attr('fill', 'white')
+                          .text(displayValue)
+                          .attr('x', x(selectDate) + 1)
+                          .attr('y', y(displayValue) - 15)
+                          .attr('transform', (i === 0) ? 'translate(0,0)' : 'translate(-10,0)');
+      
+                  let bgSelector = d3.select('#' + self.props.name).select('.selector-bg-2');
+                  bgSelector.attr('fill', color2)
+                          .attr('width', (textSelector as any).node().getComputedTextLength() + 12)
+                          .attr('x', x(selectDate) - 5)
+                          .attr('y', y(displayValue) - 30)
+                          .attr('transform', (i === 0) ? 'translate(0,0)' : 'translate(-10,0)');
+                })
+                .on('mouseout', function() {
+                  let textSelector = d3.select('#' + self.props.name).select('.text-selector-2');
+                  textSelector.attr('x', -100).attr('y', -100);
+                  let bgSelector = d3.select('#' + self.props.name).select('.selector-bg-2');
+                  bgSelector.attr('x', -100).attr('y', -100);
+                })
+                .on('mousedown', function(d: any, i: any) {
+                  if (d3.event.ctrlKey) {
+                    let selectDate = Math.round(convertedTime(d.time));
+                    let displayValue = Math.round(d.value);
+      
+                    let isDelete = false;
+                    d3.selectAll('.mark-group').each(function() {
+                      let rect = d3.select(this).select('.mark-bg');
+                      let tempx = (rect.nodes()[0] as any).x.baseVal.value;
+                      if (Math.abs(x(selectDate) - tempx) < 10) {
+                        d3.select(this).remove();
+                        isDelete = true;
+                      }
+                    });
+          
+                    if (isDelete) { return; }
+                    
+                    self.drawMark(chart, x, y, selectDate, displayValue, 0, color);
+                  }
+                });
+    }
     
     if (data3) {
       chart.selectAll('.bar3')
         .data(data3)
         .enter().append('rect')
-          .attr('class', 'bar3')
+          .attr('class', 'bar3 bar-of-chart')
           .attr('fill', color2)
           .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('width', '10px')
           .attr('y', function(d: any) { return y(Number(d.value)); })
           .attr('height', function(d: any) { return height - y(Number(d.value)); })
-          .attr('transform', 'translate(0,0)');
+          .attr('transform', 'translate(0,0)')
+          .on('mousemove', function(d: any, i: any) {
+            var selectDate = Math.round(convertedTime(d.time));
+            let displayValue = Math.round(d.value);
 
-      chart.append('rect')
-          .attr('class', 'selector-3')
-          .attr('fill', color)
-          .attr('x', '0px')
-          .attr('width', '10px')
-          .attr('y', 0)
-          .attr('height', '0px')
-          .attr('transform', 'translate(0,0)');
+            let textSelector = d3.select('#' + self.props.name).select('.text-selector-3');
+            textSelector.attr('fill', 'white')
+                    .text(displayValue)
+                    .attr('x', x(selectDate) + 1)
+                    .attr('y', y(displayValue) - 15)
+                    .attr('transform', (i === 0) ? 'translate(0,0)' : 'translate(-10,0)');
+
+            let bgSelector = d3.select('#' + self.props.name).select('.selector-bg-3');
+            bgSelector.attr('fill', color)
+                    .attr('width', (textSelector as any).node().getComputedTextLength() + 12)
+                    .attr('x', x(selectDate) - 5)
+                    .attr('y', y(displayValue) - 30)
+                    .attr('transform', (i === 0) ? 'translate(0,0)' : 'translate(-10,0)');
+          })
+          .on('mouseout', function() {
+            let textSelector = d3.select('#' + self.props.name).select('.text-selector-3');
+            textSelector.attr('x', -100).attr('y', -100);
+            let bgSelector = d3.select('#' + self.props.name).select('.selector-bg-3');
+            bgSelector.attr('x', -100).attr('y', -100);
+          })
+          .on('mousedown', function(d: any, i: any) {
+            if (d3.event.ctrlKey) {
+              let selectDate = Math.round(convertedTime(d.time));
+              let displayValue = Math.round(d.value);
+
+              let isDelete = false;
+              d3.selectAll('.mark-group').each(function() {
+                let rect = d3.select(this).select('.mark-bg');
+                let tempx = (rect.nodes()[0] as any).x.baseVal.value;
+                if (Math.abs(x(selectDate) - tempx) < 10) {
+                  d3.select(this).remove();
+                  isDelete = true;
+                }
+              });
+    
+              if (isDelete) { return; }
+              
+              self.drawMark(chart, x, y, selectDate, displayValue, 0, color);
+            }
+          });
     }
 
     if (data4) {
       chart.selectAll('.bar4')
         .data(data4)
         .enter().append('rect')
-          .attr('class', 'bar4')
+          .attr('class', 'bar4 bar-of-chart')
           .attr('fill', color2)
           .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('width', '10px')
           .attr('y', function(d: any) { return y(Number(d.value)); })
           .attr('height', function(d: any) { return height - y(Number(d.value)); })
-          .attr('transform', 'translate(0,0)');
+          .attr('transform', 'translate(0,0)')
+          .on('mousemove', function(d: any, i: any) {
+            var selectDate = Math.round(convertedTime(d.time));
+            let displayValue = Math.round(d.value);
 
-      chart.append('rect')
-          .attr('class', 'selector-4')
-          .attr('fill', color2)
-          .attr('x', '0px')
-          .attr('width', '10px')
-          .attr('y', 0)
-          .attr('height', '0px')
-          .attr('transform', 'translate(0,0)');
+            let textSelector = d3.select('#' + self.props.name).select('.text-selector-4');
+            textSelector.attr('fill', 'white')
+                    .text(displayValue)
+                    .attr('x', x(selectDate) + 1)
+                    .attr('y', y(displayValue) - 15)
+                    .attr('transform', (i === 0) ? 'translate(0,0)' : 'translate(-10,0)');
+
+            let bgSelector = d3.select('#' + self.props.name).select('.selector-bg-4');
+            bgSelector.attr('fill', color2)
+                    .attr('width', (textSelector as any).node().getComputedTextLength() + 12)
+                    .attr('x', x(selectDate) - 5)
+                    .attr('y', y(displayValue) - 30)
+                    .attr('transform', (i === 0) ? 'translate(0,0)' : 'translate(-10,0)');
+          })
+          .on('mouseout', function() {
+            let textSelector = d3.select('#' + self.props.name).select('.text-selector-4');
+            textSelector.attr('x', -100).attr('y', -100);
+            let bgSelector = d3.select('#' + self.props.name).select('.selector-bg-4');
+            bgSelector.attr('x', -100).attr('y', -100);
+          })
+          .on('mousedown', function(d: any, i: any) {
+            if (d3.event.ctrlKey) {
+              let selectDate = Math.round(convertedTime(d.time));
+              let displayValue = Math.round(d.value);
+
+              let isDelete = false;
+              d3.selectAll('.mark-group').each(function() {
+                let rect = d3.select(this).select('.mark-bg');
+                let tempx = (rect.nodes()[0] as any).x.baseVal.value;
+                if (Math.abs(x(selectDate) - tempx) < 10) {
+                  d3.select(this).remove();
+                  isDelete = true;
+                }
+              });
+    
+              if (isDelete) { return; }
+              
+              self.drawMark(chart, x, y, selectDate, displayValue, 0, color);
+            }
+          });
     }
+
+    this.drawSelector(chart, color, color2, data2, data3, data4, color, color2);
 
     if (isPredict === true && predict) {
         var predictY = d3.scaleLinear().range([height, 0]);
@@ -234,45 +492,6 @@ class BarChart extends React.Component<any, States> {
             .attr('height', '100px')
             .attr('transform', 'translate(-10,0)');
     }
-    
-    svg.append('rect')
-    .attr('class', 'overlay')
-    .attr('width', width + 10)
-    .attr('height', height)
-    .attr('fill', 'transparent')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-        .on('mousemove', function() {
-            var selectDate = (timeRange[1] - timeRange[0]) * d3.mouse(this as any)[0] / width + timeRange[0];
-            // tslint:disable-next-line:forin
-            for (var i in data1) {
-                var dataTime = Math.round(convertedTime((data1[i] as any).time));
-                selectDate = Math.round(selectDate);
-                if (Math.abs(dataTime - selectDate) < 5) {
-                    var displayValue = Number((data1[i] as any).value);
-
-                    if (data2) {
-                        d3.select('#' + self.props.name).select('.figure-value-1').text(displayValue);
-                        let selector = d3.select('#' + self.props.name).select('.selector');
-                        selector.attr('x', x(dataTime))
-                                .attr('y', y(displayValue))
-                                .attr('height', height - y(Number(displayValue)));
-
-                        let displayValue2 = Number((data2[i] as any).value);
-                        let selector2 = d3.select('#' + self.props.name).select('.selector-2');
-                        d3.select('#' + self.props.name).select('.figure-value-2').text(displayValue2);
-                        selector2.attr('x', x(dataTime))
-                                 .attr('y', y(displayValue2))
-                                 .attr('height', height - y(Number(displayValue2)));
-                    } else {
-                        let selector = d3.select('#' + self.props.name).select('.selector');
-                        d3.select('#' + self.props.name).select('.figure-value').text(displayValue);
-                        selector.attr('x', x(dataTime) + 5)
-                                .attr('y', y(displayValue) - 5);
-                    }
-
-                }
-            }
-        });
   }
 
   drawFigureBox(color: string, color2: string, unit: string) {

@@ -23,8 +23,8 @@ export default class Header extends React.Component<Props, States> {
   }
 
   onLogin = () => {
-    if (this.state.username === 'admin' && this.state.password === 'admin') {
-      window.location.href = '/list-patient';
+    if (this.state.username === 'john' && this.state.password === 'admin') {
+      window.location.href = '/profile';
     } else {
       this.setState({
         error: true

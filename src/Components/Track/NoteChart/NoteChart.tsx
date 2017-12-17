@@ -81,19 +81,12 @@ class NoteChart extends React.Component<any, States> {
 
     x.domain([timeRange[0], timeRange[1]]);
     y.domain([0, 3]);
-
-    svg.append('defs').append('pattern')
-      .attr('id', 'notebg')
-      .append('image')
-        .attr('src', require('./note.png'))
-        .attr('width', 4)
-        .attr('height', 4);
         
     svg.selectAll('.note-bar')
         .data(data)
         .enter().append('image')
           .attr('class', 'note-bar')
-          .attr('xlink:href', require('./note.png'))
+          .attr('xlink:href', (data2) ? require('./note1.png') : require('./note.png'))
           .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('y', function(d: any) { return (data2) ? y(2.4) : y(1.7); })
           .attr('width', '20px') 
@@ -134,12 +127,11 @@ class NoteChart extends React.Component<any, States> {
     if (data2) {
       var patientArray = window.location.href.split('?')[1].split('&');
       var patientId2 = Number(patientArray[1].split('=')[1]);
-
       svg.selectAll('.note-bar-2')
         .data(data2)
         .enter().append('image')
           .attr('class', 'note-bar-2')
-          .attr('xlink:href', require('./note.png'))
+          .attr('xlink:href', require('./note2.png'))
           .attr('x', function(d: any) { return x(Number(convertedTime(d.time))); })
           .attr('y', function(d: any) { return y(1.4); })
           .attr('width', '20px') 
@@ -244,7 +236,7 @@ class NoteChart extends React.Component<any, States> {
 
           value = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value);
           if (value2) {
-            value2 = transformYear(new Date((props.patient as any).info.dischtime).getFullYear(), value2);
+            value2 = transformYear(new Date(props.secondTimeRange[1]).getFullYear(), value2);
           }
           
           this.isGetTime = true;

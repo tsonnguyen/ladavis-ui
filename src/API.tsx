@@ -34,7 +34,10 @@ export function formatDate (dateString: string, isGetTime: boolean = false) {
   let data = new Date(dateString);
   let day = pad(data.getDate());
   let month = pad(data.getMonth() + 1);
-  let year = (data.getFullYear() > 10) ? data.getFullYear() - shiftYear : data.getFullYear();
+  let year: any = (data.getFullYear() > 10) ? data.getFullYear() - shiftYear : data.getFullYear();
+  if (year < 10) {
+    year = 'y1';
+  }
   let hour = pad(data.getHours());
   let minute = pad(data.getMinutes());
   let second = pad(data.getSeconds());

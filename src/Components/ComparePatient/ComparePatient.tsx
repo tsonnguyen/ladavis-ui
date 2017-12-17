@@ -193,10 +193,7 @@ class SinglePatient extends React.Component<Props, States> {
   }
 
   renderPatientInfo() {
-    var styleText = {
-      color: (this.state.displayPredict) ? 'green' : 'black',
-      fontWeight: (this.state.displayPredict) ? 'bold' : '100'
-    } as any;
+
     return (
       <div className="patient-info">
         <div className="patient-basic-info">
@@ -213,13 +210,13 @@ class SinglePatient extends React.Component<Props, States> {
             <div className="patient-health-title">Pre-diagnosis</div>
             <div className="patient-health-value">{this.props.patient.info.diagnosis}</div>
             <div className="patient-health-title">Pregnancy (times)</div>
-            <div className="patient-health-value" style={styleText}>{this.pregnancy}</div>
+            <div className="patient-health-value">{this.pregnancy}</div>
             <div className="patient-health-title">Skin thickness (mm)</div>
-            <div className="patient-health-value" style={styleText}>{this.skinThickness}</div>
+            <div className="patient-health-value">{this.skinThickness}</div>
             <div className="patient-health-title">Insulin (mu U/ml)</div>
-            <div className="patient-health-value" style={styleText}>{this.insulin}</div>
+            <div className="patient-health-value">{this.insulin}</div>
             <div className="patient-health-title">Diabete predigree</div>
-            <div className="patient-health-value" style={styleText}>{this.diabetesPedigreeFunction}</div>
+            <div className="patient-health-value">{this.diabetesPedigreeFunction}</div>
           </div>
         </div>
 
@@ -238,13 +235,13 @@ class SinglePatient extends React.Component<Props, States> {
             <div className="patient-health-title">Pre-diagnosis</div>
             <div className="patient-health-value">{this.state.patient2.info.diagnosis}</div>
             <div className="patient-health-title">Pregnancy (times)</div>
-            <div className="patient-health-value" style={styleText}>{this.pregnancy}</div>
+            <div className="patient-health-value">{this.pregnancy}</div>
             <div className="patient-health-title">Skin thickness (mm)</div>
-            <div className="patient-health-value" style={styleText}>{this.skinThickness}</div>
+            <div className="patient-health-value">{this.skinThickness}</div>
             <div className="patient-health-title">Insulin (mu U/ml)</div>
-            <div className="patient-health-value" style={styleText}>{this.insulin}</div>
+            <div className="patient-health-value">{this.insulin}</div>
             <div className="patient-health-title">Diabete predigree</div>
-            <div className="patient-health-value" style={styleText}>{this.diabetesPedigreeFunction}</div>
+            <div className="patient-health-value">{this.diabetesPedigreeFunction}</div>
           </div>
         </div>
         : null}
@@ -326,7 +323,7 @@ class SinglePatient extends React.Component<Props, States> {
           </div>
           <div 
             className="feature-text"
-            style={{color: (isCheck) ? '#4ed8da' : '#cfd1d2'}}
+            style={{color: '#cfd1d2'}}
           >
             {name}
           </div>

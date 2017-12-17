@@ -18,9 +18,9 @@
 .list-patient .patient-chart-body {
   position: relative;
   width: 1030px;
-  height: calc(100% - 9px);
+  height: calc(100% - 45px);
   margin-right: 20px;
-  padding-top: 10px;
+  padding-top: 25px;
   overflow: auto;
   border-right: 1px solid black;
 }
@@ -182,4 +182,14 @@
   color: #cfd1d2;
   background: #393e44;
   font-weight: bold;
+}
+
+.list-feature {
+  height: 190px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.Dropdown-control {
+  font-size: 14px;
 }

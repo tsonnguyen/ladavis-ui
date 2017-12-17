@@ -197,9 +197,9 @@ class LineChart extends React.Component<any, States> {
         .attr('fill', 'white')
         .attr('rx', '100')
         .attr('ry', '100')
-        .attr('x', '0px')
+        .attr('x', -100)
         .attr('width', '10px')
-        .attr('y', 0)
+        .attr('y', -100)
         .attr('height', '10px')
         .attr('transform', 'translate(-10,0)');
 
@@ -325,6 +325,8 @@ class LineChart extends React.Component<any, States> {
     for (let i in data) {
       if (Number((data[i] as any).value) > normalRange[1]) {
         colours.push('#fd0b00');
+      } else if (Number((data[i] as any).value) < normalRange[0]) {
+        colours.push('#5d5df5');
       } else {
         colours.push('#fded00');
       }
@@ -437,7 +439,7 @@ class LineChart extends React.Component<any, States> {
         .attr('fill', 'none');
     }
 
-    // this.drawPoint(chart, data, data2, color, color2, x, y);
+    this.drawPoint(chart, data, data2, color, color2, x, y);
     this.drawSelector(chart, color, color2, data2, data3, data4, color3, color4);
     
     if (isPredict === true && predict) {

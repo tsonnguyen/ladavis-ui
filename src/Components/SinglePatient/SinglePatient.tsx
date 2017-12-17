@@ -129,7 +129,7 @@ class SinglePatient extends React.Component<Props, States> {
 
   renderPatientInfo() {
     var styleText = {
-      color: (this.state.displayPredict) ? 'green' : 'black',
+      color: (this.state.displayPredict) ? 'green' : 'white',
       fontWeight: (this.state.displayPredict) ? 'bold' : '100'
     } as any;
 
@@ -232,7 +232,7 @@ class SinglePatient extends React.Component<Props, States> {
           </div>
           <div 
             className="feature-text"
-            style={{color: (isCheck) ? '#4ed8da' : '#cfd1d2'}}
+            style={{color: '#cfd1d2'}}
           >
             {name}
           </div>
@@ -411,7 +411,7 @@ class SinglePatient extends React.Component<Props, States> {
         name={(isTop) ? 'Creatinine-Top' : 'Creatinine'} 
         title={'Creatinine'} 
         value={this.props.patient.creatinine}
-        range={[0, 3]}
+        range={[0, 10]}
         normalRange1={[0.5, 1.2]}
         unit={'mg/dl'}
         color={color}
@@ -449,7 +449,7 @@ class SinglePatient extends React.Component<Props, States> {
         name={(isTop) ? 'Glucose-Top' : 'Glucose'} 
         title={'Glucose'} 
         value={this.props.patient.glucoseBlood}
-        range={[0, 350]}
+        range={[0, 450]}
         normalRange1={[70, 99]}
         unit={'mg/dl'}
         color={color}

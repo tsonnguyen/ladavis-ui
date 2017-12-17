@@ -5,6 +5,7 @@ import Login from '../Login/Login';
 import SinglePatient from '../SinglePatient/SinglePatient';
 import ComparePatient from '../ComparePatient/ComparePatient';
 import ListPatient from '../ListPatient/ListPatient';
+import Profile from '../Profile/Profile';
 
 import './App.css';
 
@@ -23,6 +24,7 @@ class App extends React.Component<{}, {}> {
             <Route exact={true} path="/single-patient"component={SinglePatient} />
             <Route exact={true} path="/list-patient"component={ListPatient} />
             <Route exact={true} path="/compare-patient"component={ComparePatient} />
+            <Route exact={true} path="/profile"component={Profile} />
           </div>  
         </div>
       </Router>

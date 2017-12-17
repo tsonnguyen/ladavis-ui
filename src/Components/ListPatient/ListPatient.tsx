@@ -26,7 +26,9 @@ interface States {
   listPatient: any;
   selectedFeature: string;
   searchFeature: string;
+  searchPatientFeature: string;
   compare: string;
+  search: string;
   sort: string;
 }
 
@@ -50,6 +52,10 @@ class ListPatient extends React.Component<Props, States> {
   pregnancy = 0;
   insulin = Math.floor((Math.random() * 500) + 90);
   diabetesPedigreeFunction = ((Math.random() * 1.6) + 0.085).toFixed(2);
+  searchOptions = [
+    { value: 'Patient ID', label: 'Patient ID' },
+    { value: 'Age', label: 'Age' }
+  ];
   featureOptions = [
     { value: 'Patient ID', label: 'Patient ID' },
     { value: 'Age', label: 'Age' },
@@ -65,8 +71,10 @@ class ListPatient extends React.Component<Props, States> {
       listPatient: [],
       selectedFeature: 'Hb',
       searchFeature: '',
+      searchPatientFeature: '',
       compare: '', 
-      sort: 'Patient ID'
+      sort: 'Patient ID',
+      search: 'Patient ID'
     };
   }
 
@@ -355,8 +363,6 @@ class ListPatient extends React.Component<Props, States> {
     );
   }
 
-  // <div class="title-area">PIN FEATURE</div>
-
   renderFeatureSelection() { 
     let isChoose = (value: string) => {
       let searchValue = this.state.searchFeature.toLocaleLowerCase();
@@ -383,6 +389,26 @@ class ListPatient extends React.Component<Props, States> {
 
     return (
       <div className="select-feature-bar">
+        <div className="title-area">SEARCH</div>
+        <div className="select-area" style={{padding: '13px', paddingBottom: 0}}>
+          <Dropdown 
+            options={this.searchOptions} 
+            value={this.state.search}
+            placeholder="Select a feature"
+            onChange={(e: any) => {
+              this.setState({
+                search: e.value
+              });
+            }}
+          />
+        </div>
+        <div className="search-area" style={{marginTop: '-5px'}}>
+          <input 
+            type="text"
+            placeholder={'Search'}
+            onChange={(e) => { this.setState({searchPatientFeature: e.target.value}); }} 
+          />
+        </div>
         <div className="title-area">SORT</div>
         <div className="select-area" style={{padding: '13px'}}>
           <Dropdown 
@@ -404,12 +430,14 @@ class ListPatient extends React.Component<Props, States> {
             onChange={(e) => { this.setState({searchFeature: e.target.value}); }} 
           />
         </div>
-        {singleChoice('Hb', 'Hemoglobin A1c')}
-        {singleChoice('Glu', 'Glucose')}
-        {singleChoice('BP', 'Blood pressure')}
-        {singleChoice('Fat', 'Fat')}
-        {singleChoice('Cr', 'Creatine')}
-        {singleChoice('Alb', 'Albumin')}
+        <div className="list-feature slimScroll">
+          {singleChoice('Hb', 'Hemoglobin A1c')}
+          {singleChoice('Glu', 'Glucose')}
+          {singleChoice('BP', 'Blood pressure')}
+          {singleChoice('Fat', 'Fat')}
+          {singleChoice('Cr', 'Creatine')}
+          {singleChoice('Alb', 'Albumin')}
+        </div>
         <div className="comparing">
           {(this.state.compare !== '') ?
             'COMPARE WITH ' + this.state.compare : 
@@ -421,6 +449,16 @@ class ListPatient extends React.Component<Props, States> {
   }
 
   render() {
+    let isRender = (value: string) => {
+      let searchValue = this.state.searchPatientFeature.toLocaleLowerCase();
+      let considerValue = value.toLocaleLowerCase();
+      if (considerValue.indexOf(searchValue) > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
     let listPatientInfo = this.state.listPatient.slice(0);
     if (this.state.sort === 'Patient ID') {
       listPatientInfo.sort(function(a: any, b: any)  {return a.id - b.id; });
@@ -440,7 +478,23 @@ class ListPatient extends React.Component<Props, States> {
 
     let listPatient = listPatientInfo.map((patient: any, index: number) => {
       if (patient.hemoA1c && patient.hemoA1c.length > 2) {
-        return this.singlePatient(index, patient);
+        if (this.state.searchPatientFeature === '') {
+          return this.singlePatient(index, patient);
+        } else {
+          if (this.state.search === 'Patient ID') {
+            if (isRender(patient.id.toString())) {
+              return this.singlePatient(index, patient);
+            } else {
+              return null;
+            }
+          } else {
+            if (isRender(patient.age.toString())) {
+              return this.singlePatient(index, patient);
+            } else {
+              return null;
+            }
+          }
+        }
       } else {
         return null;
       }

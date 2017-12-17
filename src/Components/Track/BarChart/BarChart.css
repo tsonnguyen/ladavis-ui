@@ -2,3 +2,7 @@
     height: 200px;
     width: 800px;
 }
+
+.bar-of-chart {
+    cursor: pointer;
+}

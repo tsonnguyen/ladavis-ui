@@ -37,6 +37,7 @@ interface Props {
 interface States {
   isSetting: boolean;
   isGrid: boolean;
+  isChange: boolean;
   isNormal1: boolean;
   isNormal2: boolean;
   isShade1: boolean;
@@ -51,6 +52,7 @@ class Track extends React.Component<Props, States> {
     this.state = {
       isSetting: false,
       isGrid: false,
+      isChange: false,
       isNormal1: false,
       isNormal2: false,
       isShade1: false,
@@ -250,17 +252,55 @@ class Track extends React.Component<Props, States> {
     );
   }
 
+  renderChangeChartIcon(type: string) {
+    let name = '';
+    if (type === 'bar-chart') {
+      name = 'BAR';
+      if (this.state.isChange) {
+        name = 'LINE';
+      }
+    } else if (type === 'line-chart') {
+      name = 'LINE';
+      if (this.state.isChange) {
+        name = 'BAR';
+      }
+    } else {
+      return null;
+    } 
+
+    return (
+      <g>
+        <rect 
+          className="grid-icon"
+          fill="#444faf"
+          rx="5" 
+          ry="2"
+          width="50"
+          height="25"
+          x="585"
+          y={this.props.position + 18}
+          onMouseDown={() => {
+            this.setState({isChange: !this.state.isChange});
+          }}
+        />
+        <text 
+          className="grid-icon grid-icon-text" 
+          x="597" 
+          y={this.props.position + 35} 
+          fill="white"
+          onMouseDown={() => {
+            this.setState({isChange: !this.state.isChange});
+          }}
+        >
+          {name}
+        </text>
+      </g>
+    );
+  }
+
   renderGridIcon() {
     return (
       <g>
-        {/* <image 
-          className="grid-icon"
-          xlinkHref={require('./img/grid.png')}
-          width="25"
-          height="25"
-          x="725"
-          y={this.props.position + 18}
-        /> */}
         <rect 
           className="grid-icon"
           fill="#444faf"
@@ -345,7 +385,7 @@ class Track extends React.Component<Props, States> {
             rx="5" 
             ry="2"
             width={tableWidth}
-            height={(this.props.title2) ? '120' : '60'}
+            height={(this.props.title2 && this.props.type === 'line-chart') ? '120' : '60'}
             x={startPosition}
             y={this.props.position + 18}
           />
@@ -362,25 +402,28 @@ class Track extends React.Component<Props, States> {
                 isNormal1: false,
               });
             })}
-            {renderItem(this.props.title + ' shading', this.props.color as string, 97, 76, () => {
-              this.setState({
-                isShade1: !this.state.isShade1,
-                isShade2: false,
-              });
-            })}
-            {renderItem(this.props.title2 + ' shading', this.props.color2 as string, 127, 106, () => {
-              this.setState({
-                isShade2: !this.state.isShade2,
-                isShade1: false,
-              });
-            })}
+            {(this.props.type === 'line-chart') ? 
+              renderItem(this.props.title + ' shading', this.props.color as string, 97, 76, () => {
+                this.setState({
+                  isShade1: !this.state.isShade1,
+                  isShade2: false,
+                });
+            }) : null}
+            {(this.props.type === 'line-chart') ? 
+              renderItem(this.props.title2 + ' shading', this.props.color2 as string, 127, 106, () => {
+                this.setState({
+                  isShade2: !this.state.isShade2,
+                  isShade1: false,
+                });
+            }) : null}
           </g> : <g>
-            {renderItem(this.props.title + ' shading', this.props.color as string, 68, 47, () => {
-              this.setState({
-                isShade1: !this.state.isShade1,
-                isShade2: false,
-              });
-            })}
+            {(this.props.type === 'line-chart') ? 
+              renderItem(this.props.title + ' shading', this.props.color as string, 68, 47, () => {
+                this.setState({
+                  isShade1: !this.state.isShade1,
+                  isShade2: false,
+                });
+            }) : null}
           </g>}
         </g> : null}
       </g>
@@ -483,10 +526,18 @@ class Track extends React.Component<Props, States> {
     let isGridAndRange = true;
     switch (this.props.type) {
     case 'bar-chart':
-        renderComponent = this.renderBarChart();
+        if (!this.state.isChange) {
+          renderComponent = this.renderBarChart();
+        } else {
+          renderComponent = this.renderLineChart();
+        }    
         break;
     case 'line-chart':
-        renderComponent = this.renderLineChart();
+        if (!this.state.isChange) {
+          renderComponent = this.renderLineChart();
+        } else {
+          renderComponent = this.renderBarChart();
+        }
         break;
     case 'event-chart':
         renderComponent = this.renderEventChart();
@@ -508,7 +559,6 @@ class Track extends React.Component<Props, States> {
       <g className="track-group" >
         {this.renderTrackClipPath()}
         {this.renderHeader()}
-        
         {this.renderMoveTrackIcon()}
         {this.renderTrackBackground()}
         <svg className="track" x="-11" y={this.props.position + 30}>
@@ -516,6 +566,7 @@ class Track extends React.Component<Props, States> {
           {this.renderTrackDrag()}
           {renderComponent}  
         </svg>
+        {this.renderChangeChartIcon(this.props.type)}
         {(isGridAndRange) ? this.renderGridIcon() : null}}
         {(isGridAndRange) ? this.renderSettingIcon() : null}
         {/* {(isGridAndRange) ? this.renderNormalIcon() : null}

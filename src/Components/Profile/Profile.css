@@ -1,0 +1,204 @@
+.profile {
+  height: 660px;
+  background: #22252a;
+  margin-top: -4px;
+}
+
+.profile-title {
+  display: table;
+  padding-left: 40px;
+  padding-top: 30px;
+  width: 1202px;
+}
+
+
+.profile-title-name {
+  width: calc(100% - 28px);
+  height: 30px;
+  display: table-cell;
+  padding-left: 20px;
+  vertical-align: middle;
+  color: #cfd1d2;
+  background: #393e44;
+  border: 1px solid #cfd1d2;
+  border-bottom: none;
+  font-weight: bold;
+  font-size: 18px;
+  outline: none;
+}
+
+.profile-avatar-info {
+  display: table;
+  background: #2d3136;
+  border: 1px solid #cfd1d2;
+  border-top: none;
+  margin-left: 40px;
+  width: 1200px;
+}
+
+.profile .avatar {
+  display: table-cell;
+  width: 18%;
+  padding: 20px;
+}
+
+.profile .avatar img{
+  width: 100%;
+  border: 1px solid grey;
+}
+
+.profile .info {
+  display: table-cell;
+  vertical-align: top;
+  width: 80%;
+  padding: 20px;
+}
+
+.user-name {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: rgb(207, 209, 210);
+}
+
+.user-info {
+  display: table;
+  margin-bottom: 10px;
+}
+
+.user-info .user-title {
+  display: table-cell;
+  background: #ff8a6b;
+  color: white;
+  padding: 5px;
+  width: 90px;
+  text-align: center;
+}
+
+.user-info .user-value {
+  display: table-cell;
+  padding: 5px;
+  padding-left: 20px;
+  color: rgb(207, 209, 210);
+}
+
+.schedule-my-list-patient {
+  display: table;
+  width: 1200px;
+
+  margin-left: 40px;
+  margin-top: 30px;
+}
+
+.schedule {
+  display: table-cell;
+  width: 40%;
+  background: #2d3136;
+  height: 300px;
+  border: 1px solid #cfd1d2;
+}
+
+.my-list-patient {
+  display: table-cell;
+  width: 55%;
+  margin-left: 30px;
+  background: #2d3136;
+  height: 300px;
+  border: 1px solid #cfd1d2;
+}
+
+.schedule-my-list-patient-title {
+  width: calc(100% - 20px);
+  height: 30px;
+  padding-left: 20px;
+  vertical-align: middle;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 30px;
+  color: #cfd1d2;
+  background: #393e44;
+  border: none;
+  outline: none;
+}
+
+.schedule-table-header, .schedule-table-body {
+  display: table;
+  padding-left: 20px;
+}
+
+.schedule-table-header {
+  margin-top: 5px;
+}
+
+.schedule-table-body {
+  margin-bottom: 10px;
+}
+
+.schedule-text {
+  display: table-cell;
+  padding: 13px;
+}
+
+.schedule-table-header .schedule-text {
+  font-weight: bold;
+  color: rgb(207, 209, 210);
+}
+
+.schedule-table-body .schedule-text {
+  background: white;
+}
+
+.schedule-text-1 {
+  width: 320px;
+}
+
+.my-patient-table-header, .my-patient-table-body {
+  display: table;
+  margin-left: 20px;
+}
+
+.my-patient-table-header {
+  margin-top: 5px;
+}
+
+.my-patient-table-body {
+  margin-bottom: 10px;
+  background: white;
+  cursor: pointer;
+}
+
+.my-patient-table-body:hover {
+  background: #393e44;
+  color: #cfd1d2;
+}
+
+.my-patient-text {
+  display: table-cell;
+  padding: 13px;
+  vertical-align: middle;
+}
+
+.my-patient-table-header .my-patient-text {
+  font-weight: bold;
+  color: rgb(207, 209, 210);
+}
+
+.my-patient-text-1 {
+  width: 80px;
+}
+
+.my-patient-text-2 {
+  width: 50px;
+}
+
+.my-patient-text-3 {
+  width: 185px;
+}
+
+.my-patient-text-4 {
+  width: 100px;
+}
+
+.my-patient-text-5 {
+  width: 100px;
+}

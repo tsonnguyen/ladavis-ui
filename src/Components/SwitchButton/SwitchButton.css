@@ -10,8 +10,8 @@
 
 .switch-container input[type="checkbox"].switch + div {
 	vertical-align: middle;
-	width: 40px;
-	height: 20px;
+	width: 36px;
+	height: 16px;
 	border-radius: 999px;
 	background-color: #393e44;
 	-webkit-transition-duration: .4s;
@@ -37,14 +37,14 @@
 }
 
 .switch-container input[type="checkbox"].switch:checked + div {
-	width: 36px;
+	width: 32px;
 	background-position: 0 0;
 	background-color: #393e44;
 }
 
 .switch-container input[type="checkbox"].switch + div {
-	width: 36px;
-	height: 18px;
+	width: 32px;
+	height: 16px;
 }
 
 
@@ -54,7 +54,7 @@
 
 .switch-container input[type="checkbox"].switch + div > div {
 	float: left;
-	width: 16px; height: 16px;
+	width: 14px; height: 14px;
 	border-radius: inherit;
 	background: #ffffff;
 	-webkit-transition-timing-function: cubic-bezier(1,0,0,1);

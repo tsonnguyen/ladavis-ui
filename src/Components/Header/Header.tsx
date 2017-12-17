@@ -115,18 +115,28 @@ class Header extends React.Component<Props, States> {
   render() {
     this.listPatient();
     var checkList = false;
+    var checkProfile = false;
     if (window.location.href.includes('list-patient')) {
       checkList = true;
+    } else if (window.location.href.includes('profile')) {
+      checkProfile = true;
     }
 
     return (
       <div className="header">
         <div 
           className="list-patient-button"
+          style={{background: (checkProfile) ? '#515357' : '#3b3b3d'}}
+          onClick={() => window.location.href = '/profile'}
+        >
+          MY PROFILE
+        </div>
+        <div 
+          className="list-patient-button"
           style={{background: (checkList) ? '#515357' : '#3b3b3d'}}
           onClick={() => window.location.href = '/list-patient'}
         >
-          List of patients
+          LIST PATIENTS
         </div>
         {this.listPatient()}
         <div 
